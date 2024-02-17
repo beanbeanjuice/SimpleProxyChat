@@ -1,0 +1,14 @@
+name: Count Lines of Code
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install cloc
+        run: sudo apt-get install cloc
+      - name: Run cloc
+        run: cloc .
