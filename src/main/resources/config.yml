@@ -1,0 +1,16 @@
+BOT_TOKEN: "TOKEN_HERE"  # Discord Bot Token
+
+prefix: "&8[&bProxy Chat&8] "
+
+servers:
+  hub:
+    - "CHANNEL_ID_1"
+    - "CHANNEL_ID_2"
+  smp:
+    - "CHANNEL_ID_1"
+    - "CHANNEL_ID_2"
+  factions:
+    - "CHANNEL_ID_1"
+    - "CHANNEL_ID_2"
+
+format: "someFormat"
