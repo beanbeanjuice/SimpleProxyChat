@@ -12,6 +12,8 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.TimeUnit;
+
 public class Bot {
 
     private final ProxyChat plugin;
@@ -38,6 +40,17 @@ public class Bot {
 
     public void sendMessageEmbed(@NotNull MessageEmbed embed) {
         bot.getTextChannelById((String) plugin.getConfig().get(ConfigDataKey.CHANNEL_ID)).sendMessageEmbeds(embed).queue();
+    }
+
+    public void updateChannelTopic(@NotNull String topic) {
+        bot.getTextChannelById((String) plugin.getConfig().get(ConfigDataKey.CHANNEL_ID)).getManager().setTopic(topic).queue();
+    }
+
+    public void startChannelTopicUpdater() {
+        plugin.getProxy().getScheduler().schedule(plugin, () -> {
+            String topicMessage = String.format("There are %d players online.", plugin.getProxy().getPlayers().size());
+            updateChannelTopic(topicMessage);
+        }, 1, 1, TimeUnit.MINUTES);
     }
 
 }

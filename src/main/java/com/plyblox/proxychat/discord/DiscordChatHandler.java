@@ -1,6 +1,7 @@
 package com.plyblox.proxychat.discord;
 
 import com.plyblox.proxychat.ProxyChat;
+import com.plyblox.proxychat.utility.Helper;
 import com.plyblox.proxychat.utility.config.ConfigDataKey;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
@@ -24,7 +25,7 @@ public class DiscordChatHandler extends ListenerAdapter {
         if (event.getAuthor().isBot()) return;
 
         Member author = event.getMember();
-        Role topRole = author.getRoles().get(0);
+        Role topRole = author.getRoles().get(0);  // TODO: This is not working. Why?
         String message = event.getMessage().getContentStripped();
 
         TextComponent roleText = new TextComponent(topRole.getName());
@@ -38,7 +39,7 @@ public class DiscordChatHandler extends ListenerAdapter {
                 .replace("%user%", author.getEffectiveName())
                 .replace("%message%", message);
 
-        plugin.getProxy().broadcast(new ComponentBuilder(ChatColor.translateAlternateColorCodes('&', minecraftMessage)).create());
+        plugin.getProxy().broadcast(new ComponentBuilder(Helper.translateColors(minecraftMessage)).create());
     }
 
 }
