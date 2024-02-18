@@ -13,4 +13,20 @@ servers:
     - "CHANNEL_ID_1"
     - "CHANNEL_ID_2"
 
-format: "someFormat"
+# Minecraft to Minecraft
+join-format: "&e%player% &ahas joined the network."
+leave-format: "&e%player% &chas left the network."
+message-format: "&8[&3%server%&8] &e%player% &8>> &7%message%"
+switch-format: "&e%player% &7moved from &c%from% &7to &a%to%&7."
+switch-format_NO_FROM: "&e%player% &7moved &7to &a%to%&7."
+
+# Minecraft to Discord
+minecraft_to_discord_join: "%player% has joined the network."
+minecraft_to_discord_leave: "%player% has left the network."
+minecraft_to_discord_switch: "%player% has switched %from% to %to%."
+
+# Discord to Minecraft
+discord_to_minecraft_message: "&8[&bDiscord&8] %role_color%%user% &8>> &7%message%"
+
+# DO NOT TOUCH THIS
+version: 0
