@@ -50,7 +50,7 @@ public class Bot {
         plugin.getProxy().getScheduler().schedule(plugin, () -> {
             String topicMessage = String.format("There are %d players online.", plugin.getProxy().getPlayers().size());
             updateChannelTopic(topicMessage);
-        }, 1, 1, TimeUnit.MINUTES);
+        }, 3, 3, TimeUnit.MINUTES);
     }
 
 }
