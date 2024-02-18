@@ -1,9 +1,11 @@
 package com.plyblox.proxychat;
 
+import com.plyblox.proxychat.chat.ServerChatHandler;
 import com.plyblox.proxychat.discord.Bot;
 import com.plyblox.proxychat.utility.config.Config;
 import com.plyblox.proxychat.utility.config.ConfigDataKey;
 import net.md_5.bungee.api.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,11 +31,19 @@ public final class ProxyChat extends Plugin {
             throw new RuntimeException(e);
         }
         discordBot.sendMessage(servers.get("factions").get(0), "Server is starting...");
+
+        // Registering Chat Listener
+        this.getProxy().getPluginManager().registerListener(this, new ServerChatHandler(this));
     }
 
     @Override
     public void onDisable() {
         this.getLogger().log(Level.INFO, "The plugin is shutting down.");
+    }
+
+    @NotNull
+    public Config getConfig() {
+        return config;
     }
 
 }
