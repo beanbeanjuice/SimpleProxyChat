@@ -7,8 +7,6 @@ import com.plyblox.proxychat.utility.config.ConfigDataKey;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Level;
 
 public final class ProxyChat extends Plugin {
@@ -24,13 +22,13 @@ public final class ProxyChat extends Plugin {
         this.getLogger().log(Level.INFO, "The plugin is starting.");
         this.getLogger().log(Level.INFO, "Initializing discord bot.");
 
-        HashMap<String, List<String>> servers = (HashMap<String, List<String>>) config.get(ConfigDataKey.SERVERS);
         try {
-            discordBot = new Bot((String) config.get(ConfigDataKey.BOT_TOKEN));
+            discordBot = new Bot((String) config.get(ConfigDataKey.BOT_TOKEN), this);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        discordBot.sendMessage(servers.get("factions").get(0), "Server is starting...");
+
+        discordBot.sendMessage("The proxy is now running!");
 
         // Registering Chat Listener
         this.getProxy().getPluginManager().registerListener(this, new ServerChatHandler(this));
@@ -44,6 +42,11 @@ public final class ProxyChat extends Plugin {
     @NotNull
     public Config getConfig() {
         return config;
+    }
+
+    @NotNull
+    public Bot getBot() {
+        return discordBot;
     }
 
 }
