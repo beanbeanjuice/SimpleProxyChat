@@ -57,6 +57,7 @@ public class Config {
         config.put(ConfigDataKey.MINECRAFT_TO_DISCORD_JOIN, new ConfigDataEntry(configurationFile.getString("minecraft_to_discord_join")));
         config.put(ConfigDataKey.MINECRAFT_TO_DISCORD_LEAVE, new ConfigDataEntry(configurationFile.getString("minecraft_to_discord_leave")));
         config.put(ConfigDataKey.MINECRAFT_TO_DISCORD_SWITCH, new ConfigDataEntry(configurationFile.getString("minecraft_to_discord_switch")));
+        config.put(ConfigDataKey.MINECRAFT_TO_DISCORD_MESSAGE, new ConfigDataEntry(configurationFile.getString("minecraft_to_discord_message")));
 
         config.put(ConfigDataKey.DISCORD_TO_MINECRAFT_MESSAGE, new ConfigDataEntry(configurationFile.getString("discord_to_minecraft_message")));
     }

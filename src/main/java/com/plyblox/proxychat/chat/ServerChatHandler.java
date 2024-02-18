@@ -34,36 +34,32 @@ public class ServerChatHandler implements Listener {
     public void onProxyChatEvent(ChatEvent event) {
         if (event.isCommand() || event.isProxyCommand()) return;  // Ignore if it is a command.
 
-        String configString = (String) this.plugin.getConfig().get(ConfigDataKey.MESSAGE_FORMAT);
+        String minecraftConfigString = (String) this.plugin.getConfig().get(ConfigDataKey.MESSAGE_FORMAT);
+        String discordConfigString = (String) this.plugin.getConfig().get(ConfigDataKey.MINECRAFT_TO_DISCORD_MESSAGE);
         Server currentServer = (Server) event.getReceiver();
         String serverName = currentServer.getInfo().getName().toUpperCase();
         ProxiedPlayer player = (ProxiedPlayer) event.getSender();
         String playerName = player.getName();
         String playerMessage = event.getMessage();
 
-        String message = configString
+        String minecraftMessage = minecraftConfigString
+                .replace("%message%", playerMessage)
+                .replace("%server%", serverName)
+                .replace("%player%", playerName);
+
+        String discordMessage = discordConfigString
                 .replace("%message%", playerMessage)
                 .replace("%server%", serverName)
                 .replace("%player%", playerName);
 
         // Log to Console
-        plugin.getLogger().log(Level.INFO, message);
+        plugin.getLogger().log(Level.INFO, minecraftMessage);
 
         // Log to Discord
-        plugin.getBot().sendMessageEmbed(playerMessageEmbed(player, serverName, playerMessage));
+        plugin.getBot().sendMessage(discordMessage);
 
         // Log to Minecraft
-        sendToOtherServers(currentServer, message);
-    }
-
-    private MessageEmbed playerMessageEmbed(ProxiedPlayer player, String serverName, String message) {
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-
-        String title = String.format("%s (%s)", player.getName(), serverName);
-        embedBuilder.setAuthor(title, null, getPlayerHeadURL(player));
-        embedBuilder.setDescription(message);
-
-        return embedBuilder.build();
+        sendToOtherServers(currentServer, minecraftMessage);
     }
 
     @EventHandler
