@@ -2,16 +2,16 @@ package com.plyblox.proxychat.utility.config;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ConfigDataEntry {
-
-    private final Object data;
+public record ConfigDataEntry(Object data) {
 
     public ConfigDataEntry(@NotNull Object data) {
         this.data = data;
     }
 
+    @Override
     @NotNull
-    public Object getData() {
+    public Object data() {
         return data;
     }
+
 }

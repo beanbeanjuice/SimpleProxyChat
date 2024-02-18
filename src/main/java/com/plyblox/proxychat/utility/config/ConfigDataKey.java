@@ -1,12 +1,10 @@
 package com.plyblox.proxychat.utility.config;
 
 public enum ConfigDataKey {
-
     BOT_TOKEN,
     CHANNEL_ID,
 
     PREFIX,
-
 
     JOIN_FORMAT,
     LEAVE_FORMAT,
@@ -20,5 +18,4 @@ public enum ConfigDataKey {
     MINECRAFT_TO_DISCORD_MESSAGE,
 
     DISCORD_TO_MINECRAFT_MESSAGE
-
 }

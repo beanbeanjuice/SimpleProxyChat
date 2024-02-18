@@ -12,9 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Level;
 
 public class Config {
@@ -38,7 +36,7 @@ public class Config {
     }
 
     public Object get(@NotNull ConfigDataKey key) {
-        return config.get(key).getData();
+        return config.get(key).data();
     }
 
     private void populateConfig() throws IOException {
@@ -64,36 +62,28 @@ public class Config {
 
     private void makeConfig() throws IOException {
         // Create plugin config folder if it doesn't exist
-        if (!plugin.getDataFolder().exists()) {
-            plugin.getLogger().info("Created config folder: " + plugin.getDataFolder().mkdir());
-        }
+        if (!plugin.getDataFolder().exists()) plugin.getLogger().info("Created config folder: " + plugin.getDataFolder().mkdir());
 
         File configFile = new File(plugin.getDataFolder(), "config.yml");
 
         // Copy default config if it doesn't exist
-        if (!configFile.exists()) {
-            FileOutputStream outputStream = new FileOutputStream(configFile); // Throws IOException
-            InputStream in = plugin.getResourceAsStream("config.yml"); // This file must exist in the jar resources folder
-            in.transferTo(outputStream); // Throws IOException
-        }
+        if (configFile.exists()) return;
+
+        FileOutputStream outputStream = new FileOutputStream(configFile); // Throws IOException
+        InputStream in = plugin.getResourceAsStream("config.yml"); // This file must exist in the jar resources folder
+        in.transferTo(outputStream); // Throws IOException
     }
 
 
     // Doesnt work for some later java versions
     private void makeConfigAlternative() throws IOException {
-        if (!plugin.getDataFolder().exists()) {
-            plugin.getDataFolder().mkdir();
-        }
+        if (!plugin.getDataFolder().exists()) plugin.getDataFolder().mkdir();
 
         File file = new File(plugin.getDataFolder(), "config.yml");
+        if (file.exists()) return;
 
-        if (!file.exists()) {
-            try (InputStream in = plugin.getResourceAsStream("config.yml")) {
-                Files.copy(in, file.toPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        try (InputStream in = plugin.getResourceAsStream("config.yml")) { Files.copy(in, file.toPath()); }
+        catch (IOException e) { e.printStackTrace(); }
     }
 
 }

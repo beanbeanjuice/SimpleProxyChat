@@ -3,8 +3,6 @@ package com.plyblox.proxychat.chat;
 import com.plyblox.proxychat.ProxyChat;
 import com.plyblox.proxychat.utility.config.ConfigDataKey;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -18,6 +16,7 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.logging.Level;
 
 public class ServerChatHandler implements Listener {
@@ -77,7 +76,7 @@ public class ServerChatHandler implements Listener {
         // Log to Discord
         String discordConfigString = (String) this.plugin.getConfig().get(ConfigDataKey.MINECRAFT_TO_DISCORD_LEAVE);
         String discordMessage = discordConfigString.replace("%player%", playerName);
-        plugin.getBot().sendMessageEmbed(simpleAuthorEmbed(player, discordMessage));
+        plugin.getBot().sendMessageEmbed(simpleAuthorEmbedBuilder(player, discordMessage).setColor(Color.RED).build());
 
         // Log to Minecraft
         sendToAllServers(message);
@@ -98,7 +97,7 @@ public class ServerChatHandler implements Listener {
         // Log to Discord
         String discordConfigString = (String) this.plugin.getConfig().get(ConfigDataKey.MINECRAFT_TO_DISCORD_JOIN);
         String discordMessage = discordConfigString.replace("%player%", playerName);
-        plugin.getBot().sendMessageEmbed(simpleAuthorEmbed(player, discordMessage));
+        plugin.getBot().sendMessageEmbed(simpleAuthorEmbedBuilder(player, discordMessage).setColor(Color.GREEN).build());
 
         // Log to Minecraft
         sendToAllServers(message);
@@ -137,16 +136,16 @@ public class ServerChatHandler implements Listener {
         plugin.getLogger().log(Level.INFO, consoleMessage);
 
         // Log to Discord
-        plugin.getBot().sendMessageEmbed(simpleAuthorEmbed(player, discordMessage));
+        plugin.getBot().sendMessageEmbed(simpleAuthorEmbedBuilder(player, discordMessage).setColor(Color.YELLOW).build());
 
         // Log to Minecraft
         sendToSpecificServer(minecraftMessage, event.getFrom(), event.getPlayer());
     }
 
-    private MessageEmbed simpleAuthorEmbed(@NotNull ProxiedPlayer player, @NotNull String message) {
+    private EmbedBuilder simpleAuthorEmbedBuilder(@NotNull ProxiedPlayer player, @NotNull String message) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setAuthor(message, null, getPlayerHeadURL(player));
-        return embedBuilder.build();
+        return embedBuilder;
     }
 
     private void sendToOtherServers(@NotNull Server currentServer, @NotNull String message) {
