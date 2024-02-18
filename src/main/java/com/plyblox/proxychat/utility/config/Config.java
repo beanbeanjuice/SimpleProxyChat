@@ -44,15 +44,9 @@ public class Config {
     private void populateConfig() throws IOException {
         Configuration configurationFile = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(plugin.getDataFolder(), "config.yml"));
         config.put(ConfigDataKey.BOT_TOKEN, new ConfigDataEntry(configurationFile.getString("BOT_TOKEN")));
+        config.put(ConfigDataKey.CHANNEL_ID, new ConfigDataEntry(configurationFile.getString("CHANNEL_ID")));
+
         config.put(ConfigDataKey.PREFIX, new ConfigDataEntry(Helper.translateColors(configurationFile.getString("prefix"))));
-
-        Configuration serversSection = configurationFile.getSection("servers");
-        HashMap<String, List<String>> servers = new HashMap<>();
-        for (String key : serversSection.getKeys()) {
-            servers.put(key, serversSection.getStringList(key));
-        }
-
-        config.put(ConfigDataKey.SERVERS, new ConfigDataEntry(servers));
 
         config.put(ConfigDataKey.JOIN_FORMAT, new ConfigDataEntry(Helper.translateColors(configurationFile.getString("join-format"))));
         config.put(ConfigDataKey.LEAVE_FORMAT, new ConfigDataEntry(Helper.translateColors(configurationFile.getString("leave-format"))));

@@ -3,8 +3,11 @@ package com.plyblox.proxychat.utility.config;
 public enum ConfigDataKey {
 
     BOT_TOKEN,
+    CHANNEL_ID,
+
     PREFIX,
-    SERVERS,
+
+
     JOIN_FORMAT,
     LEAVE_FORMAT,
     MESSAGE_FORMAT,
