@@ -14,9 +14,10 @@ switch-format_NO_FROM: "&e%player% &7moved &7to &a%to%&7."  # Message Sent in Mi
 minecraft_to_discord_join: "%player% has joined the network."
 minecraft_to_discord_leave: "%player% has left the network."
 minecraft_to_discord_switch: "%player% has switched from %from% to %to%."
+minecraft_to_discord_message: "**%server%** %player% » %message%"
 
 # Discord to Minecraft
-discord_to_minecraft_message: "&8[&bDiscord&8] %role_color%%user% &9» &7%message%"
+discord_to_minecraft_message: "&8[&bDiscord&8] %role% &f%user% &9» &7%message%"
 
 # DO NOT TOUCH THIS
 version: 0

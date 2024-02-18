@@ -6,19 +6,30 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.ChunkingFilter;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.jetbrains.annotations.NotNull;
 
 public class Bot {
 
-    private ProxyChat plugin;
-    private JDA bot;
+    private final ProxyChat plugin;
+    private final JDA bot;
 
     public Bot(@NotNull String token, @NotNull ProxyChat plugin) throws InterruptedException {
         this.plugin = plugin;
 
-        JDABuilder builder = JDABuilder.createDefault(token);
-        builder.setActivity(Activity.watching("Proxy"));
-        bot = builder.build().awaitReady();
+        bot = JDABuilder
+                .createLight(token)
+                .setActivity(Activity.watching("Proxy"))
+                .enableCache(CacheFlag.ROLE_TAGS)
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
+                .setChunkingFilter(ChunkingFilter.ALL)
+                .enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
+                .build().awaitReady();
+
+        bot.addEventListener(new DiscordChatHandler(plugin));
     }
 
     public void sendMessage(@NotNull String message) {
