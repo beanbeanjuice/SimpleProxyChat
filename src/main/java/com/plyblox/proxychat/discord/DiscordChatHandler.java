@@ -9,8 +9,10 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 public class DiscordChatHandler extends ListenerAdapter {
 
@@ -25,21 +27,29 @@ public class DiscordChatHandler extends ListenerAdapter {
         if (event.getAuthor().isBot()) return;
 
         Member author = event.getMember();
-        Role topRole = author.getRoles().get(0);  // TODO: This is not working. Why?
+        Role topRole = author.getRoles().get(0);
         String message = event.getMessage().getContentStripped();
 
-        TextComponent roleText = new TextComponent(topRole.getName());
-        roleText.setColor(ChatColor.of(topRole.getColor()));
+        String[] minecraftMessageConfig = ((String) plugin.getConfig().get(ConfigDataKey.DISCORD_TO_MINECRAFT_MESSAGE)).split(" ");
 
-        String minecraftMessageConfig = (String) plugin.getConfig().get(ConfigDataKey.DISCORD_TO_MINECRAFT_MESSAGE);
-        String roleColorString = ChatColor.of(topRole.getColor()).toString();
+        Stream<ComponentBuilder> components = Arrays.stream(minecraftMessageConfig)
+                .map((string) -> {
+                    String text = string
+                            .replace("%role%", topRole.getName())
+                            .replace("%user%", author.getEffectiveName())
+                            .replace("%message%", message);
 
-        String minecraftMessage = minecraftMessageConfig
-                .replace("%role%", roleColorString)
-                .replace("%user%", author.getEffectiveName())
-                .replace("%message%", message);
+                    ComponentBuilder builder = new ComponentBuilder(Helper.translateColors(text));
 
-        plugin.getProxy().broadcast(new ComponentBuilder(Helper.translateColors(minecraftMessage)).create());
+                    if (string.equalsIgnoreCase("%role%")) builder.color(ChatColor.of(topRole.getColor())).bold(true);
+
+                    return builder;
+                });
+
+        ComponentBuilder chatComponentBuilder = new ComponentBuilder();
+        components.forEach((component) -> chatComponentBuilder.append(component.create()).append(" "));
+
+        plugin.getProxy().broadcast(chatComponentBuilder.create());
     }
 
 }
