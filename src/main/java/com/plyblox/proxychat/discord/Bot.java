@@ -1,18 +1,22 @@
 package com.plyblox.proxychat.discord;
 
 import com.plyblox.proxychat.ProxyChat;
+import com.plyblox.proxychat.utility.config.Config;
 import com.plyblox.proxychat.utility.config.ConfigDataKey;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class Bot {
 
@@ -35,6 +39,19 @@ public class Bot {
     }
 
     public void sendMessage(@NotNull String message) {
+        message = Arrays.stream(message.split(" ")).map((originalString) -> {
+            if (!originalString.startsWith("@")) return originalString;
+            String name = originalString.replace("@", "");
+
+            List<Member> potentialMembers = bot.getTextChannelById((String) plugin.getConfig().get(ConfigDataKey.CHANNEL_ID)).getMembers();
+            Optional<Member> potentialMember = potentialMembers
+                    .stream()
+                    .filter((member) -> ((member.getNickname() != null && member.getNickname().equalsIgnoreCase(name)) || member.getEffectiveName().equalsIgnoreCase(name)))
+                    .findFirst();
+
+            return potentialMember.map(IMentionable::getAsMention).orElse(originalString);
+        }).collect(Collectors.joining(" "));
+
         bot.getTextChannelById((String) plugin.getConfig().get(ConfigDataKey.CHANNEL_ID)).sendMessage(message).queue();
     }
 
