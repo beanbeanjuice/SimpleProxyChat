@@ -150,7 +150,7 @@ public class ServerChatHandler implements Listener {
 
     private void sendToOtherServers(@NotNull Server currentServer, @NotNull String message) {
         plugin.getProxy().getPlayers().stream()
-                .filter((player) -> player.getServer() != currentServer)
+                .filter((player) -> player.getServer().getSocketAddress() != currentServer.getSocketAddress())
                 .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, new ComponentBuilder().append(message).create()));
     }
 
