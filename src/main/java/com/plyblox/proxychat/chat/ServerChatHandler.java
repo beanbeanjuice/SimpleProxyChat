@@ -26,7 +26,7 @@ public class ServerChatHandler implements Listener {
 
     private final ProxyChat plugin;
 
-    private final String MINECRAFT_PLAYER_HEAD_URL = "https://crafthead.net/avatar/{PLAYER_UUID}";
+    private static final String MINECRAFT_PLAYER_HEAD_URL = "https://crafthead.net/avatar/{PLAYER_UUID}";
 
     public ServerChatHandler(@NotNull ProxyChat plugin) {
         this.plugin = plugin;
