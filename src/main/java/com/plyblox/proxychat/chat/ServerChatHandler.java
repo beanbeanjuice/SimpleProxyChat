@@ -17,7 +17,10 @@ import net.md_5.bungee.event.EventHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.UUID;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class ServerChatHandler implements Listener {
 
@@ -149,19 +152,23 @@ public class ServerChatHandler implements Listener {
     }
 
     private void sendToOtherServers(@NotNull Server currentServer, @NotNull String message) {
+        ArrayList<UUID> blacklistedUUIDs = (ArrayList<UUID>) currentServer.getInfo().getPlayers().stream()
+                        .map(ProxiedPlayer::getUniqueId)
+                        .toList();
+
         plugin.getProxy().getPlayers().stream()
-                .filter((player) -> player.getServer().getSocketAddress() != currentServer.getSocketAddress())
-                .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, new ComponentBuilder().append(message).create()));
+                .filter((player) -> !blacklistedUUIDs.contains(player.getUniqueId()))
+                .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, new ComponentBuilder(message).create()));
     }
 
     private void sendToSpecificServer(@NotNull String message, @NotNull ServerInfo server, @NotNull ProxiedPlayer blacklistedPlayer) {
         server.getPlayers().stream()
                 .filter((player) -> player != blacklistedPlayer)
-                .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, new ComponentBuilder().append(message).create()));
+                .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, new ComponentBuilder(message).create()));
     }
 
     private void sendToAllServers(@NotNull String message) {
-        plugin.getProxy().broadcast(new ComponentBuilder().append(message).create());
+        plugin.getProxy().broadcast(new ComponentBuilder(message).create());
     }
 
     private String getPlayerHeadURL(@NotNull ProxiedPlayer player) {
