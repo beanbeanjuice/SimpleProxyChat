@@ -7,6 +7,7 @@ import com.plyblox.proxychat.utility.config.ConfigDataEntry;
 import com.plyblox.proxychat.utility.config.ConfigDataKey;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.api.plugin.PluginManager;
 import net.md_5.bungee.api.scheduler.GroupedThreadFactory;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,18 +21,19 @@ public final class ProxyChat extends Plugin {
 
     @Override
     public void onEnable() {
-
+        this.getLogger().log(Level.INFO, "The plugin is starting.");
 
         this.config = new Config(this);
         this.config.initialize();
 
-        // Enable vanish support.
-        if (
-                this.getProxy().getPluginManager().getPlugin("PremiumVanish") != null ||
-                this.getProxy().getPluginManager().getPlugin("SuperVanish") != null
-        ) config.overwrite(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(true));
+        PluginManager pm = this.getProxy().getPluginManager();
 
-        this.getLogger().log(Level.INFO, "The plugin is starting.");
+        // Enable vanish support.
+        if (pm.getPlugin("PremiumVanish") != null || pm.getPlugin("SuperVanish") != null) {
+            config.overwrite(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(true));
+            this.getLogger().log(Level.INFO, "Enabled PremiumVanish/SuperVanish Support");
+        }
+
         this.getLogger().log(Level.INFO, "Initializing discord bot.");
 
         try { discordBot = new Bot((String) config.get(ConfigDataKey.BOT_TOKEN), this); }
