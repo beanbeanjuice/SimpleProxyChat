@@ -3,9 +3,11 @@ package com.plyblox.proxychat;
 import com.plyblox.proxychat.chat.ServerChatHandler;
 import com.plyblox.proxychat.discord.Bot;
 import com.plyblox.proxychat.utility.config.Config;
+import com.plyblox.proxychat.utility.config.ConfigDataEntry;
 import com.plyblox.proxychat.utility.config.ConfigDataKey;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.api.scheduler.GroupedThreadFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -18,8 +20,16 @@ public final class ProxyChat extends Plugin {
 
     @Override
     public void onEnable() {
+
+
         this.config = new Config(this);
         this.config.initialize();
+
+        // Enable vanish support.
+        if (
+                this.getProxy().getPluginManager().getPlugin("PremiumVanish") != null ||
+                this.getProxy().getPluginManager().getPlugin("SuperVanish") != null
+        ) config.overwrite(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(true));
 
         this.getLogger().log(Level.INFO, "The plugin is starting.");
         this.getLogger().log(Level.INFO, "Initializing discord bot.");

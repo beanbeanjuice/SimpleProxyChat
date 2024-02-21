@@ -91,5 +91,13 @@
         </exclusion>
       </exclusions>
     </dependency>
+
+    <!-- PremiumVanishAPI -->
+    <dependency>
+      <groupId>com.github.LeonMangler</groupId>
+      <artifactId>PremiumVanishAPI</artifactId>
+      <version>2.9.0-4</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 </project>
