@@ -58,6 +58,8 @@ public class Config {
         config.put(ConfigDataKey.MINECRAFT_TO_DISCORD_MESSAGE, new ConfigDataEntry(configurationFile.getString("minecraft_to_discord_message")));
 
         config.put(ConfigDataKey.DISCORD_TO_MINECRAFT_MESSAGE, new ConfigDataEntry(configurationFile.getString("discord_to_minecraft_message")));
+
+        config.put(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(false));
     }
 
     private void makeConfig() throws IOException {
@@ -84,6 +86,10 @@ public class Config {
 
         try (InputStream in = plugin.getResourceAsStream("config.yml")) { Files.copy(in, file.toPath()); }
         catch (IOException e) { e.printStackTrace(); }
+    }
+
+    public void overwrite(ConfigDataKey key, ConfigDataEntry entry) {
+        config.put(key, entry);
     }
 
 }

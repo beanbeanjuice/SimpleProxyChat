@@ -2,6 +2,7 @@ package com.plyblox.proxychat.chat;
 
 import com.plyblox.proxychat.ProxyChat;
 import com.plyblox.proxychat.utility.config.ConfigDataKey;
+import de.myzelyam.api.vanish.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -20,7 +21,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 public class ServerChatHandler implements Listener {
 
@@ -66,8 +66,18 @@ public class ServerChatHandler implements Listener {
 
     @EventHandler
     public void onPlayerLeaveProxy(PlayerDisconnectEvent event) {
+        if ((Boolean) plugin.getConfig().get(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
+
+        leave(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onVanish(BungeePlayerHideEvent event) {
+        leave(event.getPlayer());
+    }
+
+    private void leave(ProxiedPlayer player) {
         String configString = (String) this.plugin.getConfig().get(ConfigDataKey.LEAVE_FORMAT);
-        ProxiedPlayer player = event.getPlayer();
         String playerName = player.getName();
 
         String message = configString
@@ -87,8 +97,18 @@ public class ServerChatHandler implements Listener {
 
     @EventHandler
     public void onPlayerJoinProxy(PostLoginEvent event) {
+        if ((Boolean) plugin.getConfig().get(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
+        join(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onAppear(BungeePlayerShowEvent event) {
+        join(event.getPlayer());
+    }
+
+    private void join(ProxiedPlayer player) {
         String configString = (String) this.plugin.getConfig().get(ConfigDataKey.JOIN_FORMAT);
-        ProxiedPlayer player = event.getPlayer();
+
         String playerName = player.getName();
 
         String message = configString
@@ -108,14 +128,16 @@ public class ServerChatHandler implements Listener {
 
     @EventHandler
     public void onPlayerServerSwitch(ServerSwitchEvent event) {
+        ProxiedPlayer player = event.getPlayer();
+
+        if ((Boolean) plugin.getConfig().get(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(player)) return;  // Ignore if player is invisible.
         if (event.getFrom() == null) return;  // This means the player just joined the network.
+
+        ServerInfo from = event.getFrom();
 
         String consoleConfigString = (String) this.plugin.getConfig().get(ConfigDataKey.SWITCH_FORMAT);
         String discordConfigString = (String) this.plugin.getConfig().get(ConfigDataKey.MINECRAFT_TO_DISCORD_SWITCH);
         String minecraftConfigString = (String) this.plugin.getConfig().get(ConfigDataKey.SWITCH_FORMAT_NO_FROM);
-
-        ServerInfo from = event.getFrom();
-        ProxiedPlayer player = event.getPlayer();
 
         String fromString = from.getName().toUpperCase();
         String toString = player.getServer().getInfo().getName().toUpperCase();
