@@ -1,6 +1,6 @@
-package com.beanbeanjuice.proxychat.utility.config;
+package com.beanbeanjuice.simpleproxychat.utility.config;
 
-import com.beanbeanjuice.proxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
 import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;

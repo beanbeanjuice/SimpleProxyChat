@@ -7,7 +7,7 @@ Please note we have a code of conduct, please follow it in all your interactions
 
 ## Branching
 
-Now, make sure you are forking off of/branching off of the `integration` branch located [here](https://github.com/beanbeanjuice/ProxyChat/tree/integration). This allows new and upcoming changes to be pushed to a "working" directory rather than straight to the main, production directory. For example, this is how you may contribute.
+Now, make sure you are forking off of/branching off of the `integration` branch located [here](https://github.com/beanbeanjuice/SimpleProxyChat/tree/integration). This allows new and upcoming changes to be pushed to a "working" directory rather than straight to the main, production directory. For example, this is how you may contribute.
 
 Create a fork of the repository, and run the following commands in git CLI.
 

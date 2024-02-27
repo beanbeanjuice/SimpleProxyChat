@@ -1,10 +1,10 @@
-package com.beanbeanjuice.proxychat.chat;
+package com.beanbeanjuice.simpleproxychat.chat;
 
-import com.beanbeanjuice.proxychat.discord.Bot;
-import com.beanbeanjuice.proxychat.discord.DiscordChatHandler;
-import com.beanbeanjuice.proxychat.utility.Helper;
-import com.beanbeanjuice.proxychat.utility.config.Config;
-import com.beanbeanjuice.proxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.discord.Bot;
+import com.beanbeanjuice.simpleproxychat.discord.DiscordChatHandler;
+import com.beanbeanjuice.simpleproxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.config.Config;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;

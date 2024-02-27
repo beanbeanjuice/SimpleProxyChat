@@ -1,4 +1,4 @@
-package com.beanbeanjuice.proxychat.utility.config;
+package com.beanbeanjuice.simpleproxychat.utility.config;
 
 import org.jetbrains.annotations.NotNull;
 
