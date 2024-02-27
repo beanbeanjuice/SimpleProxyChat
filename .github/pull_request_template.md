@@ -32,7 +32,7 @@ Fixes # (issue)
     - CPU: 
     - GPU: 
     - RAM: 
-* JDK: Java OpenJDK 11
+* JDK: Java OpenJDK 17
 
 ---
 
