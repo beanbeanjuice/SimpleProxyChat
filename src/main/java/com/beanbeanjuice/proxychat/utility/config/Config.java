@@ -1,6 +1,6 @@
-package com.plyblox.proxychat.utility.config;
+package com.beanbeanjuice.proxychat.utility.config;
 
-import com.plyblox.proxychat.utility.Helper;
+import com.beanbeanjuice.proxychat.utility.Helper;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
 import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;

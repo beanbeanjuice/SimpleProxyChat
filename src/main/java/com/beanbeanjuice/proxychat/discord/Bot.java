@@ -1,7 +1,7 @@
-package com.plyblox.proxychat.discord;
+package com.beanbeanjuice.proxychat.discord;
 
-import com.plyblox.proxychat.utility.config.Config;
-import com.plyblox.proxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.proxychat.utility.config.Config;
+import com.beanbeanjuice.proxychat.utility.config.ConfigDataKey;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;

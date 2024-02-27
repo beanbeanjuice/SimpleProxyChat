@@ -1,7 +1,7 @@
-package com.plyblox.proxychat.chat;
+package com.beanbeanjuice.proxychat.chat;
 
-import com.plyblox.proxychat.ProxyChatVelocity;
-import com.plyblox.proxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.proxychat.ProxyChatVelocity;
+import com.beanbeanjuice.proxychat.utility.config.ConfigDataKey;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.PostLoginEvent;

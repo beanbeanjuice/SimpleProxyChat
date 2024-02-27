@@ -1,12 +1,9 @@
-package com.plyblox.proxychat.utility;
+package com.beanbeanjuice.proxychat.utility;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.regex.Pattern;
 
 public class Helper {
 

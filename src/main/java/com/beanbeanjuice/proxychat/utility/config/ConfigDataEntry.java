@@ -1,4 +1,4 @@
-package com.plyblox.proxychat.utility.config;
+package com.beanbeanjuice.proxychat.utility.config;
 
 import org.jetbrains.annotations.NotNull;
 
