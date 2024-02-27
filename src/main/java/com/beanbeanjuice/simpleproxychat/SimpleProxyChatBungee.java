@@ -4,6 +4,7 @@ import com.beanbeanjuice.simpleproxychat.chat.BungeeServerListener;
 import com.beanbeanjuice.simpleproxychat.chat.BungeeVanishListener;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
 import com.beanbeanjuice.simpleproxychat.discord.Bot;
+import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataEntry;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
@@ -74,6 +75,15 @@ public final class SimpleProxyChatBungee extends Plugin {
         this.getProxy().getScheduler().schedule(this, () -> {
             discordBot.channelUpdaterFunction(this.getProxy().getPlayers().size());
         }, 5, 5, TimeUnit.MINUTES);
+
+        // Update Checker
+        this.getProxy().getScheduler().schedule(this, () -> {
+            UpdateChecker.checkUpdate((spigotMCVersion) -> {
+                if (!this.getDescription().getVersion().equals(spigotMCVersion)) {
+                    this.getLogger().info("ATTENTION - There is a new update available: v" + spigotMCVersion);
+                }
+            });
+        }, 0, 2, TimeUnit.HOURS);
 
         // bStats Stuff
         this.getLogger().info("Starting bStats... (IF ENABLED)");
