@@ -1,6 +1,6 @@
-name: ProxyChat
+name: ProxyChatBungee
 version: '${project.version}'
-main: com.plyblox.proxychat.ProxyChat
+main: com.plyblox.proxychat.ProxyChatBungee
 softdepend: [PlaceholderAPI, PremiumVanish]
 author: beanbeanjuice
 description: A simple plugin to send chat messages between servers.
