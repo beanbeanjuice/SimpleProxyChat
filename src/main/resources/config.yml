@@ -1,8 +1,6 @@
 BOT_TOKEN: "TOKEN_HERE"  # Discord Bot Token
 CHANNEL_ID: "GLOBAL_CHANNEL_ID"  # Channel to send Discord messages to.
 
-prefix: "&8[&bProxy Chat&8] "
-
 # Minecraft to Minecraft
 join-format: "&e%player% &ahas joined the network."
 leave-format: "&e%player% &chas left the network."
@@ -20,4 +18,4 @@ minecraft_to_discord_message: "**%server%** %player% » %message%"
 discord_to_minecraft_message: "&8[&bDiscord&8] %role% &f%user% &9» &7%message%"
 
 # DO NOT TOUCH THIS
-version: 0
+file-version: 1

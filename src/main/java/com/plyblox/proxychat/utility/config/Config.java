@@ -1,91 +1,73 @@
 package com.plyblox.proxychat.utility.config;
 
-import com.plyblox.proxychat.ProxyChat;
 import com.plyblox.proxychat.utility.Helper;
-import net.md_5.bungee.config.Configuration;
-import net.md_5.bungee.config.ConfigurationProvider;
-import net.md_5.bungee.config.YamlConfiguration;
+import dev.dejvokep.boostedyaml.YamlDocument;
+import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
+import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
+import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
+import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
+import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.logging.Level;
+import java.util.Objects;
 
 public class Config {
 
-    private final ProxyChat plugin;
+    private YamlDocument yamlConfig;
+    private final File configFolder;
     private final HashMap<ConfigDataKey, ConfigDataEntry> config;
 
-    public Config(ProxyChat plugin) {
-        this.plugin = plugin;
+    public Config(File configFolder) {
+        this.configFolder = configFolder;
         config = new HashMap<>();
     }
 
     public void initialize() {
         try {
-            makeConfig();
-            makeConfigAlternative();
-            populateConfig();
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "[ProxyChat] Unable to create config...");
-        }
+            yamlConfig = loadConfig();
+            yamlConfig.update();
+            yamlConfig.save();
+            readConfig();
+        } catch (IOException ignored) { }
     }
 
     public Object get(@NotNull ConfigDataKey key) {
         return config.get(key).data();
     }
 
-    private void populateConfig() throws IOException {
-        Configuration configurationFile = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(plugin.getDataFolder(), "config.yml"));
-        config.put(ConfigDataKey.BOT_TOKEN, new ConfigDataEntry(configurationFile.getString("BOT_TOKEN")));
-        config.put(ConfigDataKey.CHANNEL_ID, new ConfigDataEntry(configurationFile.getString("CHANNEL_ID")));
+    private void readConfig() throws IOException {
+        config.put(ConfigDataKey.BOT_TOKEN, new ConfigDataEntry(yamlConfig.getString("BOT_TOKEN")));
+        config.put(ConfigDataKey.CHANNEL_ID, new ConfigDataEntry(yamlConfig.getString("CHANNEL_ID")));
 
-        config.put(ConfigDataKey.PREFIX, new ConfigDataEntry(Helper.translateColors(configurationFile.getString("prefix"))));
+        config.put(ConfigDataKey.JOIN_FORMAT, new ConfigDataEntry(Helper.translateColors(yamlConfig.getString("join-format"))));
+        config.put(ConfigDataKey.LEAVE_FORMAT, new ConfigDataEntry(Helper.translateColors(yamlConfig.getString("leave-format"))));
+        config.put(ConfigDataKey.MESSAGE_FORMAT, new ConfigDataEntry(Helper.translateColors(yamlConfig.getString("message-format"))));
+        config.put(ConfigDataKey.SWITCH_FORMAT, new ConfigDataEntry(Helper.translateColors(yamlConfig.getString("switch-format"))));
+        config.put(ConfigDataKey.SWITCH_FORMAT_NO_FROM, new ConfigDataEntry(Helper.translateColors(yamlConfig.getString("switch-format_NO_FROM"))));
 
-        config.put(ConfigDataKey.JOIN_FORMAT, new ConfigDataEntry(Helper.translateColors(configurationFile.getString("join-format"))));
-        config.put(ConfigDataKey.LEAVE_FORMAT, new ConfigDataEntry(Helper.translateColors(configurationFile.getString("leave-format"))));
-        config.put(ConfigDataKey.MESSAGE_FORMAT, new ConfigDataEntry(Helper.translateColors(configurationFile.getString("message-format"))));
-        config.put(ConfigDataKey.SWITCH_FORMAT, new ConfigDataEntry(Helper.translateColors(configurationFile.getString("switch-format"))));
-        config.put(ConfigDataKey.SWITCH_FORMAT_NO_FROM, new ConfigDataEntry(Helper.translateColors(configurationFile.getString("switch-format_NO_FROM"))));
+        config.put(ConfigDataKey.MINECRAFT_TO_DISCORD_JOIN, new ConfigDataEntry(yamlConfig.getString("minecraft_to_discord_join")));
+        config.put(ConfigDataKey.MINECRAFT_TO_DISCORD_LEAVE, new ConfigDataEntry(yamlConfig.getString("minecraft_to_discord_leave")));
+        config.put(ConfigDataKey.MINECRAFT_TO_DISCORD_SWITCH, new ConfigDataEntry(yamlConfig.getString("minecraft_to_discord_switch")));
+        config.put(ConfigDataKey.MINECRAFT_TO_DISCORD_MESSAGE, new ConfigDataEntry(yamlConfig.getString("minecraft_to_discord_message")));
 
-        config.put(ConfigDataKey.MINECRAFT_TO_DISCORD_JOIN, new ConfigDataEntry(configurationFile.getString("minecraft_to_discord_join")));
-        config.put(ConfigDataKey.MINECRAFT_TO_DISCORD_LEAVE, new ConfigDataEntry(configurationFile.getString("minecraft_to_discord_leave")));
-        config.put(ConfigDataKey.MINECRAFT_TO_DISCORD_SWITCH, new ConfigDataEntry(configurationFile.getString("minecraft_to_discord_switch")));
-        config.put(ConfigDataKey.MINECRAFT_TO_DISCORD_MESSAGE, new ConfigDataEntry(configurationFile.getString("minecraft_to_discord_message")));
-
-        config.put(ConfigDataKey.DISCORD_TO_MINECRAFT_MESSAGE, new ConfigDataEntry(configurationFile.getString("discord_to_minecraft_message")));
+        config.put(ConfigDataKey.DISCORD_TO_MINECRAFT_MESSAGE, new ConfigDataEntry(Helper.translateColors(yamlConfig.getString("discord_to_minecraft_message"))));
 
         config.put(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(false));
     }
 
-    private void makeConfig() throws IOException {
-        // Create plugin config folder if it doesn't exist
-        if (!plugin.getDataFolder().exists()) plugin.getLogger().info("Created config folder: " + plugin.getDataFolder().mkdir());
-
-        File configFile = new File(plugin.getDataFolder(), "config.yml");
-
-        // Copy default config if it doesn't exist
-        if (configFile.exists()) return;
-
-        FileOutputStream outputStream = new FileOutputStream(configFile); // Throws IOException
-        InputStream in = plugin.getResourceAsStream("config.yml"); // This file must exist in the jar resources folder
-        in.transferTo(outputStream); // Throws IOException
-    }
-
-
-    // Doesnt work for some later java versions
-    private void makeConfigAlternative() throws IOException {
-        if (!plugin.getDataFolder().exists()) plugin.getDataFolder().mkdir();
-
-        File file = new File(plugin.getDataFolder(), "config.yml");
-        if (file.exists()) return;
-
-        try (InputStream in = plugin.getResourceAsStream("config.yml")) { Files.copy(in, file.toPath()); }
-        catch (IOException e) { e.printStackTrace(); }
+    private YamlDocument loadConfig() throws IOException {
+        return YamlDocument.create(
+                new File(configFolder, "config.yml"),
+                Objects.requireNonNull(getClass().getResourceAsStream("/config.yml")),
+                GeneralSettings.DEFAULT,
+                LoaderSettings.builder().setAutoUpdate(true).build(),
+                DumperSettings.DEFAULT,
+                UpdaterSettings.builder().setVersioning(new BasicVersioning("file-version"))
+                        .setOptionSorting(UpdaterSettings.OptionSorting.SORT_BY_DEFAULTS).build()
+        );
     }
 
     public void overwrite(ConfigDataKey key, ConfigDataEntry entry) {

@@ -4,8 +4,6 @@ public enum ConfigDataKey {
     BOT_TOKEN,
     CHANNEL_ID,
 
-    PREFIX,
-
     JOIN_FORMAT,
     LEAVE_FORMAT,
     MESSAGE_FORMAT,
