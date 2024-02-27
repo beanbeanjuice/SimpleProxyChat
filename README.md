@@ -41,3 +41,12 @@ A simple plugin to send chat messages to/from all servers on the network. This a
 
 ## Caveats
 As of right now, vanish support is only available on *BungeeCord/Waterfall*. The plugin will still function as normal, but if you go into vanish then it won't send a fake join/leave message.
+
+---
+
+## Statistics
+### BungeeCord/Waterfall Graph
+![alt text](https://bstats.org/signatures/bungeecord/SimpleProxyChat.svg)
+
+### Velocity Graph
+![alt text](https://bstats.org/signatures/velocity/SimpleProxyChat.svg)
