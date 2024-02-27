@@ -1,0 +1,21 @@
+package com.beanbeanjuice.simpleproxychat.utility.config;
+
+public enum ConfigDataKey {
+    BOT_TOKEN,
+    CHANNEL_ID,
+
+    JOIN_FORMAT,
+    LEAVE_FORMAT,
+    MESSAGE_FORMAT,
+    SWITCH_FORMAT,
+    SWITCH_FORMAT_NO_FROM,
+
+    MINECRAFT_TO_DISCORD_JOIN,
+    MINECRAFT_TO_DISCORD_LEAVE,
+    MINECRAFT_TO_DISCORD_SWITCH,
+    MINECRAFT_TO_DISCORD_MESSAGE,
+
+    DISCORD_TO_MINECRAFT_MESSAGE,
+
+    VANISH_ENABLED
+}

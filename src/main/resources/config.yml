@@ -1,0 +1,35 @@
+# ==========================================================
+#                       INFORMATION
+#                 HEX Values are Supported
+#  Example: <#FFFFFF>Some text</#FFFFFF> this is a message!
+#  If using the color codes ("&"), only use the COLOR codes.
+# ==========================================================
+
+# Discord Bot Token
+BOT_TOKEN: "TOKEN_HERE"
+
+# Channel to send Discord messages to.
+CHANNEL_ID: "GLOBAL_CHANNEL_ID"
+
+# Minecraft to Minecraft
+join-format: "&e%player% &ahas joined the network."
+leave-format: "&e%player% &chas left the network."
+message-format: "&8[&3%server%&8] &e%player% &9» &7%message%"
+
+# Message Sent to Console
+switch-format: "&e%player% &7moved from &c%from% &7to &a%to%&7."
+
+# Message Sent in Minecraft
+switch-format_NO_FROM: "&e%player% &7moved &7to &a%to%&7."
+
+# Minecraft to Discord
+minecraft_to_discord_join: "%player% has joined the network."
+minecraft_to_discord_leave: "%player% has left the network."
+minecraft_to_discord_switch: "%player% has switched from %from% to %to%."
+minecraft_to_discord_message: "**%server%** %player% » %message%"
+
+# Discord to Minecraft
+discord_to_minecraft_message: "&8[&bDiscord&8] %role% &f%user% &9» &7%message%"
+
+# DO NOT TOUCH THIS
+file-version: 1
