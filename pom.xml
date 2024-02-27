@@ -66,6 +66,9 @@
         </configuration>
         <executions>
           <execution>
+            <configuration>
+              <minimizeJar>true</minimizeJar>
+            </configuration>
             <phase>package</phase>
             <goals>
               <goal>shade</goal>
