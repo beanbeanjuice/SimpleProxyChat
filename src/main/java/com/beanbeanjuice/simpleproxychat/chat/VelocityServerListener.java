@@ -1,7 +1,7 @@
-package com.beanbeanjuice.proxychat.chat;
+package com.beanbeanjuice.simpleproxychat.chat;
 
-import com.beanbeanjuice.proxychat.ProxyChatVelocity;
-import com.beanbeanjuice.proxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
@@ -20,10 +20,10 @@ import java.util.UUID;
 
 public class VelocityServerListener {
 
-    private ProxyChatVelocity plugin;
+    private SimpleProxyChatVelocity plugin;
     private ChatHandler chatHandler;
 
-    public VelocityServerListener(ProxyChatVelocity plugin, ChatHandler chatHandler) {
+    public VelocityServerListener(SimpleProxyChatVelocity plugin, ChatHandler chatHandler) {
         this.plugin = plugin;
         this.chatHandler = chatHandler;
     }

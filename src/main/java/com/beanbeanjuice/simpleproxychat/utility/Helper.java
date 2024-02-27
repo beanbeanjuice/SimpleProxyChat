@@ -1,4 +1,4 @@
-package com.beanbeanjuice.proxychat.utility;
+package com.beanbeanjuice.simpleproxychat.utility;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -6,8 +6,6 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 
 public class Helper {
-
-//    public static final Pattern STRIP_COLOR_PATTERN = Pattern.compile("(?i)" + String.valueOf('§') + "[0-9A-FK-ORX]");
 
     public static String translateLegacyCodes(@NotNull String string) {
         return string
@@ -35,19 +33,6 @@ public class Helper {
 
     public static String stripColor(Component input) {
         return PlainTextComponentSerializer.plainText().serialize(input);
-    }
-
-    public static String translateAlternateColorCodes(char altColorChar, String textToTranslate) {
-        char[] b = textToTranslate.toCharArray();
-
-        for(int i = 0; i < b.length - 1; ++i) {
-            if (b[i] == altColorChar && "0123456789AaBbCcDdEeFfKkLlMmNnOoRrXx".indexOf(b[i + 1]) > -1) {
-                b[i] = 167;
-                b[i + 1] = Character.toLowerCase(b[i + 1]);
-            }
-        }
-
-        return new String(b);
     }
 
 }

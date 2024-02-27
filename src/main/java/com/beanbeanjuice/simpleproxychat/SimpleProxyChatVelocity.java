@@ -1,13 +1,13 @@
-package com.beanbeanjuice.proxychat;
+package com.beanbeanjuice.simpleproxychat;
 
 import com.google.inject.Inject;
-import com.beanbeanjuice.proxychat.chat.ChatHandler;
-import com.beanbeanjuice.proxychat.chat.VelocityServerListener;
-import com.beanbeanjuice.proxychat.discord.Bot;
-import com.beanbeanjuice.proxychat.utility.Helper;
-import com.beanbeanjuice.proxychat.utility.config.Config;
-import com.beanbeanjuice.proxychat.utility.config.ConfigDataEntry;
-import com.beanbeanjuice.proxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
+import com.beanbeanjuice.simpleproxychat.chat.VelocityServerListener;
+import com.beanbeanjuice.simpleproxychat.discord.Bot;
+import com.beanbeanjuice.simpleproxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.config.Config;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataEntry;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
@@ -20,31 +20,39 @@ import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bstats.charts.MultiLineChart;
+import org.bstats.charts.SimplePie;
+import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
 import java.awt.*;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 @Plugin(
-        id = "proxychat",
-        name = "ProxyChat",
+        id = "simpleproxychat",
+        name = "SimpleProxyChat",
         version = "0.0.0",
-        description = "A simple plugin to send chat messages between servers.",
-        url = "https://www.plyblox.com",
+        description = "A simple plugin to send chat messages between servers as well as to Discord.",
+        url = "https://github.com/beanbeanjuice/SimpleProxyChat",
         authors = {"beanbeanjuice"},
         dependencies = {
                 @Dependency(id = "supervanish", optional = true),
                 @Dependency(id = "premiumvanish", optional = true)
         }
 )
-public class ProxyChatVelocity {
+public class SimpleProxyChatVelocity {
 
     @Getter
     private final ProxyServer proxyServer;
 
     @Getter
     private final Logger logger;
+
+    private final Metrics.Factory metricsFactory;
 
     @Getter
     private Config config;
@@ -53,9 +61,10 @@ public class ProxyChatVelocity {
     private Bot discordBot;
 
     @Inject
-    public ProxyChatVelocity(ProxyServer proxyServer, Logger logger, @DataDirectory Path dataDirectory) {
+    public SimpleProxyChatVelocity(ProxyServer proxyServer, Logger logger, @DataDirectory Path dataDirectory, Metrics.Factory metricsFactory) {
         this.proxyServer = proxyServer;
         this.logger = logger;
+        this.metricsFactory = metricsFactory;
 
         this.logger.info("The plugin is starting.");
 
@@ -103,6 +112,18 @@ public class ProxyChatVelocity {
                 .delay(5, TimeUnit.MINUTES)
                 .repeat(5, TimeUnit.MINUTES)
                 .schedule();
+
+        // bStats Stuff
+        int pluginId = 21147;
+        Metrics metrics = metricsFactory.make(this, pluginId);
+
+        // You can also add custom charts:
+        metrics.addCustomChart(new MultiLineChart("players_and_servers", () -> {
+            Map<String, Integer> valueMap = new HashMap<>();
+            valueMap.put("servers", 1);
+            valueMap.put("players", proxyServer.getAllPlayers().size());
+            return valueMap;
+        }));
     }
 
     @Subscribe

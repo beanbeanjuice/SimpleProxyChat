@@ -1,7 +1,7 @@
-package com.beanbeanjuice.proxychat.chat;
+package com.beanbeanjuice.simpleproxychat.chat;
 
-import com.beanbeanjuice.proxychat.ProxyChatBungee;
-import com.beanbeanjuice.proxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import de.myzelyam.api.vanish.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -24,10 +24,10 @@ import java.util.UUID;
 
 public class BungeeServerListener implements Listener {
 
-    private ProxyChatBungee plugin;
+    private SimpleProxyChatBungee plugin;
     private ChatHandler chatHandler;
 
-    public BungeeServerListener(ProxyChatBungee plugin, ChatHandler chatHandler) {
+    public BungeeServerListener(SimpleProxyChatBungee plugin, ChatHandler chatHandler) {
         this.plugin = plugin;
         this.chatHandler = chatHandler;
     }

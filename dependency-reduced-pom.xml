@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.plyblox</groupId>
-  <artifactId>ProxyChat</artifactId>
+  <groupId>com.beanbeanjuice</groupId>
+  <artifactId>SimpleProxyChat</artifactId>
   <name>ProxyChat</name>
   <version>0.0.0</version>
-  <description>A simple plugin to send chat messages between servers.</description>
+  <description>A simple plugin to send chat messages between servers as well as to Discord.</description>
   <build>
     <defaultGoal>clean package</defaultGoal>
     <resources>
@@ -46,11 +46,15 @@
           <relocations>
             <relocation>
               <pattern>dev.dejvokep.boostedyaml</pattern>
-              <shadedPattern>com.beanbeanjuice.proxychat.libs</shadedPattern>
+              <shadedPattern>com.beanbeanjuice.simpleproxychat.libs</shadedPattern>
             </relocation>
             <relocation>
               <pattern>net.dv8tion.jda</pattern>
-              <shadedPattern>com.beanbeanjuice.proxychat.libs</shadedPattern>
+              <shadedPattern>com.beanbeanjuice.simpleproxychat.libs</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>org.bstats</pattern>
+              <shadedPattern>com.beanbeanjuice.simpleproxychat.libs</shadedPattern>
             </relocation>
           </relocations>
         </configuration>

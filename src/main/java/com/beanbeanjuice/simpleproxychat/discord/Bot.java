@@ -1,7 +1,7 @@
-package com.beanbeanjuice.proxychat.discord;
+package com.beanbeanjuice.simpleproxychat.discord;
 
-import com.beanbeanjuice.proxychat.utility.config.Config;
-import com.beanbeanjuice.proxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.config.Config;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;

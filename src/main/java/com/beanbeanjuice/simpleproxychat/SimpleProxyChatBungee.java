@@ -1,12 +1,12 @@
-package com.beanbeanjuice.proxychat;
+package com.beanbeanjuice.simpleproxychat;
 
-import com.beanbeanjuice.proxychat.chat.BungeeServerListener;
-import com.beanbeanjuice.proxychat.chat.BungeeVanishListener;
-import com.beanbeanjuice.proxychat.chat.ChatHandler;
-import com.beanbeanjuice.proxychat.discord.Bot;
-import com.beanbeanjuice.proxychat.utility.config.Config;
-import com.beanbeanjuice.proxychat.utility.config.ConfigDataEntry;
-import com.beanbeanjuice.proxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.chat.BungeeServerListener;
+import com.beanbeanjuice.simpleproxychat.chat.BungeeVanishListener;
+import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
+import com.beanbeanjuice.simpleproxychat.discord.Bot;
+import com.beanbeanjuice.simpleproxychat.utility.config.Config;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataEntry;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.kyori.adventure.text.Component;
@@ -14,12 +14,16 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
+import org.bstats.bungeecord.Metrics;
+import org.bstats.charts.MultiLineChart;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
-public final class ProxyChatBungee extends Plugin {
+public final class SimpleProxyChatBungee extends Plugin {
 
     @Getter
     private Config config;
@@ -70,6 +74,18 @@ public final class ProxyChatBungee extends Plugin {
         this.getProxy().getScheduler().schedule(this, () -> {
             discordBot.channelUpdaterFunction(this.getProxy().getPlayers().size());
         }, 5, 5, TimeUnit.MINUTES);
+
+        // bStats Stuff
+        int pluginId = 21146;
+        Metrics metrics = new Metrics(this, pluginId);
+
+        // Optional: Add custom charts
+        metrics.addCustomChart(new MultiLineChart("players_and_servers", () -> {
+            Map<String, Integer> valueMap = new HashMap<>();
+            valueMap.put("servers", 1);
+            valueMap.put("players", this.getProxy().getOnlineCount());
+            return valueMap;
+        }));
 
         this.getLogger().log(Level.INFO, "The plugin has been started.");
     }

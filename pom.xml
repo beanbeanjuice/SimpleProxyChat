@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.plyblox</groupId>
-  <artifactId>ProxyChat</artifactId>
+  <groupId>com.beanbeanjuice</groupId>
+  <artifactId>SimpleProxyChat</artifactId>
   <version>0.0.0</version>
   <packaging>jar</packaging>
 
   <name>ProxyChat</name>
 
-  <description>A simple plugin to send chat messages between servers.</description>
+  <description>A simple plugin to send chat messages between servers as well as to Discord.</description>
 
   <properties>
     <java.version>17</java.version>
@@ -50,12 +50,17 @@
           <relocations>
             <relocation>
               <pattern>dev.dejvokep.boostedyaml</pattern>
-              <shadedPattern>com.beanbeanjuice.proxychat.libs</shadedPattern>
+              <shadedPattern>com.beanbeanjuice.simpleproxychat.libs</shadedPattern>
             </relocation>
 
             <relocation>
               <pattern>net.dv8tion.jda</pattern>
-              <shadedPattern>com.beanbeanjuice.proxychat.libs</shadedPattern>
+              <shadedPattern>com.beanbeanjuice.simpleproxychat.libs</shadedPattern>
+            </relocation>
+
+            <relocation>
+              <pattern>org.bstats</pattern>
+              <shadedPattern>com.beanbeanjuice.simpleproxychat.libs</shadedPattern>
             </relocation>
           </relocations>
         </configuration>
@@ -185,6 +190,20 @@
       <artifactId>lombok</artifactId>
       <version>RELEASE</version>
       <scope>provided</scope>
+    </dependency>
+
+    <!-- bStats -->
+    <dependency>
+      <groupId>org.bstats</groupId>
+      <artifactId>bstats-bungeecord</artifactId>
+      <version>3.0.2</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.bstats</groupId>
+      <artifactId>bstats-velocity</artifactId>
+      <version>3.0.2</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 </project>
