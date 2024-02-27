@@ -42,18 +42,18 @@ public class Config {
         config.put(ConfigDataKey.BOT_TOKEN, new ConfigDataEntry(yamlConfig.getString("BOT_TOKEN")));
         config.put(ConfigDataKey.CHANNEL_ID, new ConfigDataEntry(yamlConfig.getString("CHANNEL_ID")));
 
-        config.put(ConfigDataKey.JOIN_FORMAT, new ConfigDataEntry(Helper.translateColors(yamlConfig.getString("join-format"))));
-        config.put(ConfigDataKey.LEAVE_FORMAT, new ConfigDataEntry(Helper.translateColors(yamlConfig.getString("leave-format"))));
-        config.put(ConfigDataKey.MESSAGE_FORMAT, new ConfigDataEntry(Helper.translateColors(yamlConfig.getString("message-format"))));
-        config.put(ConfigDataKey.SWITCH_FORMAT, new ConfigDataEntry(Helper.translateColors(yamlConfig.getString("switch-format"))));
-        config.put(ConfigDataKey.SWITCH_FORMAT_NO_FROM, new ConfigDataEntry(Helper.translateColors(yamlConfig.getString("switch-format_NO_FROM"))));
+        config.put(ConfigDataKey.JOIN_FORMAT, new ConfigDataEntry(Helper.translateLegacyCodes(yamlConfig.getString("join-format"))));
+        config.put(ConfigDataKey.LEAVE_FORMAT, new ConfigDataEntry(Helper.translateLegacyCodes(yamlConfig.getString("leave-format"))));
+        config.put(ConfigDataKey.MESSAGE_FORMAT, new ConfigDataEntry(Helper.translateLegacyCodes(yamlConfig.getString("message-format"))));
+        config.put(ConfigDataKey.SWITCH_FORMAT, new ConfigDataEntry(Helper.translateLegacyCodes(yamlConfig.getString("switch-format"))));
+        config.put(ConfigDataKey.SWITCH_FORMAT_NO_FROM, new ConfigDataEntry(Helper.translateLegacyCodes(yamlConfig.getString("switch-format_NO_FROM"))));
 
         config.put(ConfigDataKey.MINECRAFT_TO_DISCORD_JOIN, new ConfigDataEntry(yamlConfig.getString("minecraft_to_discord_join")));
         config.put(ConfigDataKey.MINECRAFT_TO_DISCORD_LEAVE, new ConfigDataEntry(yamlConfig.getString("minecraft_to_discord_leave")));
         config.put(ConfigDataKey.MINECRAFT_TO_DISCORD_SWITCH, new ConfigDataEntry(yamlConfig.getString("minecraft_to_discord_switch")));
         config.put(ConfigDataKey.MINECRAFT_TO_DISCORD_MESSAGE, new ConfigDataEntry(yamlConfig.getString("minecraft_to_discord_message")));
 
-        config.put(ConfigDataKey.DISCORD_TO_MINECRAFT_MESSAGE, new ConfigDataEntry(Helper.translateColors(yamlConfig.getString("discord_to_minecraft_message"))));
+        config.put(ConfigDataKey.DISCORD_TO_MINECRAFT_MESSAGE, new ConfigDataEntry(Helper.translateLegacyCodes(yamlConfig.getString("discord_to_minecraft_message"))));
 
         config.put(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(false));
     }

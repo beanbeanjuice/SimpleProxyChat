@@ -90,12 +90,9 @@ public class ProxyChatVelocity {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         // Register Chat Listener
         ChatHandler chatHandler = new ChatHandler(config, discordBot, (message) -> {
-            logger.info(Helper.stripColor(message));
-            String miniMessage = MiniMessage.miniMessage().serialize(
-                    LegacyComponentSerializer.legacySection().deserialize(message)
-            );
-            Component component = MiniMessage.miniMessage().deserialize(miniMessage);
-            proxyServer.getAllPlayers().stream().forEach((player) -> player.sendMessage(component));
+            Component messageComponent = MiniMessage.miniMessage().deserialize(message);
+            logger.info(Helper.stripColor(messageComponent));
+            proxyServer.getAllPlayers().stream().forEach((player) -> player.sendMessage(messageComponent));
         });
         this.proxyServer.getEventManager().register(this, new VelocityServerListener(this, chatHandler));
 
