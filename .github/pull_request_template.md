@@ -39,7 +39,7 @@ Fixes # (issue)
 ## Checklist
 
 - [ ] This pull request has been linked to the appropriate issue on GitHub. (Use the development section on the right.)
-- [ ] The code follows the style [guidelines](https://github.com/Plyblox-Network/ProxyChat/blob/master/CONTRIBUTING.md).
+- [ ] The code follows the style [guidelines](https://github.com/beanbeanjuice/ProxyChat/blob/master/CONTRIBUTING.md).
 - [ ] A self-review of the code was performed on GitHub.
 - [ ] Appropriate comments and javadocs were added in your code.
 - [ ] Appropriate changes have been made to the documentation.
@@ -49,4 +49,4 @@ Fixes # (issue)
 - [ ] New and existing Maven CI tests have passed.
 - [ ] The pull request is properly merging into the correct branch.
 - [ ] All existing local code has been pushed to the GitHub repository.
-- [ ] Changes have been documented in the current draft [ProxyChat Releases](https://github.com/Plyblox-Network/ProxyChat/releases) update.
+- [ ] Changes have been documented in the current draft [ProxyChat Releases](https://github.com/beanbeanjuice/ProxyChat/releases) update.

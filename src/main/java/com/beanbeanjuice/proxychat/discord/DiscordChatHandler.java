@@ -1,7 +1,7 @@
-package com.plyblox.proxychat.discord;
+package com.beanbeanjuice.proxychat.discord;
 
-import com.plyblox.proxychat.utility.config.Config;
-import com.plyblox.proxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.proxychat.utility.config.Config;
+import com.beanbeanjuice.proxychat.utility.config.ConfigDataKey;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;

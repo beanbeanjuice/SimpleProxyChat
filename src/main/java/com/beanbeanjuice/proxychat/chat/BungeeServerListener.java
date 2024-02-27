@@ -1,10 +1,13 @@
-package com.plyblox.proxychat.chat;
+package com.beanbeanjuice.proxychat.chat;
 
-import com.plyblox.proxychat.ProxyChatBungee;
-import com.plyblox.proxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.proxychat.ProxyChatBungee;
+import com.beanbeanjuice.proxychat.utility.config.ConfigDataKey;
 import de.myzelyam.api.vanish.*;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
@@ -16,7 +19,7 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class BungeeServerListener implements Listener {
@@ -40,13 +43,13 @@ public class BungeeServerListener implements Listener {
         String playerMessage = event.getMessage();
 
         chatHandler.runProxyChatMessage(serverName, playerName, playerMessage, plugin.getLogger()::info, (message) -> {
-            ArrayList<UUID> blacklistedUUIDs = (ArrayList<UUID>) currentServer.getInfo().getPlayers().stream()
+            List<UUID> blacklistedUUIDs = currentServer.getInfo().getPlayers().stream()
                     .map(ProxiedPlayer::getUniqueId)
                     .toList();
 
             plugin.getProxy().getPlayers().stream()
                     .filter((streamPlayer) -> !blacklistedUUIDs.contains(streamPlayer.getUniqueId()))
-                    .forEach((streamPlayer) -> streamPlayer.sendMessage(ChatMessageType.CHAT, new ComponentBuilder(message).create()));
+                    .forEach((streamPlayer) -> streamPlayer.sendMessage(ChatMessageType.CHAT, convertToBungee(message)));
         });
     }
 
@@ -57,12 +60,7 @@ public class BungeeServerListener implements Listener {
         leave(event.getPlayer());
     }
 
-    @EventHandler
-    public void onVanish(BungeePlayerHideEvent event) {
-        leave(event.getPlayer());
-    }
-
-    private void leave(ProxiedPlayer player) {
+    void leave(ProxiedPlayer player) {
         chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), plugin.getLogger()::info, this::sendToAllServers);
     }
 
@@ -73,12 +71,7 @@ public class BungeeServerListener implements Listener {
         join(event.getPlayer());
     }
 
-    @EventHandler
-    public void onAppear(BungeePlayerShowEvent event) {
-        join(event.getPlayer());
-    }
-
-    private void join(ProxiedPlayer player) {
+    void join(ProxiedPlayer player) {
         chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), plugin.getLogger()::info, this::sendToAllServers);
     }
 
@@ -100,14 +93,19 @@ public class BungeeServerListener implements Listener {
                 (message) -> {
                     from.getPlayers().stream()
                             .filter((streamPlayer) -> streamPlayer != player)
-                            .forEach((streamPlayer) -> streamPlayer.sendMessage(ChatMessageType.CHAT, new ComponentBuilder(message).create()));
+                            .forEach((streamPlayer) -> streamPlayer.sendMessage(ChatMessageType.CHAT, convertToBungee(message)));
 
                 }
         );
     }
 
     private void sendToAllServers(@NotNull String message) {
-        plugin.getProxy().broadcast(new ComponentBuilder(message).create());
+        plugin.getProxy().broadcast(convertToBungee(message));
+    }
+
+    private @NotNull BaseComponent @NotNull [] convertToBungee(String message) {
+        Component minimessage = MiniMessage.miniMessage().deserialize(message);
+        return BungeeComponentSerializer.get().serialize(minimessage);
     }
 
 }

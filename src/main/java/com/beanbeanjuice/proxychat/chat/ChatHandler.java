@@ -1,11 +1,12 @@
-package com.plyblox.proxychat.chat;
+package com.beanbeanjuice.proxychat.chat;
 
-import com.plyblox.proxychat.discord.Bot;
-import com.plyblox.proxychat.discord.DiscordChatHandler;
-import com.plyblox.proxychat.utility.Helper;
-import com.plyblox.proxychat.utility.config.Config;
-import com.plyblox.proxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.proxychat.discord.Bot;
+import com.beanbeanjuice.proxychat.discord.DiscordChatHandler;
+import com.beanbeanjuice.proxychat.utility.Helper;
+import com.beanbeanjuice.proxychat.utility.config.Config;
+import com.beanbeanjuice.proxychat.utility.config.ConfigDataKey;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
@@ -145,8 +146,16 @@ public class ChatHandler {
         String message = (String) config.get(ConfigDataKey.DISCORD_TO_MINECRAFT_MESSAGE);
 
         String username = event.getMember().getEffectiveName();
-        String roleName = event.getMember().getRoles().get(0).getName();
-        Color roleColor = event.getMember().getRoles().get(0).getColor();
+
+        String roleName = "[no-role]";
+        Color roleColor = Color.GRAY;
+        if (!event.getMember().getRoles().isEmpty()) {
+            Role role = event.getMember().getRoles().get(0);
+            roleName = role.getName();
+
+            if (role.getColor() != null) roleColor = role.getColor();
+        }
+
         String discordMessage = event.getMessage().getContentStripped();
 
         String hex = "#" + Integer.toHexString(roleColor.getRGB()).substring(2);

@@ -1,13 +1,13 @@
-package com.plyblox.proxychat;
+package com.beanbeanjuice.proxychat;
 
 import com.google.inject.Inject;
-import com.plyblox.proxychat.chat.ChatHandler;
-import com.plyblox.proxychat.chat.VelocityServerListener;
-import com.plyblox.proxychat.discord.Bot;
-import com.plyblox.proxychat.utility.Helper;
-import com.plyblox.proxychat.utility.config.Config;
-import com.plyblox.proxychat.utility.config.ConfigDataEntry;
-import com.plyblox.proxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.proxychat.chat.ChatHandler;
+import com.beanbeanjuice.proxychat.chat.VelocityServerListener;
+import com.beanbeanjuice.proxychat.discord.Bot;
+import com.beanbeanjuice.proxychat.utility.Helper;
+import com.beanbeanjuice.proxychat.utility.config.Config;
+import com.beanbeanjuice.proxychat.utility.config.ConfigDataEntry;
+import com.beanbeanjuice.proxychat.utility.config.ConfigDataKey;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
@@ -20,7 +20,6 @@ import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.slf4j.Logger;
 
 import java.awt.*;

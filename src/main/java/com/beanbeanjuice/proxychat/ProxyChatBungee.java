@@ -1,14 +1,17 @@
-package com.plyblox.proxychat;
+package com.beanbeanjuice.proxychat;
 
-import com.plyblox.proxychat.chat.BungeeServerListener;
-import com.plyblox.proxychat.chat.ChatHandler;
-import com.plyblox.proxychat.discord.Bot;
-import com.plyblox.proxychat.utility.config.Config;
-import com.plyblox.proxychat.utility.config.ConfigDataEntry;
-import com.plyblox.proxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.proxychat.chat.BungeeServerListener;
+import com.beanbeanjuice.proxychat.chat.BungeeVanishListener;
+import com.beanbeanjuice.proxychat.chat.ChatHandler;
+import com.beanbeanjuice.proxychat.discord.Bot;
+import com.beanbeanjuice.proxychat.utility.config.Config;
+import com.beanbeanjuice.proxychat.utility.config.ConfigDataEntry;
+import com.beanbeanjuice.proxychat.utility.config.ConfigDataKey;
 import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 
@@ -33,12 +36,6 @@ public final class ProxyChatBungee extends Plugin {
 
         PluginManager pm = this.getProxy().getPluginManager();
 
-        // Enable vanish support.
-        if (pm.getPlugin("PremiumVanish") != null || pm.getPlugin("SuperVanish") != null) {
-            this.config.overwrite(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(true));
-            this.getLogger().log(Level.INFO, "Enabled PremiumVanish/SuperVanish Support");
-        }
-
         this.getLogger().info("Initializing discord bot.");
 
         try {
@@ -55,9 +52,19 @@ public final class ProxyChatBungee extends Plugin {
 
         // Registering Chat Listener
         ChatHandler chatHandler = new ChatHandler(config, discordBot, (message) -> {
-            this.getProxy().broadcast(new ComponentBuilder(message).create());
+            Component minimessage = MiniMessage.miniMessage().deserialize(message);
+            this.getProxy().broadcast(BungeeComponentSerializer.get().serialize(minimessage));
         });
-        this.getProxy().getPluginManager().registerListener(this, new BungeeServerListener(this, chatHandler));
+
+        BungeeServerListener serverListener = new BungeeServerListener(this, chatHandler);
+        this.getProxy().getPluginManager().registerListener(this, serverListener);
+
+        // Enable vanish support.
+        if (pm.getPlugin("PremiumVanish") != null || pm.getPlugin("SuperVanish") != null) {
+            this.config.overwrite(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(true));
+            this.getLogger().log(Level.INFO, "Enabled PremiumVanish/SuperVanish Support");
+            this.getProxy().getPluginManager().registerListener(this, new BungeeVanishListener(serverListener));
+        }
 
         // Discord Topic Updater
         this.getProxy().getScheduler().schedule(this, () -> {

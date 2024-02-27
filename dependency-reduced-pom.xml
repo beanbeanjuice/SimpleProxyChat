@@ -46,11 +46,11 @@
           <relocations>
             <relocation>
               <pattern>dev.dejvokep.boostedyaml</pattern>
-              <shadedPattern>com.plyblox.proxychat.libs</shadedPattern>
+              <shadedPattern>com.beanbeanjuice.proxychat.libs</shadedPattern>
             </relocation>
             <relocation>
               <pattern>net.dv8tion.jda</pattern>
-              <shadedPattern>com.plyblox.proxychat.libs</shadedPattern>
+              <shadedPattern>com.beanbeanjuice.proxychat.libs</shadedPattern>
             </relocation>
           </relocations>
         </configuration>
