@@ -13,7 +13,6 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 import de.myzelyam.api.vanish.VelocityVanishAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -41,10 +40,7 @@ public class VelocityServerListener {
                     .map(Player::getUniqueId)
                     .toList();
 
-            String miniMessage = MiniMessage.miniMessage().serialize(
-                    LegacyComponentSerializer.legacySection().deserialize(message)
-            );
-            Component component = MiniMessage.miniMessage().deserialize(miniMessage);
+            Component component = MiniMessage.miniMessage().deserialize(message);
 
             plugin.getProxyServer().getAllPlayers().stream()
                     .filter((streamPlayer) -> !blacklistedUUIDs.contains(streamPlayer.getUniqueId()))
@@ -93,11 +89,7 @@ public class VelocityServerListener {
                 playerUUID,
                 plugin.getLogger()::info,
                 (message) -> {
-                    String miniMessage = MiniMessage.miniMessage().serialize(
-                            LegacyComponentSerializer.legacySection().deserialize(message)
-                    );
-                    Component component = MiniMessage.miniMessage().deserialize(miniMessage);
-
+                    Component component = MiniMessage.miniMessage().deserialize(message);
                     previousServer.getPlayersConnected().stream()
                             .filter((streamPlayer) -> streamPlayer != event.getPlayer())
                             .forEach((streamPlayer) -> streamPlayer.sendMessage(component));
@@ -106,12 +98,7 @@ public class VelocityServerListener {
     }
 
     private void sendToAllServers(@NotNull String message) {
-        String miniMessage = MiniMessage.miniMessage().serialize(
-                LegacyComponentSerializer.legacySection().deserialize(message)
-        );
-        Component component = MiniMessage.miniMessage().deserialize(miniMessage);
-
-        plugin.getProxyServer().sendMessage(component);
+        plugin.getProxyServer().sendMessage(MiniMessage.miniMessage().deserialize(message));
     }
 
 }

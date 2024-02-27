@@ -7,6 +7,7 @@ import com.plyblox.proxychat.utility.config.Config;
 import com.plyblox.proxychat.utility.config.ConfigDataKey;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -49,7 +50,7 @@ public class ChatHandler {
                 .replace("%player%", playerName);
 
         // Log to Console
-        consoleLogger.accept(Helper.stripColor(minecraftMessage));
+        consoleLogger.accept(Helper.stripColor(MiniMessage.miniMessage().deserialize(minecraftMessage)));
 
         // Log to Discord
         discordBot.sendMessage(discordMessage);
@@ -66,7 +67,7 @@ public class ChatHandler {
                 .replace("%player%", playerName);
 
         // Log to Console
-        consoleLogger.accept(Helper.stripColor(message));
+        consoleLogger.accept(Helper.stripColor(MiniMessage.miniMessage().deserialize(message)));
 
         // Log to Discord
         String discordConfigString = (String) config.get(ConfigDataKey.MINECRAFT_TO_DISCORD_LEAVE);
@@ -85,7 +86,7 @@ public class ChatHandler {
                 .replace("%player%", playerName);
 
         // Log to Console
-        consoleLogger.accept(Helper.stripColor(message));
+        consoleLogger.accept(Helper.stripColor(MiniMessage.miniMessage().deserialize(message)));
 
         // Log to Discord
         String discordConfigString = (String) config.get(ConfigDataKey.MINECRAFT_TO_DISCORD_JOIN);
@@ -121,7 +122,7 @@ public class ChatHandler {
                 .replace("%player%", playerName);
 
         // Log to Console
-        consoleLogger.accept(Helper.stripColor(consoleMessage));
+        consoleLogger.accept(Helper.stripColor(MiniMessage.miniMessage().deserialize(consoleMessage)));
 
         // Log to Discord
         discordBot.sendMessageEmbed(simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.YELLOW).build());
@@ -149,9 +150,8 @@ public class ChatHandler {
         String discordMessage = event.getMessage().getContentStripped();
 
         String hex = "#" + Integer.toHexString(roleColor.getRGB()).substring(2);
-
         message = message
-                .replace("%role%", String.format("<%s>%s", hex, roleName))
+                .replace("%role%", String.format("<%s>%s</%s>", hex, roleName, hex))
                 .replace("%user%", username)
                 .replace("%message%", discordMessage);
 
