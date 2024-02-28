@@ -19,18 +19,17 @@ public class ChatHandler {
 
     private static final String MINECRAFT_PLAYER_HEAD_URL = "https://crafthead.net/avatar/{PLAYER_UUID}";
 
-    private Config config;
-    private Bot discordBot;
+    private final Config config;
+    private final Bot discordBot;
 
-    private Consumer<String> globalLogger;
+    private final Consumer<String> globalLogger;
 
     public ChatHandler(Config config, Bot discordBot, Consumer<String> globalLogger) {
         this.config = config;
         this.discordBot = discordBot;
 
         this.globalLogger = globalLogger;
-
-        discordBot.getBot().addEventListener(new DiscordChatHandler(config, this::sendFromDiscord));
+        discordBot.getJDA().ifPresent((jda) -> jda.addEventListener(new DiscordChatHandler(config, this::sendFromDiscord)));
     }
 
     public void runProxyChatMessage(String serverName, String playerName, String playerMessage,
@@ -144,6 +143,8 @@ public class ChatHandler {
 
     public void sendFromDiscord(MessageReceivedEvent event) {
         String message = (String) config.get(ConfigDataKey.DISCORD_TO_MINECRAFT_MESSAGE);
+
+        if (event.getMember() == null) return;
 
         String username = event.getMember().getEffectiveName();
 
