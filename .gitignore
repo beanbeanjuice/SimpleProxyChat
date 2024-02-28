@@ -41,6 +41,7 @@
 /out/
 gradle.properties
 !gradle-wrapper.jar
+!gradle.properties
 
 # JetBrains IDEA
 /.idea/
