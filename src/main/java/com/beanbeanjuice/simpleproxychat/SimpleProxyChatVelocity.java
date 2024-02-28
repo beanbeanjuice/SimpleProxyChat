@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 @Plugin(
         id = "simpleproxychat",
         name = "SimpleProxyChat",
-        version = "0.0.2",
+        version = "0.1.0",
         description = "A simple plugin to send chat messages between servers as well as to Discord.",
         url = "https://github.com/beanbeanjuice/SimpleProxyChat",
         authors = {"beanbeanjuice"},
