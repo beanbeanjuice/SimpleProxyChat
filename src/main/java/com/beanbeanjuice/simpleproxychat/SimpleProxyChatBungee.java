@@ -24,12 +24,10 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
+@Getter
 public final class SimpleProxyChatBungee extends Plugin {
 
-    @Getter
     private Config config;
-
-    @Getter
     private Bot discordBot;
 
     @Override
@@ -43,10 +41,10 @@ public final class SimpleProxyChatBungee extends Plugin {
 
         this.getLogger().info("Initializing discord bot.");
 
-        try {
-            discordBot = new Bot((String) this.config.get(ConfigDataKey.BOT_TOKEN), this.config);
-        }
-        catch (InterruptedException e) { throw new RuntimeException(e); }
+        try { discordBot = new Bot(this.config); }
+        catch (Exception e) { getLogger().warning("There was an error starting the discord bot: " + e.getMessage()); }
+
+        discordBot.getJDA().ifPresentOrElse((jda) -> { }, () -> getLogger().warning("Discord logging is not enabled."));
 
         discordBot.sendMessageEmbed(
                 new EmbedBuilder()
