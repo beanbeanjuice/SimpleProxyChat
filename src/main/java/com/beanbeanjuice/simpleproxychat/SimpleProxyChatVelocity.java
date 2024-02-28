@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 @Plugin(
         id = "simpleproxychat",
         name = "SimpleProxyChat",
-        version = "0.0.1",
+        version = "0.0.2",
         description = "A simple plugin to send chat messages between servers as well as to Discord.",
         url = "https://github.com/beanbeanjuice/SimpleProxyChat",
         authors = {"beanbeanjuice"},
@@ -54,7 +54,7 @@ public class SimpleProxyChatVelocity {
     private final Metrics.Factory metricsFactory;
 
     @Getter
-    private Config config;
+    private final Config config;
 
     @Getter
     private Bot discordBot;
@@ -80,8 +80,10 @@ public class SimpleProxyChatVelocity {
 
         this.logger.info("Initializing discord bot.");
 
-        try { discordBot = new Bot((String) this.config.get(ConfigDataKey.BOT_TOKEN), this.config); }
+        try { discordBot = new Bot(this.config); }
         catch (Exception e) { logger.warn("There was an error starting the discord bot: " + e.getMessage()); }
+
+        discordBot.getJDA().ifPresentOrElse((jda) -> { }, () -> this.logger.warn("Discord logging is not enabled."));
 
         discordBot.sendMessageEmbed(
                 new EmbedBuilder()
@@ -99,7 +101,7 @@ public class SimpleProxyChatVelocity {
         ChatHandler chatHandler = new ChatHandler(config, discordBot, (message) -> {
             Component messageComponent = MiniMessage.miniMessage().deserialize(message);
             logger.info(Helper.stripColor(messageComponent));
-            proxyServer.getAllPlayers().stream().forEach((player) -> player.sendMessage(messageComponent));
+            proxyServer.getAllPlayers().forEach((player) -> player.sendMessage(messageComponent));
         });
         this.proxyServer.getEventManager().register(this, new VelocityServerListener(this, chatHandler));
 

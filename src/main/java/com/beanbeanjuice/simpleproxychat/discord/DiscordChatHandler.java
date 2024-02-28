@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 public class DiscordChatHandler extends ListenerAdapter {
 
     private final Config config;
-    private Consumer<MessageReceivedEvent> sendFromDiscord;
+    private final Consumer<MessageReceivedEvent> sendFromDiscord;
 
     public DiscordChatHandler(@NotNull Config config,
                               Consumer<MessageReceivedEvent> sendFromDiscord) {
