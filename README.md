@@ -1,14 +1,20 @@
-# ProxyChat (BungeeCord/Waterfall/Velocity)
-
-
-A simple plugin to send chat messages to/from all servers on the network. This also includes to/from a Discord server.
+<p align="center">
+  <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/SimpleProxyChat.png?raw=true" alt="SimpleProxyChat Logo"/>
+</p>
+<center>
+  A simple plugin to allow cross-server communication. Also has the option of using Discord to allow global Discord chat with all of the servers on your proxy network.​
+</center>
 
 ---
 
-## Setup Information (No Discord)
-1) Simply place the plugin in your `plugins` folder on **BungeeCord/Velocity** and restart your server!
+<p align="center">
+  <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Installation.png?raw=true" alt="installation"/>
+</p>
 
-## Setup Information (Discord)
+### Without Discord
+1) Simply place the plugin in your `plugins` folder on **BungeeCord/Velocity** and restart your proxy!
+
+### With Discord
 1) Go to discord.com/developers and select **New Application**. You can select *any* name you want.
 1) Go to the **OAuth2** section.
 1) Go to the **OAuth2 URL Generator** and give it the **bot** scope.
@@ -30,24 +36,26 @@ A simple plugin to send chat messages to/from all servers on the network. This a
 1) Place the plugin in the `plugins` folder on **BungeeCord/Velocity**.
 1) Start your server once *fully*, then stop it. There *will* be errors, this is normal.
 1) In the generated `ProxyChat/config.yml` file, paste your **Bot Token** and choose the appropriate channel you want messages being sent to.
-1) Restart your server!
+1) Restart your proxy!
 
 ---
 
-## Requirements
+<p align="center">
+  <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Features.png?raw=true" alt="features"/>
+</p>
 
-* Java Version: 17+ (**REQUIRED**)
-* PremiumVanish (**OPTIONAL**)
-* SuperVanish (**OPTIONAL**)
+* **Global Network Chat**
+* **Discord Support**
+* **Velocity/Waterfall/Bungee Support**
+* **Colored Chat**
+* **Cross-Server Communication**
 
 ---
 
-## Caveats
-As of right now, vanish support is only available on *BungeeCord/Waterfall*. The plugin will still function as normal, but if you go into vanish then it won't send a fake join/leave message.
+<p align="center">
+  <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Configuration.png?raw=true" alt="configuration"/>
+</p>
 
----
-
-## Configuration
 ```YAML
 # ==========================================================
 #                       INFORMATION
@@ -87,14 +95,18 @@ discord_to_minecraft_message: "&8[&bDiscord&8] %role% &f%user% &9» &7%message%"
 
 # DO NOT TOUCH THIS
 file-version: 2
-
 ```
 
 ---
 
-## Statistics
-### BungeeCord/Waterfall Graph
-![alt text](https://bstats.org/signatures/bungeecord/SimpleProxyChat.svg)
+## Caveats
+As of right now, vanish support is only available on *BungeeCord/Waterfall*. The plugin will still function as normal, but if you go into vanish then it won't send a fake join/leave message.
 
-### Velocity Graph
-![alt text](https://bstats.org/signatures/velocity/SimpleProxyChat.svg)
+---
+
+## Statistics
+### Velocity Statistics
+![velocity statistics](https://bstats.org/signatures/velocity/SimpleProxyChat.svg)
+
+### BungeeCord/Waterfall Statistics
+![bungeecord/waterfall statistics](https://bstats.org/signatures/bungeecord/SimpleProxyChat.svg)
