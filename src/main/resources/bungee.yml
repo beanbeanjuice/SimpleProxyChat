@@ -1,5 +1,5 @@
 name: SimpleProxyChat
-version: '${project.version}'
+version: '${version}'
 main: com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee
 softdepend: [PlaceholderAPI, PremiumVanish]
 author: beanbeanjuice

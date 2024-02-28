@@ -99,11 +99,11 @@ public class BungeeServerListener implements Listener {
         );
     }
 
-    private void sendToAllServers(@NotNull String message) {
+    private void sendToAllServers(String message) {
         plugin.getProxy().broadcast(convertToBungee(message));
     }
 
-    private @NotNull BaseComponent @NotNull [] convertToBungee(String message) {
+    private BaseComponent[] convertToBungee(String message) {
         Component minimessage = MiniMessage.miniMessage().deserialize(message);
         return BungeeComponentSerializer.get().serialize(minimessage);
     }
