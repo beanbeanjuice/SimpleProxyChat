@@ -24,8 +24,8 @@ import java.util.UUID;
 
 public class BungeeServerListener implements Listener {
 
-    private SimpleProxyChatBungee plugin;
-    private ChatHandler chatHandler;
+    private final SimpleProxyChatBungee plugin;
+    private final ChatHandler chatHandler;
 
     public BungeeServerListener(SimpleProxyChatBungee plugin, ChatHandler chatHandler) {
         this.plugin = plugin;

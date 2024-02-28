@@ -5,10 +5,13 @@
 #  If using the color codes ("&"), only use the COLOR codes.
 # ==========================================================
 
-# Discord Bot Token
+# True if you will be using Discord
+use_discord: false
+
+# Discord Bot Token (IGNORE IF use_discord = false)
 BOT_TOKEN: "TOKEN_HERE"
 
-# Channel to send Discord messages to.
+# Channel to send Discord messages to (IGNORE IF use_discord = false)
 CHANNEL_ID: "GLOBAL_CHANNEL_ID"
 
 # Minecraft to Minecraft
@@ -32,4 +35,4 @@ minecraft_to_discord_message: "**%server%** %player% » %message%"
 discord_to_minecraft_message: "&8[&bDiscord&8] %role% &f%user% &9» &7%message%"
 
 # DO NOT TOUCH THIS
-file-version: 1
+file-version: 2

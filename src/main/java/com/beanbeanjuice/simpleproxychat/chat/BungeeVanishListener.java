@@ -7,7 +7,7 @@ import net.md_5.bungee.event.EventHandler;
 
 public class BungeeVanishListener implements Listener {
 
-    private BungeeServerListener listener;
+    private final BungeeServerListener listener;
 
     public BungeeVanishListener(BungeeServerListener listener) {
         this.listener = listener;
