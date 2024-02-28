@@ -35,7 +35,7 @@ jobs:
         cache: gradle
 
     - name: Setup Gradle
-      uses: actions/setup-gradle@v3
+      uses: gradle/actions/setup-gradle@v3
 
     - name: Build and Test with Gradle
       run: ./gradlew -b ci.gradle package
