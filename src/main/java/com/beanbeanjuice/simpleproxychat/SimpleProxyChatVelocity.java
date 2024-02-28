@@ -9,10 +9,10 @@ import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataEntry;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
-import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginManager;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
@@ -31,18 +31,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-@Plugin(
-        id = "simpleproxychat",
-        name = "SimpleProxyChat",
-        version = "0.1.0",
-        description = "A simple plugin to send chat messages between servers as well as to Discord.",
-        url = "https://github.com/beanbeanjuice/SimpleProxyChat",
-        authors = {"beanbeanjuice"},
-        dependencies = {
-                @Dependency(id = "supervanish", optional = true),
-                @Dependency(id = "premiumvanish", optional = true)
-        }
-)
 public class SimpleProxyChatVelocity {
 
     @Getter
@@ -116,16 +104,19 @@ public class SimpleProxyChatVelocity {
 
         // Start Update Checker
         this.proxyServer.getScheduler()
-                .buildTask(this, () -> {
-                    UpdateChecker.checkUpdate((spigotMCVersion) -> {
-                        if (!this.getClass().getAnnotation(Plugin.class).version().equals(spigotMCVersion)) {
-                            this.logger.info("ATTENTION - There is a new update available: v" + spigotMCVersion);
-                        }
-                    });
-                })
-                .delay(0, TimeUnit.MINUTES)
-                .repeat(12, TimeUnit.HOURS)
-                .schedule();
+                .buildTask(
+                        this,
+                        () -> UpdateChecker.checkUpdate(
+                                (spigotMCVersion) -> this.proxyServer.getPluginManager().getPlugin("simpleproxychat")
+                                        .flatMap(
+                                                pluginContainer -> pluginContainer.getDescription().getVersion()
+                                        ).ifPresent((version) -> {
+                                                    if (!version.equalsIgnoreCase(spigotMCVersion))
+                                                        this.logger.info("ATTENTION - There is a new update available: v" + spigotMCVersion);
+                                                }
+                                        )
+                        )
+                ).delay(0, TimeUnit.MINUTES).repeat(12, TimeUnit.HOURS).schedule();
 
         // bStats Stuff
         this.logger.info("Starting bStats... (IF ENABLED)");
@@ -141,7 +132,7 @@ public class SimpleProxyChatVelocity {
         }));
     }
 
-    @Subscribe
+    @Subscribe(order = PostOrder.FIRST)
     public void onProxyShutdown(ProxyShutdownEvent event) {
         discordBot.sendMessageEmbed(
                 new EmbedBuilder()
