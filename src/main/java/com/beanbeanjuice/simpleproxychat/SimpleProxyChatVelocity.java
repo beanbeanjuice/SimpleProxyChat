@@ -134,7 +134,7 @@ public class SimpleProxyChatVelocity {
         }));
     }
 
-    @Subscribe
+    @Subscribe(order = PostOrder.FIRST)
     public void onProxyShutdown(ProxyShutdownEvent event) {
         discordBot.sendMessageEmbed(
                 new EmbedBuilder()
