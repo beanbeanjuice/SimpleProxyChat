@@ -8,7 +8,6 @@ import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import de.myzelyam.api.vanish.VelocityVanishAPI;
 import net.kyori.adventure.text.Component;
@@ -20,8 +19,8 @@ import java.util.UUID;
 
 public class VelocityServerListener {
 
-    private SimpleProxyChatVelocity plugin;
-    private ChatHandler chatHandler;
+    private final SimpleProxyChatVelocity plugin;
+    private final ChatHandler chatHandler;
 
     public VelocityServerListener(SimpleProxyChatVelocity plugin, ChatHandler chatHandler) {
         this.plugin = plugin;
@@ -30,21 +29,22 @@ public class VelocityServerListener {
 
     @Subscribe
     public void onPlayerChat(PlayerChatEvent event) {
-        ServerConnection serverConnection = event.getPlayer().getCurrentServer().get();
-        String serverName = serverConnection.getServerInfo().getName();
-        String playerName = event.getPlayer().getUsername();
-        String playerMessage = event.getMessage();
+        event.getPlayer().getCurrentServer().ifPresent((connection) -> {
+            String serverName = connection.getServerInfo().getName();
+            String playerName = event.getPlayer().getUsername();
+            String playerMessage = event.getMessage();
 
-        chatHandler.runProxyChatMessage(serverName, playerName, playerMessage, plugin.getLogger()::info, (message) -> {
-            List<UUID> blacklistedUUIDs = serverConnection.getServer().getPlayersConnected().stream()
-                    .map(Player::getUniqueId)
-                    .toList();
+            chatHandler.runProxyChatMessage(serverName, playerName, playerMessage, plugin.getLogger()::info, (message) -> {
+                List<UUID> blacklistedUUIDs = connection.getServer().getPlayersConnected().stream()
+                        .map(Player::getUniqueId)
+                        .toList();
 
-            Component component = MiniMessage.miniMessage().deserialize(message);
+                Component component = MiniMessage.miniMessage().deserialize(message);
 
-            plugin.getProxyServer().getAllPlayers().stream()
-                    .filter((streamPlayer) -> !blacklistedUUIDs.contains(streamPlayer.getUniqueId()))
-                    .forEach((streamPlayer) -> streamPlayer.sendMessage(component));
+                plugin.getProxyServer().getAllPlayers().stream()
+                        .filter((streamPlayer) -> !blacklistedUUIDs.contains(streamPlayer.getUniqueId()))
+                        .forEach((streamPlayer) -> streamPlayer.sendMessage(component));
+            });
         });
     }
 
