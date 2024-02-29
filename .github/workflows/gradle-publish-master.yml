@@ -1,14 +1,13 @@
-name: "Gradle CI"
+name: "Gradle Publish Master"
 
 on:
   push:
     branches:
-      - integration
       - master
 
 jobs:
-  test:
-    name: Test
+  publish:
+    name: Publish
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -37,3 +36,9 @@ jobs:
 
     - name: Build and Test with Gradle
       run: ./gradlew test
+
+    - name: Upload JAR to HANGAR
+      env:
+        DEVELOPMENT_STRING: ${{ secrets.PUBLISH_STRING }}
+        HANGAR_API_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
+      run: ./gradlew build publishPluginPublicationToHangar --stacktrace
