@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.beanbeanjuice"
-version = "0.1.1-ALPHA"
+version = "0.1.1" + System.getenv("DEVELOPMENT_STRING")
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
