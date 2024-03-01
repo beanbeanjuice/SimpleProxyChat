@@ -1,7 +1,7 @@
 package com.beanbeanjuice.simpleproxychat;
 
-import com.beanbeanjuice.simpleproxychat.chat.BungeeServerListener;
-import com.beanbeanjuice.simpleproxychat.chat.BungeeVanishListener;
+import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeServerListener;
+import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeVanishListener;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
 import com.beanbeanjuice.simpleproxychat.discord.Bot;
 import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;
@@ -48,7 +48,7 @@ public final class SimpleProxyChatBungee extends Plugin {
 
         discordBot.sendMessageEmbed(
                 new EmbedBuilder()
-                        .setTitle("✅ Proxy enabled!")
+                        .setTitle((String) config.get(ConfigDataKey.PROXY_ENABLED_MESSAGE))
                         .setColor(Color.GREEN)
                         .build()
         );
@@ -75,13 +75,11 @@ public final class SimpleProxyChatBungee extends Plugin {
         }, 5, 5, TimeUnit.MINUTES);
 
         // Update Checker
-        this.getProxy().getScheduler().schedule(this, () -> {
-            UpdateChecker.checkUpdate((spigotMCVersion) -> {
-                if (!this.getDescription().getVersion().equals(spigotMCVersion)) {
-                    this.getLogger().info("ATTENTION - There is a new update available: v" + spigotMCVersion);
-                }
-            });
-        }, 0, 2, TimeUnit.HOURS);
+        this.getProxy().getScheduler().schedule(this, () -> UpdateChecker.checkUpdate((spigotMCVersion) -> {
+            if (!this.getDescription().getVersion().equals(spigotMCVersion)) {
+                this.getLogger().info("ATTENTION - There is a new update available: v" + spigotMCVersion);
+            }
+        }), 0, 2, TimeUnit.HOURS);
 
         // bStats Stuff
         this.getLogger().info("Starting bStats... (IF ENABLED)");
@@ -104,7 +102,7 @@ public final class SimpleProxyChatBungee extends Plugin {
         this.getLogger().log(Level.INFO, "The plugin is shutting down.");
         discordBot.sendMessageEmbed(
                 new EmbedBuilder()
-                        .setTitle("⛔ Proxy disabled.")
+                        .setTitle((String) config.get(ConfigDataKey.PROXY_DISABLED_MESSAGE))
                         .setColor(Color.RED)
                         .build()
         );
