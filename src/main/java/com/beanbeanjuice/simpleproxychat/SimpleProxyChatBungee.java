@@ -1,7 +1,7 @@
 package com.beanbeanjuice.simpleproxychat;
 
-import com.beanbeanjuice.simpleproxychat.chat.BungeeServerListener;
-import com.beanbeanjuice.simpleproxychat.chat.BungeeVanishListener;
+import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeServerListener;
+import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeVanishListener;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
 import com.beanbeanjuice.simpleproxychat.discord.Bot;
 import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;

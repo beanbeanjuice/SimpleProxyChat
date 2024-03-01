@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.beanbeanjuice"
-version = "0.1.1" + System.getenv("DEVELOPMENT_STRING")
+version = "0.1.1"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -96,7 +96,7 @@ fun latestCommitMessage(): String {
     return executeGitCommand("log", "-1", "--pretty=%B")
 }
 
-val versionString: String = version as String
+val versionString: String = (version as String) + (System.getenv("DEVELOPMENT_STRING") ?: "")
 val isRelease: Boolean = !versionString.contains('-')
 
 val suffixedVersion: String = if (isRelease) {
@@ -172,4 +172,8 @@ tasks.withType<ShadowJar> {
     archiveBaseName.set(rootProject.name)
     archiveClassifier.set("")
     archiveVersion.set("")
+}
+
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
 }
