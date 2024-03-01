@@ -1,4 +1,4 @@
-package com.beanbeanjuice.simpleproxychat.chat;
+package com.beanbeanjuice.simpleproxychat.utility.listeners.bungee;
 
 import de.myzelyam.api.vanish.BungeePlayerHideEvent;
 import de.myzelyam.api.vanish.BungeePlayerShowEvent;
