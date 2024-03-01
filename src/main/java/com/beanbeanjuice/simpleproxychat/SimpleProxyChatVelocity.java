@@ -3,7 +3,7 @@ package com.beanbeanjuice.simpleproxychat;
 import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;
 import com.google.inject.Inject;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
-import com.beanbeanjuice.simpleproxychat.chat.VelocityServerListener;
+import com.beanbeanjuice.simpleproxychat.utility.listeners.velocity.VelocityServerListener;
 import com.beanbeanjuice.simpleproxychat.discord.Bot;
 import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
@@ -95,9 +95,7 @@ public class SimpleProxyChatVelocity {
 
         // Start Channel Topic Updater
         this.proxyServer.getScheduler()
-                .buildTask(this, () -> {
-                    discordBot.channelUpdaterFunction(proxyServer.getPlayerCount());
-                })
+                .buildTask(this, () -> discordBot.channelUpdaterFunction(proxyServer.getPlayerCount()))
                 .delay(5, TimeUnit.MINUTES)
                 .repeat(5, TimeUnit.MINUTES)
                 .schedule();
