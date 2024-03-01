@@ -93,8 +93,16 @@ minecraft_to_discord_message: "**%server%** %player% » %message%"
 # Discord to Minecraft
 discord_to_minecraft_message: "&8[&bDiscord&8] %role% &f%user% &9» &7%message%"
 
+# Pure Discord. Does not support color codes.
+proxy_enabled: "✅ Proxy enabled!"
+proxy_disabled: "⛔ Proxy disabled."
+proxy_status_title: "Server Status"
+proxy_status_message: "Status: "
+proxy_status_online: "Online"
+proxy_status_offline: "Offline"
+
 # DO NOT TOUCH THIS
-file-version: 2
+file-version: 3
 ```
 
 ---
