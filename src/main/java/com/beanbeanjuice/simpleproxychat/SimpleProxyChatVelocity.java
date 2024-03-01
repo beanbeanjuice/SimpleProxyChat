@@ -75,7 +75,7 @@ public class SimpleProxyChatVelocity {
 
         discordBot.sendMessageEmbed(
                 new EmbedBuilder()
-                        .setTitle("✅ Proxy enabled!")
+                        .setTitle((String) config.get(ConfigDataKey.PROXY_ENABLED_MESSAGE))
                         .setColor(Color.GREEN)
                         .build()
         );
@@ -134,7 +134,7 @@ public class SimpleProxyChatVelocity {
     public void onProxyShutdown(ProxyShutdownEvent event) {
         discordBot.sendMessageEmbed(
                 new EmbedBuilder()
-                        .setTitle("⛔ Proxy disabled.")
+                        .setTitle((String) config.get(ConfigDataKey.PROXY_DISABLED_MESSAGE))
                         .setColor(Color.RED)
                         .build()
         );
