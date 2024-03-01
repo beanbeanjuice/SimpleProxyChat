@@ -96,7 +96,7 @@ fun latestCommitMessage(): String {
     return executeGitCommand("log", "-1", "--pretty=%B")
 }
 
-val versionString: String = (version as String) + System.getenv("DEVELOPMENT_STRING")
+val versionString: String = (version as String) + (System.getenv("DEVELOPMENT_STRING") ?: "")
 val isRelease: Boolean = !versionString.contains('-')
 
 val suffixedVersion: String = if (isRelease) {
