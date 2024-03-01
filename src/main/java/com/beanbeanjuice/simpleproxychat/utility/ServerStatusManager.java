@@ -28,4 +28,8 @@ public class ServerStatusManager {
         embedBuilder.setColor(status ? Color.GREEN : Color.RED);
         return embedBuilder.build();
     }
+
+    public String getStatusString(String serverName, boolean status) {
+        return String.format("%s is %s", serverName.toUpperCase(), status);
+    }
 }

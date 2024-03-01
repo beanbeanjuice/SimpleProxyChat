@@ -116,8 +116,12 @@ public class BungeeServerListener implements Listener {
                             if (status == newStatus) return;
 
                             plugin.getDiscordBot().sendMessageEmbed(manager.getStatusEmbed(serverName, newStatus));
+                            plugin.getLogger().info(manager.getStatusString(serverName, newStatus));
                         },
-                        () -> plugin.getDiscordBot().sendMessageEmbed(manager.getStatusEmbed(serverName, newStatus))
+                        () -> {
+                            plugin.getDiscordBot().sendMessageEmbed(manager.getStatusEmbed(serverName, newStatus));
+                            plugin.getLogger().info(manager.getStatusString(serverName, newStatus));
+                        }
                 );
             });
         }), 3, 3, TimeUnit.SECONDS);
