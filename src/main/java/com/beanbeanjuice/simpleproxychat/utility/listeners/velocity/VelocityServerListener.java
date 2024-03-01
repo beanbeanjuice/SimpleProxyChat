@@ -78,7 +78,7 @@ public class VelocityServerListener {
     }
 
     private void startServerStatusDetection() {
-        ServerStatusManager manager = new ServerStatusManager();
+        ServerStatusManager manager = new ServerStatusManager(plugin.getConfig());
 
         plugin.getProxyServer().getScheduler().buildTask(plugin, () -> plugin.getProxyServer().getAllServers().forEach((registeredServer) -> {
             String serverName = registeredServer.getServerInfo().getName();
