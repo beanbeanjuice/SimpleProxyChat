@@ -92,6 +92,7 @@ public class VelocityServerListener {
                             if (status == newStatus) return;
 
                             plugin.getDiscordBot().sendMessageEmbed(manager.getStatusEmbed(serverName, newStatus));
+                            plugin.getLogger().info(manager.getStatusString(serverName, newStatus));
                         }
                 );
             }).exceptionally((exception) -> {  // Server is offline.
@@ -103,6 +104,7 @@ public class VelocityServerListener {
                             if (status == newStatus) return;
 
                             plugin.getDiscordBot().sendMessageEmbed(manager.getStatusEmbed(serverName, newStatus));
+                            plugin.getLogger().info(manager.getStatusString(serverName, newStatus));
                         }
                 );
                 return null;
