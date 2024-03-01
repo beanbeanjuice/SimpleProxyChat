@@ -110,21 +110,19 @@ public class BungeeServerListener implements Listener {
                 boolean newStatus = (error == null);  // Server offline if error != null
                 Optional<Boolean> previousStatus = manager.setStatus(serverName, newStatus);
 
-                previousStatus.ifPresentOrElse(
+                previousStatus.ifPresent(
                         (status) -> {
                             // If status is the same, do nothing.
-                            if (status == newStatus) return;
-
-                            plugin.getDiscordBot().sendMessageEmbed(manager.getStatusEmbed(serverName, newStatus));
-                            plugin.getLogger().info(manager.getStatusString(serverName, newStatus));
-                        },
-                        () -> {
-                            plugin.getDiscordBot().sendMessageEmbed(manager.getStatusEmbed(serverName, newStatus));
-                            plugin.getLogger().info(manager.getStatusString(serverName, newStatus));
+                            if (status != newStatus) runStatusLogic(manager, serverName, newStatus);
                         }
                 );
             });
         }), 3, 3, TimeUnit.SECONDS);
+    }
+
+    private void runStatusLogic(ServerStatusManager manager, String serverName, boolean newStatus) {
+        plugin.getDiscordBot().sendMessageEmbed(manager.getStatusEmbed(serverName, newStatus));
+        plugin.getLogger().info(manager.getStatusString(serverName, newStatus));
     }
 
     private void sendToAllServers(String message) {

@@ -30,6 +30,7 @@ public class ServerStatusManager {
     }
 
     public String getStatusString(String serverName, boolean status) {
-        return String.format("%s is %s", serverName.toUpperCase(), status);
+        String statusString = status ? "online" : "offline";
+        return String.format("%s is %s.", serverName.toUpperCase(), statusString);
     }
 }

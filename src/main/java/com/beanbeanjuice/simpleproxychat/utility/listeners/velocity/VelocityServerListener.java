@@ -84,33 +84,25 @@ public class VelocityServerListener {
             String serverName = registeredServer.getServerInfo().getName();
 
             registeredServer.ping().thenAccept((ping) -> {  // Server is online.
-                boolean newStatus = true;
-                Optional<Boolean> previousStatus = manager.setStatus(serverName, newStatus);
-
-                previousStatus.ifPresent(
-                        (status) -> {
-                            if (status == newStatus) return;
-
-                            plugin.getDiscordBot().sendMessageEmbed(manager.getStatusEmbed(serverName, newStatus));
-                            plugin.getLogger().info(manager.getStatusString(serverName, newStatus));
-                        }
-                );
+                runStatusLogic(manager, serverName, true);
             }).exceptionally((exception) -> {  // Server is offline.
-                boolean newStatus = false;
-                Optional<Boolean> previousStatus = manager.setStatus(serverName, newStatus);
-
-                previousStatus.ifPresent(
-                        (status) -> {
-                            if (status == newStatus) return;
-
-                            plugin.getDiscordBot().sendMessageEmbed(manager.getStatusEmbed(serverName, newStatus));
-                            plugin.getLogger().info(manager.getStatusString(serverName, newStatus));
-                        }
-                );
+                runStatusLogic(manager, serverName, false);
                 return null;
             });
         })).delay(3, TimeUnit.SECONDS).repeat(3, TimeUnit.SECONDS).schedule();
+    }
 
+    private void runStatusLogic(ServerStatusManager manager, String serverName, boolean newStatus) {
+        Optional<Boolean> previousStatus = manager.setStatus(serverName, newStatus);
+
+        previousStatus.ifPresent(
+                (status) -> {
+                    if (status == newStatus) return;
+
+                    plugin.getDiscordBot().sendMessageEmbed(manager.getStatusEmbed(serverName, newStatus));
+                    plugin.getLogger().info(manager.getStatusString(serverName, newStatus));
+                }
+        );
     }
 
     @Subscribe
