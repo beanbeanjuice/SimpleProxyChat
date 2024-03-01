@@ -1,5 +1,7 @@
 package com.beanbeanjuice.simpleproxychat.utility;
 
+import com.beanbeanjuice.simpleproxychat.utility.config.Config;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
@@ -10,9 +12,11 @@ import java.util.Optional;
 public class ServerStatusManager {
 
     private final HashMap<String, Boolean> servers;
+    private final Config config;
 
-    public ServerStatusManager() {
+    public ServerStatusManager(Config config) {
         servers = new HashMap<>();
+        this.config = config;
     }
 
     public Optional<Boolean> setStatus(String serverName, Boolean status) {
@@ -20,11 +24,15 @@ public class ServerStatusManager {
     }
 
     public MessageEmbed getStatusEmbed(String serverName, boolean status) {
-        String statusString = status ? "Online" : "Offline";
+        String statusMessageString = (String) config.get(ConfigDataKey.PROXY_STATUS_MESSAGE);
+        String statusString = status ? (String) config.get(ConfigDataKey.PROXY_STATUS_ONLINE) : (String) config.get(ConfigDataKey.PROXY_STATUS_OFFLINE);
 
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle("Server Status");
-        embedBuilder.addField(serverName.toUpperCase(), String.format("Status: %s", statusString), true);
+        embedBuilder.setTitle((String) config.get(ConfigDataKey.PROXY_STATUS_TITLE));
+        embedBuilder.addField(
+                serverName.toUpperCase(),
+                String.format("%s%s", statusMessageString, statusString),
+                true);
         embedBuilder.setColor(status ? Color.GREEN : Color.RED);
         return embedBuilder.build();
     }
