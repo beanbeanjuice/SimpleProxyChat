@@ -1,12 +1,16 @@
-package com.beanbeanjuice.simpleproxychat.chat;
+package com.beanbeanjuice.simpleproxychat.utility.listeners.bungee;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
+import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
+import com.beanbeanjuice.simpleproxychat.utility.ServerStatusManager;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import de.myzelyam.api.vanish.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -17,10 +21,11 @@ import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class BungeeServerListener implements Listener {
 
@@ -30,6 +35,8 @@ public class BungeeServerListener implements Listener {
     public BungeeServerListener(SimpleProxyChatBungee plugin, ChatHandler chatHandler) {
         this.plugin = plugin;
         this.chatHandler = chatHandler;
+
+        startServerStatusDetection();
     }
 
     @EventHandler
@@ -90,20 +97,39 @@ public class BungeeServerListener implements Listener {
                 player.getName(),
                 player.getUniqueId(),
                 plugin.getLogger()::info,
-                (message) -> {
-                    from.getPlayers().stream()
-                            .filter((streamPlayer) -> streamPlayer != player)
-                            .forEach((streamPlayer) -> streamPlayer.sendMessage(ChatMessageType.CHAT, convertToBungee(message)));
-
-                }
+                (message) -> from.getPlayers().stream()
+                        .filter((streamPlayer) -> streamPlayer != player)
+                        .forEach((streamPlayer) -> streamPlayer.sendMessage(ChatMessageType.CHAT, convertToBungee(message)))
         );
     }
 
-    private void sendToAllServers(@NotNull String message) {
+    private void startServerStatusDetection() {
+        ServerStatusManager manager = new ServerStatusManager(plugin.getConfig());
+        plugin.getProxy().getScheduler().schedule(plugin, () -> plugin.getProxy().getServers().forEach((serverName, serverInfo) -> {
+            serverInfo.ping((result, error) -> {
+                boolean newStatus = (error == null);  // Server offline if error != null
+                Optional<Boolean> previousStatus = manager.setStatus(serverName, newStatus);
+
+                previousStatus.ifPresent(
+                        (status) -> {
+                            // If status is the same, do nothing.
+                            if (status != newStatus) runStatusLogic(manager, serverName, newStatus);
+                        }
+                );
+            });
+        }), 3, 3, TimeUnit.SECONDS);
+    }
+
+    private void runStatusLogic(ServerStatusManager manager, String serverName, boolean newStatus) {
+        plugin.getDiscordBot().sendMessageEmbed(manager.getStatusEmbed(serverName, newStatus));
+        plugin.getLogger().info(manager.getStatusString(serverName, newStatus));
+    }
+
+    private void sendToAllServers(String message) {
         plugin.getProxy().broadcast(convertToBungee(message));
     }
 
-    private @NotNull BaseComponent @NotNull [] convertToBungee(String message) {
+    private BaseComponent[] convertToBungee(String message) {
         Component minimessage = MiniMessage.miniMessage().deserialize(message);
         return BungeeComponentSerializer.get().serialize(minimessage);
     }

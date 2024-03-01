@@ -56,6 +56,13 @@ public class Config {
 
         config.put(ConfigDataKey.DISCORD_TO_MINECRAFT_MESSAGE, new ConfigDataEntry(Helper.translateLegacyCodes(yamlConfig.getString("discord_to_minecraft_message"))));
 
+        config.put(ConfigDataKey.PROXY_ENABLED_MESSAGE, new ConfigDataEntry(yamlConfig.getString("proxy_enabled")));
+        config.put(ConfigDataKey.PROXY_DISABLED_MESSAGE, new ConfigDataEntry(yamlConfig.getString("proxy_disabled")));
+        config.put(ConfigDataKey.PROXY_STATUS_TITLE, new ConfigDataEntry(yamlConfig.getString("proxy_status_title")));
+        config.put(ConfigDataKey.PROXY_STATUS_MESSAGE, new ConfigDataEntry(yamlConfig.getString("proxy_status_message")));
+        config.put(ConfigDataKey.PROXY_STATUS_ONLINE, new ConfigDataEntry(yamlConfig.getString("proxy_status_online")));
+        config.put(ConfigDataKey.PROXY_STATUS_OFFLINE, new ConfigDataEntry(yamlConfig.getString("proxy_status_offline")));
+
         config.put(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(false));
     }
 
