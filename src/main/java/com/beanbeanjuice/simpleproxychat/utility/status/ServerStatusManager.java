@@ -1,4 +1,4 @@
-package com.beanbeanjuice.simpleproxychat.utility;
+package com.beanbeanjuice.simpleproxychat.utility.status;
 
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
@@ -7,11 +7,10 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import java.awt.*;
 import java.util.HashMap;
-import java.util.Optional;
 
 public class ServerStatusManager {
 
-    private final HashMap<String, Boolean> servers;
+    private final HashMap<String, ServerStatus> servers;
     private final Config config;
 
     public ServerStatusManager(Config config) {
@@ -19,8 +18,9 @@ public class ServerStatusManager {
         this.config = config;
     }
 
-    public Optional<Boolean> setStatus(String serverName, Boolean status) {
-        return Optional.ofNullable(servers.put(serverName, status));
+    public ServerStatus getStatus(String serverName) {
+        servers.putIfAbsent(serverName, new ServerStatus());
+        return servers.get(serverName);
     }
 
     public MessageEmbed getStatusEmbed(String serverName, boolean status) {
