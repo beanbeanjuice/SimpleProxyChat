@@ -2,15 +2,14 @@ package com.beanbeanjuice.simpleproxychat.utility.listeners.bungee;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
-import com.beanbeanjuice.simpleproxychat.utility.ServerStatusManager;
+import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatus;
+import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import de.myzelyam.api.vanish.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
-import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -108,14 +107,12 @@ public class BungeeServerListener implements Listener {
         plugin.getProxy().getScheduler().schedule(plugin, () -> plugin.getProxy().getServers().forEach((serverName, serverInfo) -> {
             serverInfo.ping((result, error) -> {
                 boolean newStatus = (error == null);  // Server offline if error != null
-                Optional<Boolean> previousStatus = manager.setStatus(serverName, newStatus);
 
-                previousStatus.ifPresent(
-                        (status) -> {
-                            // If status is the same, do nothing.
-                            if (status != newStatus) runStatusLogic(manager, serverName, newStatus);
-                        }
-                );
+                ServerStatus currentStatus = manager.getStatus(serverName);
+                currentStatus.updateStatus(newStatus).ifPresent((isOnline) -> {
+                    plugin.getDiscordBot().sendMessageEmbed(manager.getStatusEmbed(serverName, isOnline));
+                    plugin.getLogger().info(manager.getStatusString(serverName, isOnline));
+                });
             });
         }), 3, 3, TimeUnit.SECONDS);
     }
