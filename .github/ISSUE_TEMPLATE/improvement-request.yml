@@ -1,0 +1,28 @@
+name: ⬆️ Improvement Request
+description: Suggest an improvement for this project.
+title: "[Improvement]: <title>"
+labels: ["improvement"]
+assignees:
+  - beanbeanjuice
+
+body:
+  - type: checkboxes
+    attributes:
+      label: Is there an existing issue for this?
+      description: Please search to see if an issue already exists for the improvement you are suggesting.
+      options:
+      - label: I have searched the existing issues and not found ones relating to my problem.
+        required: true
+  - type: textarea
+    attributes:
+      label: Improvement
+      description: What improvement would you like to suggest?
+      placeholder: I want to suggest...
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Are you certain this is a improvement request?
+      options:
+      - label: I am certain this is an improvement request, not a feature request, bug report, or security vulnerability report.
+        required: true
