@@ -2,7 +2,8 @@ package com.beanbeanjuice.simpleproxychat.utility.listeners.velocity;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
-import com.beanbeanjuice.simpleproxychat.utility.ServerStatusManager;
+import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatus;
+import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
@@ -93,16 +94,11 @@ public class VelocityServerListener {
     }
 
     private void runStatusLogic(ServerStatusManager manager, String serverName, boolean newStatus) {
-        Optional<Boolean> previousStatus = manager.setStatus(serverName, newStatus);
-
-        previousStatus.ifPresent(
-                (status) -> {
-                    if (status == newStatus) return;
-
-                    plugin.getDiscordBot().sendMessageEmbed(manager.getStatusEmbed(serverName, newStatus));
-                    plugin.getLogger().info(manager.getStatusString(serverName, newStatus));
-                }
-        );
+        ServerStatus currentStatus = manager.getStatus(serverName);
+        currentStatus.updateStatus(newStatus).ifPresent((isOnline) -> {
+            plugin.getDiscordBot().sendMessageEmbed(manager.getStatusEmbed(serverName, isOnline));
+            plugin.getLogger().info(manager.getStatusString(serverName, isOnline));
+        });
     }
 
     @Subscribe
