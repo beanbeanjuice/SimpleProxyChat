@@ -18,7 +18,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -80,6 +79,7 @@ public class VelocityServerListener {
 
     private void startServerStatusDetection() {
         ServerStatusManager manager = new ServerStatusManager(plugin.getConfig());
+        int updateInterval = (int) plugin.getConfig().get(ConfigDataKey.SERVER_UPDATE_INTERVAL);
 
         plugin.getProxyServer().getScheduler().buildTask(plugin, () -> plugin.getProxyServer().getAllServers().forEach((registeredServer) -> {
             String serverName = registeredServer.getServerInfo().getName();
@@ -90,7 +90,7 @@ public class VelocityServerListener {
                 runStatusLogic(manager, serverName, false);
                 return null;
             });
-        })).delay(3, TimeUnit.SECONDS).repeat(3, TimeUnit.SECONDS).schedule();
+        })).delay(updateInterval, TimeUnit.SECONDS).repeat(updateInterval, TimeUnit.SECONDS).schedule();
     }
 
     private void runStatusLogic(ServerStatusManager manager, String serverName, boolean newStatus) {

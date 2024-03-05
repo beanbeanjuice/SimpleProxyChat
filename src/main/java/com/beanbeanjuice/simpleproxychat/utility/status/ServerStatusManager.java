@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import java.awt.*;
 import java.util.HashMap;
-import java.util.Optional;
 
 public class ServerStatusManager {
 
@@ -20,7 +19,7 @@ public class ServerStatusManager {
     }
 
     public ServerStatus getStatus(String serverName) {
-        servers.putIfAbsent(serverName, new ServerStatus(true));
+        servers.putIfAbsent(serverName, new ServerStatus());
         return servers.get(serverName);
     }
 

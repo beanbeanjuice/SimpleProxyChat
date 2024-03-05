@@ -22,7 +22,6 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -104,12 +103,14 @@ public class BungeeServerListener implements Listener {
 
     private void startServerStatusDetection() {
         ServerStatusManager manager = new ServerStatusManager(plugin.getConfig());
+        int updateInterval = (int) plugin.getConfig().get(ConfigDataKey.SERVER_UPDATE_INTERVAL);
+
         plugin.getProxy().getScheduler().schedule(plugin, () -> plugin.getProxy().getServers().forEach((serverName, serverInfo) -> {
             serverInfo.ping((result, error) -> {
                 boolean newStatus = (error == null);  // Server offline if error != null
                 runStatusLogic(manager, serverName, newStatus);
             });
-        }), 3, 3, TimeUnit.SECONDS);
+        }), updateInterval, updateInterval, TimeUnit.SECONDS);
     }
 
     private void runStatusLogic(ServerStatusManager manager, String serverName, boolean newStatus) {
