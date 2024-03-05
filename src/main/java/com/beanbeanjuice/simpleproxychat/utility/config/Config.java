@@ -63,6 +63,8 @@ public class Config {
         config.put(ConfigDataKey.PROXY_STATUS_ONLINE, new ConfigDataEntry(yamlConfig.getString("proxy_status_online")));
         config.put(ConfigDataKey.PROXY_STATUS_OFFLINE, new ConfigDataEntry(yamlConfig.getString("proxy_status_offline")));
 
+        config.put(ConfigDataKey.SERVER_UPDATE_INTERVAL, new ConfigDataEntry(yamlConfig.getInt("server_update_interval")));
+
         config.put(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(false));
     }
 

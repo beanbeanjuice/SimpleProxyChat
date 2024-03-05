@@ -6,26 +6,21 @@ import java.util.Optional;
 
 public class ServerStatus {
 
-    @Getter private boolean status;
-    private boolean previousStatus;
+    @Getter private Boolean status;  // Object wrapper to use Object#equals to detect state change.
+    private Boolean previousStatus;  // Object wrapper to use Object#equals to detect state change.
     private int onlineCount = 0;
     private int offlineCount = 0;
 
     private static final int COUNT_UNTIL_UPDATE = 5;
-
-    public ServerStatus(boolean status) {
-        this.status = status;
-        this.previousStatus = status;
-    }
 
     private void resetCount() {
         onlineCount = 0;
         offlineCount = 0;
     }
 
-    public Optional<Boolean> updateStatus(boolean newStatus) {
-        if (newStatus == this.status) return Optional.empty();  // Do nothing if no state change.
-        if (newStatus != this.previousStatus) resetCount();  // This means a state change has occurred.
+    public Optional<Boolean> updateStatus(Boolean newStatus) {
+        if (newStatus.equals(this.status)) return Optional.empty();  // Do nothing if no state change.
+        if (!newStatus.equals(this.previousStatus)) resetCount();  // This means a state change has occurred.
         this.previousStatus = newStatus;
 
         int count = newStatus ? ++this.onlineCount : ++this.offlineCount;
