@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.beanbeanjuice"
-version = "0.1.1"
+version = "0.1.2"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -171,7 +171,7 @@ tasks.withType<ShadowJar> {
     relocate("org.bstats", "com.beanbeanjuice.simpleproxychat.libs.org.bstats")
     archiveBaseName.set(rootProject.name)
     archiveClassifier.set("")
-    archiveVersion.set("")
+    archiveVersion.set(version as String)
 }
 
 tasks.withType<JavaCompile> {
