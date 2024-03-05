@@ -3,6 +3,7 @@ name: "Gradle CI"
 on:
   push:
     branches:
+      - development
       - integration
       - master
 

@@ -1,0 +1,28 @@
+name: ⚡ Feature Request
+description: Suggest an idea for this project.
+title: "[FEATURE]: <title>"
+labels: ["feature"]
+assignees:
+  - beanbeanjuice
+
+body:
+  - type: checkboxes
+    attributes:
+      label: Is there an existing issue for this?
+      description: Please search to see if an issue already exists for the feature you are requesting.
+      options:
+      - label: I have searched the existing issues and not found ones relating to my problem.
+        required: true
+  - type: textarea
+    attributes:
+      label: Feature
+      description: What feature would you like to add?
+      placeholder: I want the plugin to do...
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Are you certain this is a feature request?
+      options:
+      - label: I am certain this is a feature request, not an improvement request, bug report, or security vulnerability report.
+        required: true

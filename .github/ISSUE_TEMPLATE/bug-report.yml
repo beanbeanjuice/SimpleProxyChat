@@ -1,0 +1,63 @@
+name: 🐞 Bug Report
+description: File a bug report.
+title: "[BUG]: <title>"
+labels: ["bug"]
+assignees:
+  - beanbeanjuice
+
+body:
+  - type: checkboxes
+    attributes:
+      label: Is there an existing issue for this?
+      description: Please search to see if an issue already exists for the bug you encountered.
+      options:
+      - label: I have searched the existing issues and not found ones relating to my problem.
+        required: true
+  - type: textarea
+    attributes:
+      label: Version
+      description: What version of the plugin are you using?
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: What proxy software are you seeing this issue on?
+      multiple: true
+      options:
+        - BungeeCord
+        - Waterfall
+        - Velocity
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: What proxy software version are you using?
+      placeholder: "1.20"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Current Behaviour
+      description: A concise description of what the bug is.
+      placeholder: The plugin is doing ___...
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected Behaviour
+      description: A clear description of what the action should do. (It can also be what the action should do instead.)
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Steps to Reproduce
+      description: A step-by-step guide on how to reproduce this bug.
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Are you certain this is a bug report?
+      options:
+      - label: I am certain this is a bug report, and not a feature request, improvement request, or a security vulnerability.
+        required: true

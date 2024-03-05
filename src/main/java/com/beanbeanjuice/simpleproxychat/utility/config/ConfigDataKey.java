@@ -25,5 +25,7 @@ public enum ConfigDataKey {
     PROXY_STATUS_ONLINE,
     PROXY_STATUS_OFFLINE,
 
+    SERVER_UPDATE_INTERVAL,
+
     VANISH_ENABLED
 }
