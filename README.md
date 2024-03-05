@@ -101,8 +101,11 @@ proxy_status_message: "Status: "
 proxy_status_online: "Online"
 proxy_status_offline: "Offline"
 
+# The amount of seconds to check if a server is online/offline. Smaller numbers can cause errors. Beware.
+server_update_interval: 3
+
 # DO NOT TOUCH THIS
-file-version: 3
+file-version: 4
 ```
 
 ---
