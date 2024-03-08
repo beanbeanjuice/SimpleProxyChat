@@ -2,7 +2,7 @@
   <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/SimpleProxyChat.png?raw=true" alt="SimpleProxyChat Logo"/>
 </p>
 <center>
-  A simple plugin to allow cross-server communication. Also has the option of using Discord to allow global Discord chat with all of the servers on your proxy network.​
+  A simple plugin to allow global cross-server communication and messaging with support for LuckPerms and Discord integration.
 </center>
 
 ---
