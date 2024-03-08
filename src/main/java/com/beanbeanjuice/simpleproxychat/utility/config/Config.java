@@ -66,6 +66,7 @@ public class Config {
         config.put(ConfigDataKey.SERVER_UPDATE_INTERVAL, new ConfigDataEntry(yamlConfig.getInt("server_update_interval")));
 
         config.put(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(false));
+        config.put(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(false));
     }
 
     private YamlDocument loadConfig() throws IOException {

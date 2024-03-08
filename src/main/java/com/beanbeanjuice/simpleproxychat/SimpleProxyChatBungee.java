@@ -13,6 +13,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 import org.bstats.bungeecord.Metrics;
@@ -29,6 +31,7 @@ public final class SimpleProxyChatBungee extends Plugin {
 
     private Config config;
     private Bot discordBot;
+    private LuckPerms luckPermsAPI;
 
     @Override
     public void onEnable() {
@@ -53,11 +56,26 @@ public final class SimpleProxyChatBungee extends Plugin {
                         .build()
         );
 
+        // Registering LuckPerms support.
+        try {
+            luckPermsAPI = LuckPermsProvider.get();
+            config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(true));
+            getLogger().info("LuckPerms support has been enabled.");
+        } catch (IllegalStateException e) {
+            getLogger().info("LuckPerms not found. Disabling LuckPerms support...");
+        }
+
         // Registering Chat Listener
-        ChatHandler chatHandler = new ChatHandler(config, discordBot, (message) -> {
-            Component minimessage = MiniMessage.miniMessage().deserialize(message);
-            this.getProxy().broadcast(BungeeComponentSerializer.get().serialize(minimessage));
-        });
+        ChatHandler chatHandler = new ChatHandler(
+                config,
+                discordBot,
+                (message) -> {
+                    Component minimessage = MiniMessage.miniMessage().deserialize(message);
+                    this.getProxy().broadcast(BungeeComponentSerializer.get().serialize(minimessage));
+                },
+                (message) -> getLogger().info(message),
+                luckPermsAPI
+        );
 
         BungeeServerListener serverListener = new BungeeServerListener(this, chatHandler);
         this.getProxy().getPluginManager().registerListener(this, serverListener);

@@ -67,6 +67,9 @@ dependencies {
     // Lombok
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
+
+    // LuckPerms Support
+    compileOnly("net.luckperms:api:5.4")
 }
 
 configure<ProcessResources>("processResources") {

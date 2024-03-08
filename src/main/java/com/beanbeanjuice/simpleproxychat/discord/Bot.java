@@ -1,5 +1,6 @@
 package com.beanbeanjuice.simpleproxychat.discord;
 
+import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import net.dv8tion.jda.api.JDA;
@@ -9,6 +10,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -41,6 +43,8 @@ public class Bot {
 
     public void sendMessage(@NotNull String message) {
         if (bot == null) return;
+
+        message = Helper.stripColor(MiniMessage.miniMessage().deserialize(message));
 
         message = Arrays.stream(message.split(" ")).map((originalString) -> {
             if (!originalString.startsWith("@")) return originalString;
