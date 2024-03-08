@@ -1,5 +1,7 @@
 package com.beanbeanjuice.simpleproxychat.utility;
 
+import com.beanbeanjuice.simpleproxychat.utility.config.Config;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -25,6 +27,11 @@ public class Helper {
                 .replaceAll("&d", convertToTag(NamedTextColor.LIGHT_PURPLE.asHexString()))
                 .replaceAll("&e", convertToTag(NamedTextColor.YELLOW.asHexString()))
                 .replaceAll("&f", convertToTag(NamedTextColor.WHITE.asHexString()));
+    }
+
+    public static String convertAlias(Config config, String serverName) {
+        String alias = config.getAsStringMap(ConfigDataKey.ALIASES).get(serverName);
+        return (alias == null) ? serverName : alias;
     }
 
     private static String convertToTag(String string) {

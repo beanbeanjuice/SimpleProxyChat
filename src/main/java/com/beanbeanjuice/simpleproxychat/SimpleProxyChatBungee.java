@@ -48,7 +48,7 @@ public final class SimpleProxyChatBungee extends Plugin {
 
         discordBot.sendMessageEmbed(
                 new EmbedBuilder()
-                        .setTitle((String) config.get(ConfigDataKey.PROXY_ENABLED_MESSAGE))
+                        .setTitle(config.getAsString(ConfigDataKey.PROXY_ENABLED_MESSAGE))
                         .setColor(Color.GREEN)
                         .build()
         );
@@ -117,7 +117,7 @@ public final class SimpleProxyChatBungee extends Plugin {
         this.getLogger().log(Level.INFO, "The plugin is shutting down.");
         discordBot.sendMessageEmbed(
                 new EmbedBuilder()
-                        .setTitle((String) config.get(ConfigDataKey.PROXY_DISABLED_MESSAGE))
+                        .setTitle(config.getAsString(ConfigDataKey.PROXY_DISABLED_MESSAGE))
                         .setColor(Color.RED)
                         .build()
         );
