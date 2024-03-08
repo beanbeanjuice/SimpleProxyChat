@@ -47,7 +47,7 @@ public class BungeeServerListener implements Listener {
         String playerName = player.getName();
         String playerMessage = event.getMessage();
 
-        chatHandler.runProxyChatMessage(serverName, playerName, playerMessage, plugin.getLogger()::info, (message) -> {
+        chatHandler.runProxyChatMessage(serverName, playerName, player.getUniqueId(), playerMessage, plugin.getLogger()::info, (message) -> {
             List<UUID> blacklistedUUIDs = currentServer.getInfo().getPlayers().stream()
                     .map(ProxiedPlayer::getUniqueId)
                     .toList();

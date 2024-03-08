@@ -53,11 +53,26 @@ public final class SimpleProxyChatBungee extends Plugin {
                         .build()
         );
 
+        // Registering LuckPerms support.
+        if (pm.getPlugin("LuckPerms") != null) {
+            try {
+                config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(true));
+                getLogger().info("LuckPerms support has been enabled.");
+            } catch (IllegalStateException e) {
+                getLogger().info("Error Enabling LuckPerms: " + e.getMessage());
+            }
+        }
+
         // Registering Chat Listener
-        ChatHandler chatHandler = new ChatHandler(config, discordBot, (message) -> {
-            Component minimessage = MiniMessage.miniMessage().deserialize(message);
-            this.getProxy().broadcast(BungeeComponentSerializer.get().serialize(minimessage));
-        });
+        ChatHandler chatHandler = new ChatHandler(
+                config,
+                discordBot,
+                (message) -> {
+                    Component minimessage = MiniMessage.miniMessage().deserialize(message);
+                    this.getProxy().broadcast(BungeeComponentSerializer.get().serialize(minimessage));
+                },
+                (message) -> getLogger().info(message)
+        );
 
         BungeeServerListener serverListener = new BungeeServerListener(this, chatHandler);
         this.getProxy().getPluginManager().registerListener(this, serverListener);

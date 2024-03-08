@@ -39,7 +39,7 @@ public class VelocityServerListener {
             String playerName = event.getPlayer().getUsername();
             String playerMessage = event.getMessage();
 
-            chatHandler.runProxyChatMessage(serverName, playerName, playerMessage, plugin.getLogger()::info, (message) -> {
+            chatHandler.runProxyChatMessage(serverName, playerName, event.getPlayer().getUniqueId(), playerMessage, plugin.getLogger()::info, (message) -> {
                 List<UUID> blacklistedUUIDs = connection.getServer().getPlayersConnected().stream()
                         .map(Player::getUniqueId)
                         .toList();
