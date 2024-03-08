@@ -141,6 +141,10 @@ hangarPublish {
                     url("SuperVanish", "https://www.spigotmc.org/resources/supervanish-be-invisible.1331/") {
                         required.set(false)
                     }
+
+                    url("LuckPerms", "https://luckperms.net") {
+                        required.set(false)
+                    }
                 }
             }
 
@@ -161,6 +165,10 @@ hangarPublish {
                     }
 
                     url("SuperVanish", "https://www.spigotmc.org/resources/supervanish-be-invisible.1331/") {
+                        required.set(false)
+                    }
+
+                    url("LuckPerms", "https://luckperms.net") {
                         required.set(false)
                     }
                 }
