@@ -6,6 +6,11 @@ on:
       - development
       - integration
       - master
+  pull_request:
+    branches:
+      - development
+      - integration
+      - master
 
 jobs:
   test:
