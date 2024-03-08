@@ -56,7 +56,7 @@ public class VelocityServerListener {
     // TODO: Add Vanish API
     @Subscribe
     public void onDisconnect(DisconnectEvent event) {
-        if ((Boolean) plugin.getConfig().get(ConfigDataKey.VANISH_ENABLED) && VelocityVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
+        if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && VelocityVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
 
         leave(event.getPlayer());
     }
@@ -68,7 +68,7 @@ public class VelocityServerListener {
     // TODO: Add Vanish API
     @Subscribe
     public void onPostLogin(PostLoginEvent event) {
-        if ((Boolean) plugin.getConfig().get(ConfigDataKey.VANISH_ENABLED) && VelocityVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
+        if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && VelocityVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
 
         join(event.getPlayer());
     }
@@ -79,7 +79,7 @@ public class VelocityServerListener {
 
     private void startServerStatusDetection() {
         ServerStatusManager manager = new ServerStatusManager(plugin.getConfig());
-        int updateInterval = (int) plugin.getConfig().get(ConfigDataKey.SERVER_UPDATE_INTERVAL);
+        int updateInterval = plugin.getConfig().getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL);
 
         plugin.getProxyServer().getScheduler().buildTask(plugin, () -> plugin.getProxyServer().getAllServers().forEach((registeredServer) -> {
             String serverName = registeredServer.getServerInfo().getName();

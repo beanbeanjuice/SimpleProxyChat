@@ -42,7 +42,7 @@ public class BungeeServerListener implements Listener {
         if (event.isCommand() || event.isProxyCommand()) return;  // Ignore if it is a command.
 
         Server currentServer = (Server) event.getReceiver();
-        String serverName = currentServer.getInfo().getName().toUpperCase();
+        String serverName = currentServer.getInfo().getName();
         ProxiedPlayer player = (ProxiedPlayer) event.getSender();
         String playerName = player.getName();
         String playerMessage = event.getMessage();
@@ -60,7 +60,7 @@ public class BungeeServerListener implements Listener {
 
     @EventHandler
     public void onPlayerLeaveProxy(PlayerDisconnectEvent event) {
-        if ((Boolean) plugin.getConfig().get(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
+        if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
 
         leave(event.getPlayer());
     }
@@ -71,7 +71,7 @@ public class BungeeServerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoinProxy(PostLoginEvent event) {
-        if ((Boolean) plugin.getConfig().get(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
+        if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
 
         join(event.getPlayer());
     }
@@ -84,7 +84,7 @@ public class BungeeServerListener implements Listener {
     public void onPlayerServerSwitch(ServerSwitchEvent event) {
         ProxiedPlayer player = event.getPlayer();
 
-        if ((Boolean) plugin.getConfig().get(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(player)) return;  // Ignore if player is invisible.
+        if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(player)) return;  // Ignore if player is invisible.
         if (event.getFrom() == null) return;  // This means the player just joined the network.
 
         ServerInfo from = event.getFrom();
@@ -103,7 +103,7 @@ public class BungeeServerListener implements Listener {
 
     private void startServerStatusDetection() {
         ServerStatusManager manager = new ServerStatusManager(plugin.getConfig());
-        int updateInterval = (int) plugin.getConfig().get(ConfigDataKey.SERVER_UPDATE_INTERVAL);
+        int updateInterval = plugin.getConfig().getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL);
 
         plugin.getProxy().getScheduler().schedule(plugin, () -> plugin.getProxy().getServers().forEach((serverName, serverInfo) -> {
             serverInfo.ping((result, error) -> {

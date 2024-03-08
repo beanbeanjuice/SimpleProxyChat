@@ -46,5 +46,12 @@ proxy_status_offline: "Offline"
 # The amount of seconds to check if a server is online/offline. Smaller numbers can cause errors. Beware.
 server_update_interval: 3
 
+# Use this if you want to change the default aliases. It MUST be the same name you have in your bungee/velocity config.
+# Simply set it to disabled: disabled to disable it.
+aliases:
+  ServerInConfigExample: ServerAliasExample
+  hub: Hub1
+  smp: smp1
+
 # DO NOT TOUCH THIS
-file-version: 4
+file-version: 5

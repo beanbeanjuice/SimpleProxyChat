@@ -44,10 +44,10 @@ public class ChatHandler {
 
     public void runProxyChatMessage(String serverName, String playerName, UUID playerUUID,
                                     String playerMessage, Consumer<String> consoleLogger, Consumer<String> minecraftLogger) {
-        String minecraftConfigString = (String) config.get(ConfigDataKey.MESSAGE_FORMAT);
-        String discordConfigString = (String) config.get(ConfigDataKey.MINECRAFT_TO_DISCORD_MESSAGE);
+        String minecraftConfigString = config.getAsString(ConfigDataKey.MESSAGE_FORMAT);
+        String discordConfigString = config.getAsString(ConfigDataKey.MINECRAFT_TO_DISCORD_MESSAGE);
 
-        serverName = serverName.toUpperCase();
+        serverName = Helper.convertAlias(config, serverName);
 
         String minecraftMessage = minecraftConfigString
                 .replace("%message%", playerMessage)
@@ -59,7 +59,7 @@ public class ChatHandler {
                 .replace("%server%", serverName)
                 .replace("%player%", playerName);
 
-        if ((boolean) config.get(ConfigDataKey.LUCKPERMS_ENABLED)) {
+        if (config.getAsBoolean(ConfigDataKey.LUCKPERMS_ENABLED)) {
             minecraftMessage = replacePrefixSuffix(minecraftMessage, playerUUID);
             discordMessage = replacePrefixSuffix(discordMessage, playerUUID);
         }
@@ -76,13 +76,13 @@ public class ChatHandler {
 
     public void runProxyLeaveMessage(String playerName, UUID playerUUID,
                                      Consumer<String> consoleLogger, Consumer<String> minecraftLogger) {
-        String configString = (String) config.get(ConfigDataKey.LEAVE_FORMAT);
-        String discordConfigString = (String) config.get(ConfigDataKey.MINECRAFT_TO_DISCORD_LEAVE);
+        String configString = config.getAsString(ConfigDataKey.LEAVE_FORMAT);
+        String discordConfigString = config.getAsString(ConfigDataKey.MINECRAFT_TO_DISCORD_LEAVE);
 
         String message = configString.replace("%player%", playerName);
         String discordMessage = discordConfigString.replace("%player%", playerName);
 
-        if ((boolean) config.get(ConfigDataKey.LUCKPERMS_ENABLED)) {
+        if (config.getAsBoolean(ConfigDataKey.LUCKPERMS_ENABLED)) {
             message = replacePrefixSuffix(message, playerUUID);
             discordMessage = replacePrefixSuffix(discordMessage, playerUUID);
         }
@@ -99,13 +99,13 @@ public class ChatHandler {
 
     public void runProxyJoinMessage(String playerName, UUID playerUUID,
                                     Consumer<String> consoleLogger, Consumer<String> minecraftLogger) {
-        String configString = (String) config.get(ConfigDataKey.JOIN_FORMAT);
-        String discordConfigString = (String) config.get(ConfigDataKey.MINECRAFT_TO_DISCORD_JOIN);
+        String configString = config.getAsString(ConfigDataKey.JOIN_FORMAT);
+        String discordConfigString = config.getAsString(ConfigDataKey.MINECRAFT_TO_DISCORD_JOIN);
 
         String message = configString.replace("%player%", playerName);
         String discordMessage = discordConfigString.replace("%player%", playerName);
 
-        if ((boolean) config.get(ConfigDataKey.LUCKPERMS_ENABLED)) {
+        if (config.getAsBoolean(ConfigDataKey.LUCKPERMS_ENABLED)) {
             message = replacePrefixSuffix(message, playerUUID);
             discordMessage = replacePrefixSuffix(discordMessage, playerUUID);
         }
@@ -122,12 +122,12 @@ public class ChatHandler {
 
     public void runProxySwitchMessage(String from, String to, String playerName, UUID playerUUID,
                                       Consumer<String> consoleLogger, Consumer<String> minecraftLogger) {
-        String consoleConfigString = (String) config.get(ConfigDataKey.SWITCH_FORMAT);
-        String discordConfigString = (String) config.get(ConfigDataKey.MINECRAFT_TO_DISCORD_SWITCH);
-        String minecraftConfigString = (String) config.get(ConfigDataKey.SWITCH_FORMAT_NO_FROM);
+        String consoleConfigString = config.getAsString(ConfigDataKey.SWITCH_FORMAT);
+        String discordConfigString = config.getAsString(ConfigDataKey.MINECRAFT_TO_DISCORD_SWITCH);
+        String minecraftConfigString = config.getAsString(ConfigDataKey.SWITCH_FORMAT_NO_FROM);
 
-        from = from.toUpperCase();
-        to = to.toUpperCase();
+        from = Helper.convertAlias(config, from);
+        to = Helper.convertAlias(config, to);
 
         String consoleMessage = consoleConfigString
                 .replace("%from%", from)
@@ -144,7 +144,7 @@ public class ChatHandler {
                 .replace("%to%", to)
                 .replace("%player%", playerName);
 
-        if ((boolean) config.get(ConfigDataKey.LUCKPERMS_ENABLED)) {
+        if (config.getAsBoolean(ConfigDataKey.LUCKPERMS_ENABLED)) {
             consoleMessage = replacePrefixSuffix(consoleMessage, playerUUID);
             minecraftMessage = replacePrefixSuffix(minecraftMessage, playerUUID);
             discordMessage = replacePrefixSuffix(discordMessage, playerUUID);
@@ -171,7 +171,7 @@ public class ChatHandler {
     }
 
     public void sendFromDiscord(MessageReceivedEvent event) {
-        String message = (String) config.get(ConfigDataKey.DISCORD_TO_MINECRAFT_MESSAGE);
+        String message = config.getAsString(ConfigDataKey.DISCORD_TO_MINECRAFT_MESSAGE);
 
         if (event.getMember() == null) return;
 

@@ -113,7 +113,7 @@ file-version: 4
 
 ## Caveats
 1) As of right now, vanish support is only available on *BungeeCord/Waterfall*. The plugin will still function as normal, but if you go into vanish then it won't send a fake join/leave message.
-1) In order for prefixes and suffixes to work, you **must** have LuckPerms installed on the proxy.
+1) In order for prefixes and suffixes to work, you **must** have LuckPerms installed on the proxy. Then, you can use `%prefix%` and `%suffix%`.
 
 ---
 
