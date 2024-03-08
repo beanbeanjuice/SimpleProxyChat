@@ -3,6 +3,7 @@
 #                 HEX Values are Supported
 #  Example: <#FFFFFF>Some text</#FFFFFF> this is a message!
 #  If using the color codes ("&"), only use the COLOR codes.
+#     LuckPerms is supported. Use %prefix% or %suffix%.
 # ==========================================================
 
 # True if you will be using Discord

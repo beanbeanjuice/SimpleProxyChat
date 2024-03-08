@@ -20,6 +20,8 @@ import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
 import org.bstats.charts.MultiLineChart;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
@@ -33,19 +35,13 @@ import java.util.concurrent.TimeUnit;
 
 public class SimpleProxyChatVelocity {
 
-    @Getter
-    private final ProxyServer proxyServer;
-
-    @Getter
-    private final Logger logger;
-
     private final Metrics.Factory metricsFactory;
 
-    @Getter
-    private final Config config;
-
-    @Getter
-    private Bot discordBot;
+    @Getter private final ProxyServer proxyServer;
+    @Getter private final Logger logger;
+    @Getter private final Config config;
+    @Getter private Bot discordBot;
+    @Getter private LuckPerms luckPermsAPI;
 
     @Inject
     public SimpleProxyChatVelocity(ProxyServer proxyServer, Logger logger, @DataDirectory Path dataDirectory, Metrics.Factory metricsFactory) {
@@ -83,14 +79,29 @@ public class SimpleProxyChatVelocity {
         this.logger.info("Plugin has been initialized.");
     }
 
-    @Subscribe
+    @Subscribe(order = PostOrder.LAST)
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        // Registering LuckPerms support.
+        try {
+            luckPermsAPI = LuckPermsProvider.get();
+            config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(true));
+            getLogger().info("LuckPerms support has been enabled.");
+        } catch (IllegalStateException e) {
+            getLogger().info("LuckPerms not found. Disabling LuckPerms support...");
+        }
+
         // Register Chat Listener
-        ChatHandler chatHandler = new ChatHandler(config, discordBot, (message) -> {
-            Component messageComponent = MiniMessage.miniMessage().deserialize(message);
-            logger.info(Helper.stripColor(messageComponent));
-            proxyServer.getAllPlayers().forEach((player) -> player.sendMessage(messageComponent));
-        });
+        ChatHandler chatHandler = new ChatHandler(
+                config,
+                discordBot,
+                (message) -> {
+                    Component messageComponent = MiniMessage.miniMessage().deserialize(message);
+                    logger.info(Helper.stripColor(messageComponent));
+                    proxyServer.getAllPlayers().forEach((player) -> player.sendMessage(messageComponent));
+                },
+                (message) -> getLogger().info(message),
+                luckPermsAPI
+        );
         this.proxyServer.getEventManager().register(this, new VelocityServerListener(this, chatHandler));
 
         // Start Channel Topic Updater
