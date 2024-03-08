@@ -62,6 +62,7 @@
 #                 HEX Values are Supported
 #  Example: <#FFFFFF>Some text</#FFFFFF> this is a message!
 #  If using the color codes ("&"), only use the COLOR codes.
+#     LuckPerms is supported. Use %prefix% or %suffix%.
 # ==========================================================
 
 # True if you will be using Discord
@@ -111,7 +112,8 @@ file-version: 4
 ---
 
 ## Caveats
-As of right now, vanish support is only available on *BungeeCord/Waterfall*. The plugin will still function as normal, but if you go into vanish then it won't send a fake join/leave message.
+1) As of right now, vanish support is only available on *BungeeCord/Waterfall*. The plugin will still function as normal, but if you go into vanish then it won't send a fake join/leave message.
+1) In order for prefixes and suffixes to work, you **must** have LuckPerms installed on the proxy.
 
 ---
 
