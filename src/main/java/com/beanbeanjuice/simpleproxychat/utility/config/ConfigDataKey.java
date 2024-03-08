@@ -27,5 +27,6 @@ public enum ConfigDataKey {
 
     SERVER_UPDATE_INTERVAL,
 
-    VANISH_ENABLED
+    VANISH_ENABLED,
+    LUCKPERMS_ENABLED
 }
