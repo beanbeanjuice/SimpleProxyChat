@@ -26,13 +26,13 @@ public class Bot {
     public Bot(@NotNull Config config) throws InterruptedException {
         this.config = config;
 
-        if (!(boolean) config.get(ConfigDataKey.USE_DISCORD)) {
+        if (!config.getAsBoolean(ConfigDataKey.USE_DISCORD)) {
             bot = null;
             return;
         }
 
         bot = JDABuilder
-                .createLight((String) config.get(ConfigDataKey.BOT_TOKEN))
+                .createLight(config.getAsString(ConfigDataKey.BOT_TOKEN))
                 .setActivity(Activity.watching("Proxy"))
                 .enableCache(CacheFlag.ROLE_TAGS)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
@@ -50,7 +50,7 @@ public class Bot {
             if (!originalString.startsWith("@")) return originalString;
             String name = originalString.replace("@", "");
 
-            List<Member> potentialMembers = bot.getTextChannelById((String) config.get(ConfigDataKey.CHANNEL_ID)).getMembers();
+            List<Member> potentialMembers = bot.getTextChannelById(config.getAsString(ConfigDataKey.CHANNEL_ID)).getMembers();
             Optional<Member> potentialMember = potentialMembers
                     .stream()
                     .filter((member) -> ((member.getNickname() != null && member.getNickname().equalsIgnoreCase(name)) || member.getEffectiveName().equalsIgnoreCase(name)))
@@ -59,17 +59,17 @@ public class Bot {
             return potentialMember.map(IMentionable::getAsMention).orElse(originalString);
         }).collect(Collectors.joining(" "));
 
-        bot.getTextChannelById((String) config.get(ConfigDataKey.CHANNEL_ID)).sendMessage(message).queue();
+        bot.getTextChannelById(config.getAsString(ConfigDataKey.CHANNEL_ID)).sendMessage(message).queue();
     }
 
     public void sendMessageEmbed(@NotNull MessageEmbed embed) {
         if (bot == null) return;
-        bot.getTextChannelById((String) config.get(ConfigDataKey.CHANNEL_ID)).sendMessageEmbeds(embed).queue();
+        bot.getTextChannelById(config.getAsString(ConfigDataKey.CHANNEL_ID)).sendMessageEmbeds(embed).queue();
     }
 
     public void updateChannelTopic(@NotNull String topic) {
         if (bot == null) return;
-        bot.getTextChannelById((String) config.get(ConfigDataKey.CHANNEL_ID)).getManager().setTopic(topic).queue();
+        bot.getTextChannelById(config.getAsString(ConfigDataKey.CHANNEL_ID)).getManager().setTopic(topic).queue();
     }
 
     public void channelUpdaterFunction(int players) {
