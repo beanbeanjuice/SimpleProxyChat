@@ -20,8 +20,6 @@ import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.luckperms.api.LuckPerms;
-import net.luckperms.api.LuckPermsProvider;
 import org.bstats.charts.MultiLineChart;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
@@ -41,7 +39,6 @@ public class SimpleProxyChatVelocity {
     @Getter private final Logger logger;
     @Getter private final Config config;
     @Getter private Bot discordBot;
-    @Getter private LuckPerms luckPermsAPI;
 
     @Inject
     public SimpleProxyChatVelocity(ProxyServer proxyServer, Logger logger, @DataDirectory Path dataDirectory, Metrics.Factory metricsFactory) {
@@ -82,12 +79,13 @@ public class SimpleProxyChatVelocity {
     @Subscribe(order = PostOrder.LAST)
     public void onProxyInitialization(ProxyInitializeEvent event) {
         // Registering LuckPerms support.
-        try {
-            luckPermsAPI = LuckPermsProvider.get();
-            config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(true));
-            getLogger().info("LuckPerms support has been enabled.");
-        } catch (IllegalStateException e) {
-            getLogger().info("LuckPerms not found. Disabling LuckPerms support...");
+        if (this.proxyServer.getPluginManager().getPlugin("luckperms").isPresent()) {
+            try {
+                config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(true));
+                getLogger().info("LuckPerms support has been enabled.");
+            } catch (IllegalStateException e) {
+                getLogger().info("Error Enabling LuckPerms: " + e.getMessage());
+            }
         }
 
         // Register Chat Listener
@@ -99,8 +97,7 @@ public class SimpleProxyChatVelocity {
                     logger.info(Helper.stripColor(messageComponent));
                     proxyServer.getAllPlayers().forEach((player) -> player.sendMessage(messageComponent));
                 },
-                (message) -> getLogger().info(message),
-                luckPermsAPI
+                (message) -> getLogger().info(message)
         );
         this.proxyServer.getEventManager().register(this, new VelocityServerListener(this, chatHandler));
 

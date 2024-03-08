@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.NodeType;
 import net.luckperms.api.node.types.PrefixNode;
@@ -32,18 +32,14 @@ public class ChatHandler {
     private final Consumer<String> globalLogger;
     private final Consumer<String> pluginLogger;
 
-    private final LuckPerms luckPermsAPI;
-
     public ChatHandler(Config config, Bot discordBot, Consumer<String> globalLogger,
-                       Consumer<String> pluginLogger, LuckPerms luckPermsAPI) {
+                       Consumer<String> pluginLogger) {
         this.config = config;
         this.discordBot = discordBot;
 
         this.globalLogger = globalLogger;
         this.pluginLogger = pluginLogger;
         discordBot.getJDA().ifPresent((jda) -> jda.addEventListener(new DiscordChatHandler(config, this::sendFromDiscord)));
-
-        this.luckPermsAPI = luckPermsAPI;
     }
 
     public void runProxyChatMessage(String serverName, String playerName, UUID playerUUID,
@@ -57,7 +53,6 @@ public class ChatHandler {
                 .replace("%message%", playerMessage)
                 .replace("%server%", serverName)
                 .replace("%player%", playerName);
-
 
         String discordMessage = discordConfigString
                 .replace("%message%", playerMessage)
@@ -204,7 +199,7 @@ public class ChatHandler {
 
     private String replacePrefixSuffix(String message, UUID playerUUID) {
         try {
-            User user = luckPermsAPI.getUserManager().loadUser(playerUUID).get();
+            User user = LuckPermsProvider.get().getUserManager().loadUser(playerUUID).get();
 
             List<String> prefixList = user.resolveInheritedNodes(QueryOptions.nonContextual())
                     .stream()
