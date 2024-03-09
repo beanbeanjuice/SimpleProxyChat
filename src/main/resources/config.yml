@@ -25,5 +25,11 @@ aliases:
   hub: Hub1
   smp: smp1
 
+# Whether to use the permission system.
+# simpleproxy.read.join - Read join messages.
+# simpleproxy.read.leave - Read leave messages.
+# simpleproxy.read.switch - Read switch messages.
+use-permissions: false
+
 # DO NOT TOUCH THIS
 file-version: 6

@@ -98,7 +98,11 @@ public class BungeeServerListener implements Listener {
                 plugin.getLogger()::info,
                 (message) -> from.getPlayers().stream()
                         .filter((streamPlayer) -> streamPlayer != player)
-                        .filter((streamPlayer) -> streamPlayer.hasPermission(Permission.READ_SWITCH_MESSAGE.getPermissionNode()))
+                        .filter((streamPlayer) -> {
+                            if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
+                                return streamPlayer.hasPermission(Permission.READ_SWITCH_MESSAGE.getPermissionNode());
+                            return true;
+                        })
                         .forEach((streamPlayer) -> streamPlayer.sendMessage(ChatMessageType.CHAT, convertToBungee(message)))
         );
     }
@@ -125,7 +129,11 @@ public class BungeeServerListener implements Listener {
 
     private void sendToAllServers(String message, Permission permission) {
         plugin.getProxy().getPlayers().stream()
-                        .filter((player) -> player.hasPermission(permission.getPermissionNode()))
+                        .filter((player) -> {
+                            if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
+                                return player.hasPermission(permission.getPermissionNode());
+                            return true;
+                        })
                         .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, convertToBungee(message)));
     }
 
