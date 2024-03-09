@@ -2,6 +2,7 @@ package com.beanbeanjuice.simpleproxychat.utility.listeners.bungee;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
+import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatus;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
@@ -97,6 +98,11 @@ public class BungeeServerListener implements Listener {
                 plugin.getLogger()::info,
                 (message) -> from.getPlayers().stream()
                         .filter((streamPlayer) -> streamPlayer != player)
+                        .filter((streamPlayer) -> {
+                            if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
+                                return streamPlayer.hasPermission(Permission.READ_SWITCH_MESSAGE.getPermissionNode());
+                            return true;
+                        })
                         .forEach((streamPlayer) -> streamPlayer.sendMessage(ChatMessageType.CHAT, convertToBungee(message)))
         );
     }
@@ -121,8 +127,14 @@ public class BungeeServerListener implements Listener {
         });
     }
 
-    private void sendToAllServers(String message) {
-        plugin.getProxy().broadcast(convertToBungee(message));
+    private void sendToAllServers(String message, Permission permission) {
+        plugin.getProxy().getPlayers().stream()
+                        .filter((player) -> {
+                            if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
+                                return player.hasPermission(permission.getPermissionNode());
+                            return true;
+                        })
+                        .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, convertToBungee(message)));
     }
 
     private BaseComponent[] convertToBungee(String message) {

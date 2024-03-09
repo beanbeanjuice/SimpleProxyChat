@@ -81,6 +81,7 @@ public class Config {
                 .map((key) -> (String) key)
                 .forEach((key) -> aliases.put(key, aliasSection.getString(key)));
         config.put(ConfigDataKey.ALIASES, new ConfigDataEntry(aliases));
+        config.put(ConfigDataKey.USE_PERMISSIONS, new ConfigDataEntry(yamlConfig.getBoolean("use-permissions")));
 
         // message.yml
         config.put(ConfigDataKey.MINECRAFT_JOIN_USE, new ConfigDataEntry(yamlMessages.getBoolean("minecraft.join.use")));
