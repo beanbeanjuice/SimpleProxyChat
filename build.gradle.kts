@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import io.papermc.hangarpublishplugin.HangarPublishTask
 import io.papermc.hangarpublishplugin.model.Platforms
 import java.io.ByteArrayOutputStream
 
@@ -9,7 +10,7 @@ plugins {
 }
 
 group = "com.beanbeanjuice"
-version = "0.1.2"
+version = "0.2.0"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -67,6 +68,9 @@ dependencies {
     // Lombok
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
+
+    // LuckPerms Support
+    compileOnly("net.luckperms:api:5.4")
 }
 
 configure<ProcessResources>("processResources") {
@@ -138,6 +142,10 @@ hangarPublish {
                     url("SuperVanish", "https://www.spigotmc.org/resources/supervanish-be-invisible.1331/") {
                         required.set(false)
                     }
+
+                    url("LuckPerms", "https://luckperms.net") {
+                        required.set(false)
+                    }
                 }
             }
 
@@ -158,6 +166,10 @@ hangarPublish {
                     }
 
                     url("SuperVanish", "https://www.spigotmc.org/resources/supervanish-be-invisible.1331/") {
+                        required.set(false)
+                    }
+
+                    url("LuckPerms", "https://luckperms.net") {
                         required.set(false)
                     }
                 }

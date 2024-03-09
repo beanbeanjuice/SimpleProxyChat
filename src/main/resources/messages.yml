@@ -1,0 +1,50 @@
+# ==========================================================
+#                       INFORMATION
+#                 HEX Values are Supported
+#  Example: <#FFFFFF>Some text</#FFFFFF> this is a message!
+#  If using the color codes ("&"), only use the COLOR codes.
+#     LuckPerms is supported. Use %prefix% or %suffix%.
+# ==========================================================
+
+# Minecraft Stuff
+minecraft:
+  join:
+    use: true
+    message: "&e%player% &ahas joined the network."
+  leave:
+    use: true
+    message: "&e%player% &chas left the network."
+  message: "&8[&3%server%&8] &e%player% &9» &7%message%"
+  discord:
+    message: "**%server%** %player% » %message%"
+    embed:
+      use: false
+      title: "[%server%] %player%"
+      color: "#FFC0CB"
+  switch:
+    use: true
+    default: "&e%player% &7moved from &c%from% &7to &a%to%&7."
+    no-from: "&e%player% &7moved &7to &a%to%&7."
+
+# Discord Stuff
+discord:
+  join:
+    use: true
+    message: "%player% has joined the network."
+  leave:
+    use: true
+    message: "%player% has left the network."
+  switch:
+    use: true
+    message: "%player% has switched from %from% to %to%."
+  minecraft-message: "&8[&bDiscord&8] %role% &f%user% &9» &7%message%"
+  proxy-status:
+    enabled: "✅ Proxy enabled!"
+    disabled: "⛔ Proxy disabled."
+    title: "Server Status"
+    message: "Status: "
+    online: "Online"
+    offline: "Offline"
+
+# DO NOT TOUCH THIS
+file-version: 1
