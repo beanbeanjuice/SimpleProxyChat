@@ -121,7 +121,11 @@ public class VelocityServerListener {
                     Component component = MiniMessage.miniMessage().deserialize(message);
                     previousServer.getPlayersConnected().stream()
                             .filter((streamPlayer) -> streamPlayer != event.getPlayer())
-                            .filter((player) -> player.hasPermission(Permission.READ_SWITCH_MESSAGE.getPermissionNode()))
+                            .filter((player) -> {
+                                if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
+                                    return player.hasPermission(Permission.READ_SWITCH_MESSAGE.getPermissionNode());
+                                return true;
+                            })
                             .forEach((streamPlayer) -> streamPlayer.sendMessage(component));
                 }
         );
@@ -129,7 +133,11 @@ public class VelocityServerListener {
 
     private void sendToAllServers(String message, Permission permission) {
         plugin.getProxyServer().getAllPlayers().stream()
-                        .filter((player) -> player.hasPermission(permission.getPermissionNode()))
+                        .filter((player) -> {
+                            if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
+                                return player.hasPermission(permission.getPermissionNode());
+                            return true;
+                        })
                         .forEach((player) -> player.sendMessage(MiniMessage.miniMessage().deserialize(message)));
     }
 

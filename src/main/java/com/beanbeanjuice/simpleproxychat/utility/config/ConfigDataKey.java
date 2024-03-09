@@ -7,6 +7,7 @@ public enum ConfigDataKey {
     CHANNEL_ID,
     SERVER_UPDATE_INTERVAL,
     ALIASES,
+    USE_PERMISSIONS,
 
     // MESSAGES
     MINECRAFT_JOIN_USE,
