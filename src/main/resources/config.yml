@@ -15,15 +15,23 @@ BOT-TOKEN: "TOKEN_HERE"
 # Channel to send Discord messages to (IGNORE IF use_discord = false)
 CHANNEL-ID: "GLOBAL_CHANNEL_ID"
 
-# The amount of seconds to check if a server is online/offline. Smaller numbers can cause errors. Beware.
+# The amount of seconds to check if a server is online/offline.
+# Smaller numbers can cause errors. Beware.
 server-update-interval: 3
 
-# Use this if you want to change the default aliases. It MUST be the same name you have in your bungee/velocity config.
+# Use this if you want to change the default aliases.
+# It MUST be the same name you have in your bungee/velocity config.
 # Simply set it to disabled: disabled to disable it.
 aliases:
   ServerInConfigExample: ServerAliasExample
   hub: Hub1
   smp: smp1
 
+# Whether to use the permission system.
+# simpleproxy.read.join - Read join messages.
+# simpleproxy.read.leave - Read leave messages.
+# simpleproxy.read.switch - Read switch messages.
+use-permissions: false
+
 # DO NOT TOUCH THIS
-file-version: 6
+file-version: 5
