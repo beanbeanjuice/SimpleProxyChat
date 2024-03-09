@@ -189,7 +189,3 @@ tasks.withType<ShadowJar> {
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 }
-
-tasks.withType<HangarPublishTask> {
-    dependsOn("shadowJar")
-}
