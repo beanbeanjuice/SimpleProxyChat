@@ -2,6 +2,7 @@ package com.beanbeanjuice.simpleproxychat.utility.listeners.velocity;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
+import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatus;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
@@ -15,7 +16,6 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 import de.myzelyam.api.vanish.VelocityVanishAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
@@ -39,7 +39,7 @@ public class VelocityServerListener {
             String playerName = event.getPlayer().getUsername();
             String playerMessage = event.getMessage();
 
-            chatHandler.runProxyChatMessage(serverName, playerName, playerMessage, plugin.getLogger()::info, (message) -> {
+            chatHandler.runProxyChatMessage(serverName, playerName, event.getPlayer().getUniqueId(), playerMessage, plugin.getLogger()::info, (message) -> {
                 List<UUID> blacklistedUUIDs = connection.getServer().getPlayersConnected().stream()
                         .map(Player::getUniqueId)
                         .toList();
@@ -56,7 +56,7 @@ public class VelocityServerListener {
     // TODO: Add Vanish API
     @Subscribe
     public void onDisconnect(DisconnectEvent event) {
-        if ((Boolean) plugin.getConfig().get(ConfigDataKey.VANISH_ENABLED) && VelocityVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
+        if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && VelocityVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
 
         leave(event.getPlayer());
     }
@@ -68,7 +68,7 @@ public class VelocityServerListener {
     // TODO: Add Vanish API
     @Subscribe
     public void onPostLogin(PostLoginEvent event) {
-        if ((Boolean) plugin.getConfig().get(ConfigDataKey.VANISH_ENABLED) && VelocityVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
+        if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && VelocityVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
 
         join(event.getPlayer());
     }
@@ -79,7 +79,7 @@ public class VelocityServerListener {
 
     private void startServerStatusDetection() {
         ServerStatusManager manager = new ServerStatusManager(plugin.getConfig());
-        int updateInterval = (int) plugin.getConfig().get(ConfigDataKey.SERVER_UPDATE_INTERVAL);
+        int updateInterval = plugin.getConfig().getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL);
 
         plugin.getProxyServer().getScheduler().buildTask(plugin, () -> plugin.getProxyServer().getAllServers().forEach((registeredServer) -> {
             String serverName = registeredServer.getServerInfo().getName();
@@ -121,13 +121,24 @@ public class VelocityServerListener {
                     Component component = MiniMessage.miniMessage().deserialize(message);
                     previousServer.getPlayersConnected().stream()
                             .filter((streamPlayer) -> streamPlayer != event.getPlayer())
+                            .filter((player) -> {
+                                if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
+                                    return player.hasPermission(Permission.READ_SWITCH_MESSAGE.getPermissionNode());
+                                return true;
+                            })
                             .forEach((streamPlayer) -> streamPlayer.sendMessage(component));
                 }
         );
     }
 
-    private void sendToAllServers(@NotNull String message) {
-        plugin.getProxyServer().sendMessage(MiniMessage.miniMessage().deserialize(message));
+    private void sendToAllServers(String message, Permission permission) {
+        plugin.getProxyServer().getAllPlayers().stream()
+                        .filter((player) -> {
+                            if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
+                                return player.hasPermission(permission.getPermissionNode());
+                            return true;
+                        })
+                        .forEach((player) -> player.sendMessage(MiniMessage.miniMessage().deserialize(message)));
     }
 
 }
