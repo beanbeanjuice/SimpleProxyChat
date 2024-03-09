@@ -44,8 +44,8 @@ public class ChatHandler {
 
     public void runProxyChatMessage(String serverName, String playerName, UUID playerUUID,
                                     String playerMessage, Consumer<String> consoleLogger, Consumer<String> minecraftLogger) {
-        String minecraftConfigString = config.getAsString(ConfigDataKey.MESSAGE_FORMAT);
-        String discordConfigString = config.getAsString(ConfigDataKey.MINECRAFT_TO_DISCORD_MESSAGE);
+        String minecraftConfigString = config.getAsString(ConfigDataKey.MINECRAFT_MESSAGE);
+        String discordConfigString = config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_MESSAGE);
 
         serverName = Helper.convertAlias(config, serverName);
 
@@ -76,8 +76,8 @@ public class ChatHandler {
 
     public void runProxyLeaveMessage(String playerName, UUID playerUUID,
                                      Consumer<String> consoleLogger, Consumer<String> minecraftLogger) {
-        String configString = config.getAsString(ConfigDataKey.LEAVE_FORMAT);
-        String discordConfigString = config.getAsString(ConfigDataKey.MINECRAFT_TO_DISCORD_LEAVE);
+        String configString = config.getAsString(ConfigDataKey.MINECRAFT_LEAVE);
+        String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_LEAVE);
 
         String message = configString.replace("%player%", playerName);
         String discordMessage = discordConfigString.replace("%player%", playerName);
@@ -99,8 +99,8 @@ public class ChatHandler {
 
     public void runProxyJoinMessage(String playerName, UUID playerUUID,
                                     Consumer<String> consoleLogger, Consumer<String> minecraftLogger) {
-        String configString = config.getAsString(ConfigDataKey.JOIN_FORMAT);
-        String discordConfigString = config.getAsString(ConfigDataKey.MINECRAFT_TO_DISCORD_JOIN);
+        String configString = config.getAsString(ConfigDataKey.MINECRAFT_JOIN);
+        String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_JOIN);
 
         String message = configString.replace("%player%", playerName);
         String discordMessage = discordConfigString.replace("%player%", playerName);
@@ -122,9 +122,9 @@ public class ChatHandler {
 
     public void runProxySwitchMessage(String from, String to, String playerName, UUID playerUUID,
                                       Consumer<String> consoleLogger, Consumer<String> minecraftLogger) {
-        String consoleConfigString = config.getAsString(ConfigDataKey.SWITCH_FORMAT);
-        String discordConfigString = config.getAsString(ConfigDataKey.MINECRAFT_TO_DISCORD_SWITCH);
-        String minecraftConfigString = config.getAsString(ConfigDataKey.SWITCH_FORMAT_NO_FROM);
+        String consoleConfigString = config.getAsString(ConfigDataKey.MINECRAFT_SWITCH_DEFAULT);
+        String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_SWITCH);
+        String minecraftConfigString = config.getAsString(ConfigDataKey.MINECRAFT_SWITCH_SHORT);
 
         from = Helper.convertAlias(config, from);
         to = Helper.convertAlias(config, to);
@@ -171,7 +171,7 @@ public class ChatHandler {
     }
 
     public void sendFromDiscord(MessageReceivedEvent event) {
-        String message = config.getAsString(ConfigDataKey.DISCORD_TO_MINECRAFT_MESSAGE);
+        String message = config.getAsString(ConfigDataKey.DISCORD_MINECRAFT_MESSAGE);
 
         if (event.getMember() == null) return;
 
