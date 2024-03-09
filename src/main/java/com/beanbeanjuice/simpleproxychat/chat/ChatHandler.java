@@ -107,10 +107,12 @@ public class ChatHandler {
         consoleLogger.accept(Helper.stripColor(MiniMessage.miniMessage().deserialize(message)));
 
         // Log to Discord
-        discordBot.sendMessageEmbed(simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.RED).build());
+        if (config.getAsBoolean(ConfigDataKey.DISCORD_LEAVE_USE))
+            discordBot.sendMessageEmbed(simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.RED).build());
 
         // Log to Minecraft
-        minecraftLogger.accept(message);
+        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_LEAVE_USE))
+            minecraftLogger.accept(message);
     }
 
     public void runProxyJoinMessage(String playerName, UUID playerUUID,
@@ -130,10 +132,12 @@ public class ChatHandler {
         consoleLogger.accept(Helper.stripColor(MiniMessage.miniMessage().deserialize(message)));
 
         // Log to Discord
-        discordBot.sendMessageEmbed(simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.GREEN).build());
+        if (config.getAsBoolean(ConfigDataKey.DISCORD_JOIN_USE))
+            discordBot.sendMessageEmbed(simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.GREEN).build());
 
         // Log to Minecraft
-        minecraftLogger.accept(message);
+        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_JOIN_USE))
+            minecraftLogger.accept(message);
     }
 
     public void runProxySwitchMessage(String from, String to, String playerName, UUID playerUUID,
@@ -170,10 +174,12 @@ public class ChatHandler {
         consoleLogger.accept(Helper.stripColor(MiniMessage.miniMessage().deserialize(consoleMessage)));
 
         // Log to Discord
-        discordBot.sendMessageEmbed(simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.YELLOW).build());
+        if (config.getAsBoolean(ConfigDataKey.DISCORD_SWITCH_USE))
+            discordBot.sendMessageEmbed(simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.YELLOW).build());
 
         // Log to Minecraft
-        minecraftLogger.accept(minecraftMessage);
+        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_SWITCH_USE))
+            minecraftLogger.accept(minecraftMessage);
     }
 
     private EmbedBuilder simpleAuthorEmbedBuilder(@NotNull UUID playerUUID, @NotNull String message) {
