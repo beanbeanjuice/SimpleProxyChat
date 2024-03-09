@@ -33,19 +33,12 @@ import java.util.concurrent.TimeUnit;
 
 public class SimpleProxyChatVelocity {
 
-    @Getter
-    private final ProxyServer proxyServer;
-
-    @Getter
-    private final Logger logger;
-
     private final Metrics.Factory metricsFactory;
 
-    @Getter
-    private final Config config;
-
-    @Getter
-    private Bot discordBot;
+    @Getter private final ProxyServer proxyServer;
+    @Getter private final Logger logger;
+    @Getter private final Config config;
+    @Getter private Bot discordBot;
 
     @Inject
     public SimpleProxyChatVelocity(ProxyServer proxyServer, Logger logger, @DataDirectory Path dataDirectory, Metrics.Factory metricsFactory) {
@@ -75,7 +68,7 @@ public class SimpleProxyChatVelocity {
 
         discordBot.sendMessageEmbed(
                 new EmbedBuilder()
-                        .setTitle((String) config.get(ConfigDataKey.PROXY_ENABLED_MESSAGE))
+                        .setTitle(config.getAsString(ConfigDataKey.DISCORD_PROXY_ENABLED))
                         .setColor(Color.GREEN)
                         .build()
         );
@@ -83,14 +76,29 @@ public class SimpleProxyChatVelocity {
         this.logger.info("Plugin has been initialized.");
     }
 
-    @Subscribe
+    @Subscribe(order = PostOrder.LAST)
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        // Registering LuckPerms support.
+        if (this.proxyServer.getPluginManager().getPlugin("luckperms").isPresent()) {
+            try {
+                config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(true));
+                getLogger().info("LuckPerms support has been enabled.");
+            } catch (IllegalStateException e) {
+                getLogger().info("Error Enabling LuckPerms: " + e.getMessage());
+            }
+        }
+
         // Register Chat Listener
-        ChatHandler chatHandler = new ChatHandler(config, discordBot, (message) -> {
-            Component messageComponent = MiniMessage.miniMessage().deserialize(message);
-            logger.info(Helper.stripColor(messageComponent));
-            proxyServer.getAllPlayers().forEach((player) -> player.sendMessage(messageComponent));
-        });
+        ChatHandler chatHandler = new ChatHandler(
+                config,
+                discordBot,
+                (message) -> {
+                    Component messageComponent = MiniMessage.miniMessage().deserialize(message);
+                    logger.info(Helper.stripColor(messageComponent));
+                    proxyServer.getAllPlayers().forEach((player) -> player.sendMessage(messageComponent));
+                },
+                (message) -> getLogger().info(message)
+        );
         this.proxyServer.getEventManager().register(this, new VelocityServerListener(this, chatHandler));
 
         // Start Channel Topic Updater
@@ -134,7 +142,7 @@ public class SimpleProxyChatVelocity {
     public void onProxyShutdown(ProxyShutdownEvent event) {
         discordBot.sendMessageEmbed(
                 new EmbedBuilder()
-                        .setTitle((String) config.get(ConfigDataKey.PROXY_DISABLED_MESSAGE))
+                        .setTitle(config.getAsString(ConfigDataKey.DISCORD_PROXY_DISABLED))
                         .setColor(Color.RED)
                         .build()
         );

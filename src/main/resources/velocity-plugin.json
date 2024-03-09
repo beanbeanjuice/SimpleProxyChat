@@ -15,6 +15,10 @@
     {
       "id": "premiumvanish",
       "optional": true
+    },
+    {
+      "id": "luckperms",
+      "optional": true
     }
   ],
   "main": "com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity"

@@ -2,7 +2,7 @@
   <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/SimpleProxyChat.png?raw=true" alt="SimpleProxyChat Logo"/>
 </p>
 <center>
-  A simple plugin to allow cross-server communication. Also has the option of using Discord to allow global Discord chat with all of the servers on your proxy network.​
+  A simple plugin to allow global cross-server communication and messaging with support for LuckPerms and Discord integration.
 </center>
 
 ---
@@ -62,56 +62,98 @@
 #                 HEX Values are Supported
 #  Example: <#FFFFFF>Some text</#FFFFFF> this is a message!
 #  If using the color codes ("&"), only use the COLOR codes.
+#     LuckPerms is supported. Use %prefix% or %suffix%.
 # ==========================================================
 
 # True if you will be using Discord
-use_discord: false
+use-discord: false
 
 # Discord Bot Token (IGNORE IF use_discord = false)
-BOT_TOKEN: "TOKEN_HERE"
+BOT-TOKEN: "TOKEN_HERE"
 
 # Channel to send Discord messages to (IGNORE IF use_discord = false)
-CHANNEL_ID: "GLOBAL_CHANNEL_ID"
+CHANNEL-ID: "GLOBAL_CHANNEL_ID"
 
-# Minecraft to Minecraft
-join-format: "&e%player% &ahas joined the network."
-leave-format: "&e%player% &chas left the network."
-message-format: "&8[&3%server%&8] &e%player% &9» &7%message%"
+# The amount of seconds to check if a server is online/offline.
+# Smaller numbers can cause errors. Beware.
+server-update-interval: 3
 
-# Message Sent to Console
-switch-format: "&e%player% &7moved from &c%from% &7to &a%to%&7."
+# Use this if you want to change the default aliases.
+# It MUST be the same name you have in your bungee/velocity config.
+# Simply set it to disabled: disabled to disable it.
+aliases:
+  ServerInConfigExample: ServerAliasExample
+  hub: Hub1
+  smp: smp1
 
-# Message Sent in Minecraft
-switch-format_NO_FROM: "&e%player% &7moved &7to &a%to%&7."
-
-# Minecraft to Discord
-minecraft_to_discord_join: "%player% has joined the network."
-minecraft_to_discord_leave: "%player% has left the network."
-minecraft_to_discord_switch: "%player% has switched from %from% to %to%."
-minecraft_to_discord_message: "**%server%** %player% » %message%"
-
-# Discord to Minecraft
-discord_to_minecraft_message: "&8[&bDiscord&8] %role% &f%user% &9» &7%message%"
-
-# Pure Discord. Does not support color codes.
-proxy_enabled: "✅ Proxy enabled!"
-proxy_disabled: "⛔ Proxy disabled."
-proxy_status_title: "Server Status"
-proxy_status_message: "Status: "
-proxy_status_online: "Online"
-proxy_status_offline: "Offline"
-
-# The amount of seconds to check if a server is online/offline. Smaller numbers can cause errors. Beware.
-server_update_interval: 3
+# Whether to use the permission system.
+# simpleproxy.read.join - Read join messages.
+# simpleproxy.read.leave - Read leave messages.
+# simpleproxy.read.switch - Read switch messages.
+use-permissions: false
 
 # DO NOT TOUCH THIS
-file-version: 4
+file-version: 5
+```
+
+```YAML
+# ==========================================================
+#                       INFORMATION
+#                 HEX Values are Supported
+#  Example: <#FFFFFF>Some text</#FFFFFF> this is a message!
+#  If using the color codes ("&"), only use the COLOR codes.
+#     LuckPerms is supported. Use %prefix% or %suffix%.
+# ==========================================================
+
+# Minecraft Stuff
+minecraft:
+  join:
+    use: true
+    message: "&e%player% &ahas joined the network."
+  leave:
+    use: true
+    message: "&e%player% &chas left the network."
+  message: "&8[&3%server%&8] &e%player% &9» &7%message%"
+  discord:
+    message: "**%server%** %player% » %message%"
+    embed:
+      use: false
+      title: "[%server%] %player%"
+      color: "#FFC0CB"
+  switch:
+    use: true
+    default: "&e%player% &7moved from &c%from% &7to &a%to%&7."
+    no-from: "&e%player% &7moved &7to &a%to%&7."
+
+# Discord Stuff
+discord:
+  join:
+    use: true
+    message: "%player% has joined the network."
+  leave:
+    use: true
+    message: "%player% has left the network."
+  switch:
+    use: true
+    message: "%player% has switched from %from% to %to%."
+  minecraft-message: "&8[&bDiscord&8] %role% &f%user% &9» &7%message%"
+  proxy-status:
+    enabled: "✅ Proxy enabled!"
+    disabled: "⛔ Proxy disabled."
+    title: "Server Status"
+    message: "Status: "
+    online: "Online"
+    offline: "Offline"
+
+# DO NOT TOUCH THIS
+file-version: 1
 ```
 
 ---
 
 ## Caveats
-As of right now, vanish support is only available on *BungeeCord/Waterfall*. The plugin will still function as normal, but if you go into vanish then it won't send a fake join/leave message.
+1) As of right now, vanish support is only available on *BungeeCord/Waterfall*. The plugin will still function as normal, but if you go into vanish then it won't send a fake join/leave message.
+1) In order for prefixes and suffixes to work, you **must** have LuckPerms installed on the proxy. Then, you can use `%prefix%` and `%suffix%`.
 
 ---
 
