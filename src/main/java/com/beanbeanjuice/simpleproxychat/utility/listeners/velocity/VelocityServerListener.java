@@ -2,6 +2,7 @@ package com.beanbeanjuice.simpleproxychat.utility.listeners.velocity;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
+import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatus;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
@@ -15,7 +16,6 @@ import com.velocitypowered.api.proxy.server.RegisteredServer;
 import de.myzelyam.api.vanish.VelocityVanishAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
@@ -121,13 +121,16 @@ public class VelocityServerListener {
                     Component component = MiniMessage.miniMessage().deserialize(message);
                     previousServer.getPlayersConnected().stream()
                             .filter((streamPlayer) -> streamPlayer != event.getPlayer())
+                            .filter((player) -> player.hasPermission(Permission.READ_SWITCH_MESSAGE.getPermissionNode()))
                             .forEach((streamPlayer) -> streamPlayer.sendMessage(component));
                 }
         );
     }
 
-    private void sendToAllServers(@NotNull String message) {
-        plugin.getProxyServer().sendMessage(MiniMessage.miniMessage().deserialize(message));
+    private void sendToAllServers(String message, Permission permission) {
+        plugin.getProxyServer().getAllPlayers().stream()
+                        .filter((player) -> player.hasPermission(permission.getPermissionNode()))
+                        .forEach((player) -> player.sendMessage(MiniMessage.miniMessage().deserialize(message)));
     }
 
 }

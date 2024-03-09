@@ -5,6 +5,7 @@ import com.beanbeanjuice.simpleproxychat.discord.DiscordChatHandler;
 import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class ChatHandler {
@@ -91,7 +93,7 @@ public class ChatHandler {
     }
 
     public void runProxyLeaveMessage(String playerName, UUID playerUUID,
-                                     Consumer<String> consoleLogger, Consumer<String> minecraftLogger) {
+                                     Consumer<String> consoleLogger, BiConsumer<String, Permission> minecraftLogger) {
         String configString = config.getAsString(ConfigDataKey.MINECRAFT_LEAVE);
         String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_LEAVE);
 
@@ -112,11 +114,11 @@ public class ChatHandler {
 
         // Log to Minecraft
         if (config.getAsBoolean(ConfigDataKey.MINECRAFT_LEAVE_USE))
-            minecraftLogger.accept(message);
+            minecraftLogger.accept(message, Permission.READ_LEAVE_MESSAGE);
     }
 
     public void runProxyJoinMessage(String playerName, UUID playerUUID,
-                                    Consumer<String> consoleLogger, Consumer<String> minecraftLogger) {
+                                    Consumer<String> consoleLogger, BiConsumer<String, Permission> minecraftLogger) {
         String configString = config.getAsString(ConfigDataKey.MINECRAFT_JOIN);
         String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_JOIN);
 
@@ -137,7 +139,7 @@ public class ChatHandler {
 
         // Log to Minecraft
         if (config.getAsBoolean(ConfigDataKey.MINECRAFT_JOIN_USE))
-            minecraftLogger.accept(message);
+            minecraftLogger.accept(message, Permission.READ_JOIN_MESSAGE);
     }
 
     public void runProxySwitchMessage(String from, String to, String playerName, UUID playerUUID,
