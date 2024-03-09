@@ -3,7 +3,12 @@ minecraft:
   join: "&e%player% &ahas joined the network."
   leave: "&e%player% &chas left the network."
   message: "&8[&3%server%&8] &e%player% &9» &7%message%"
-  discord-message: "**%server%** %player% » %message%"
+  discord:
+    message: "**%server%** %player% » %message%"
+    embed:
+      use: false
+      title: "[%server%] %player%"
+      color: "#FFC0CB"
   switch-format:
     default: "&e%player% &7moved from &c%from% &7to &a%to%&7."
     no-from: "&e%player% &7moved &7to &a%to%&7."

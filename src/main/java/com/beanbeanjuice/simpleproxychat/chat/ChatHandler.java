@@ -68,7 +68,23 @@ public class ChatHandler {
         consoleLogger.accept(Helper.stripColor(MiniMessage.miniMessage().deserialize(minecraftMessage)));
 
         // Log to Discord
-        discordBot.sendMessage(discordMessage);
+        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE)) {
+            String title = config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_TITLE)
+                            .replace("%server%", serverName)
+                            .replace("%player%", playerName);
+
+            title = replacePrefixSuffix(title, playerUUID);
+            Color color = config.getAsColor(ConfigDataKey.MINECRAFT_DISCORD_EMBED_COLOR).orElse(Color.RED);
+            discordBot.sendMessageEmbed(
+                    new EmbedBuilder()
+                            .setAuthor(title, null, getPlayerHeadURL(playerUUID))
+                            .setDescription(playerMessage)
+                            .setColor(color)
+                            .build()
+            );
+        } else {
+            discordBot.sendMessage(discordMessage);
+        }
 
         // Log to Minecraft
         minecraftLogger.accept(minecraftMessage);
