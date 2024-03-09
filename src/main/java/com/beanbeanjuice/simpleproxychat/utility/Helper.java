@@ -9,6 +9,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class Helper {
 
+    /**
+     * @see <a href="https://docs.advntr.dev/minimessage/format.html">Mini-Message Decorations</a>
+     */
     public static String translateLegacyCodes(@NotNull String string) {
         return string
                 .replaceAll("&0", convertToTag(NamedTextColor.BLACK.asHexString()))
@@ -26,7 +29,13 @@ public class Helper {
                 .replaceAll("&c", convertToTag(NamedTextColor.RED.asHexString()))
                 .replaceAll("&d", convertToTag(NamedTextColor.LIGHT_PURPLE.asHexString()))
                 .replaceAll("&e", convertToTag(NamedTextColor.YELLOW.asHexString()))
-                .replaceAll("&f", convertToTag(NamedTextColor.WHITE.asHexString()));
+                .replaceAll("&f", convertToTag(NamedTextColor.WHITE.asHexString()))
+                .replaceAll("&k", convertToTag("obfuscated"))
+                .replaceAll("&l", convertToTag("bold"))
+                .replaceAll("&m", convertToTag("strikethrough"))
+                .replaceAll("&n", convertToTag("underlined"))
+                .replaceAll("&o", convertToTag("italic"))
+                .replaceAll("&r", convertToTag("reset"));
     }
 
     public static String convertAlias(Config config, String serverName) {

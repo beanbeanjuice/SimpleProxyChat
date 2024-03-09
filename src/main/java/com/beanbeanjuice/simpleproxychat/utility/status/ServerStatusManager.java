@@ -25,11 +25,11 @@ public class ServerStatusManager {
     }
 
     public MessageEmbed getStatusEmbed(String serverName, boolean status) {
-        String statusMessageString = config.getAsString(ConfigDataKey.PROXY_STATUS_MESSAGE);
-        String statusString = status ? config.getAsString(ConfigDataKey.PROXY_STATUS_ONLINE) : config.getAsString(ConfigDataKey.PROXY_STATUS_OFFLINE);
+        String statusMessageString = config.getAsString(ConfigDataKey.DISCORD_PROXY_MESSAGE);
+        String statusString = status ? config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_ONLINE) : config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_OFFLINE);
 
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle(config.getAsString(ConfigDataKey.PROXY_STATUS_TITLE));
+        embedBuilder.setTitle(config.getAsString(ConfigDataKey.DISCORD_PROXY_TITLE));
         embedBuilder.addField(
                 Helper.convertAlias(config, serverName),
                 String.format("%s%s", statusMessageString, statusString),
