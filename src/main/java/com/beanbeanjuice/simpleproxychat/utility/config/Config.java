@@ -9,10 +9,12 @@ import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Config {
 
@@ -54,6 +56,14 @@ public class Config {
         return (boolean) get(key);
     }
 
+    public Optional<Color> getAsColor(ConfigDataKey key) {
+        try {
+            return Optional.of(Color.decode(getAsString(key)));
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public HashMap<String, String> getAsStringMap(ConfigDataKey key) {
         return (HashMap<String, String>) get(key);
@@ -64,7 +74,7 @@ public class Config {
         config.put(ConfigDataKey.USE_DISCORD, new ConfigDataEntry(Boolean.valueOf(yamlConfig.getString("use-discord"))));
         config.put(ConfigDataKey.BOT_TOKEN, new ConfigDataEntry(yamlConfig.getString("BOT-TOKEN")));
         config.put(ConfigDataKey.CHANNEL_ID, new ConfigDataEntry(yamlConfig.getString("CHANNEL-ID")));
-        config.put(ConfigDataKey.SERVER_UPDATE_INTERVAL, new ConfigDataEntry(yamlConfig.getInt("server_update_interval")));
+        config.put(ConfigDataKey.SERVER_UPDATE_INTERVAL, new ConfigDataEntry(yamlConfig.getInt("server-update-interval")));
         HashMap<String, String> aliases = new HashMap<>();
         Section aliasSection = yamlConfig.getSection("aliases");
         aliasSection.getKeys().stream()
@@ -76,7 +86,10 @@ public class Config {
         config.put(ConfigDataKey.MINECRAFT_JOIN, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("minecraft.join"))));
         config.put(ConfigDataKey.MINECRAFT_LEAVE, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("minecraft.leave"))));
         config.put(ConfigDataKey.MINECRAFT_MESSAGE, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("minecraft.message"))));
-        config.put(ConfigDataKey.MINECRAFT_DISCORD_MESSAGE, new ConfigDataEntry(yamlMessages.getString("minecraft.discord-message")));
+        config.put(ConfigDataKey.MINECRAFT_DISCORD_MESSAGE, new ConfigDataEntry(yamlMessages.getString("minecraft.discord.message")));
+        config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE, new ConfigDataEntry(yamlMessages.getBoolean("minecraft.discord.embed.use")));
+        config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_TITLE, new ConfigDataEntry(yamlMessages.getString("minecraft.discord.embed.title")));
+        config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_COLOR, new ConfigDataEntry(yamlMessages.getString("minecraft.discord.embed.color")));
         config.put(ConfigDataKey.MINECRAFT_SWITCH_DEFAULT, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("minecraft.switch-format.default"))));
         config.put(ConfigDataKey.MINECRAFT_SWITCH_SHORT, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("minecraft.switch-format.no-from"))));
 
@@ -84,12 +97,12 @@ public class Config {
         config.put(ConfigDataKey.DISCORD_LEAVE, new ConfigDataEntry(yamlMessages.getString("discord.leave")));
         config.put(ConfigDataKey.DISCORD_SWITCH, new ConfigDataEntry(yamlMessages.getString("discord.switch")));
         config.put(ConfigDataKey.DISCORD_MINECRAFT_MESSAGE, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("discord.minecraft-message"))));
-        config.put(ConfigDataKey.DISCORD_PROXY_ENABLED, new ConfigDataEntry(yamlMessages.getString("proxy_enabled")));
-        config.put(ConfigDataKey.DISCORD_PROXY_DISABLED, new ConfigDataEntry(yamlMessages.getString("proxy_disabled")));
-        config.put(ConfigDataKey.DISCORD_PROXY_TITLE, new ConfigDataEntry(yamlMessages.getString("proxy_status_title")));
-        config.put(ConfigDataKey.DISCORD_PROXY_MESSAGE, new ConfigDataEntry(yamlMessages.getString("proxy_status_message")));
-        config.put(ConfigDataKey.DISCORD_PROXY_STATUS_ONLINE, new ConfigDataEntry(yamlMessages.getString("proxy_status_online")));
-        config.put(ConfigDataKey.DISCORD_PROXY_STATUS_OFFLINE, new ConfigDataEntry(yamlMessages.getString("proxy_status_offline")));
+        config.put(ConfigDataKey.DISCORD_PROXY_ENABLED, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.enabled")));
+        config.put(ConfigDataKey.DISCORD_PROXY_DISABLED, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.disabled")));
+        config.put(ConfigDataKey.DISCORD_PROXY_TITLE, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.title")));
+        config.put(ConfigDataKey.DISCORD_PROXY_MESSAGE, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.message")));
+        config.put(ConfigDataKey.DISCORD_PROXY_STATUS_ONLINE, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.online")));
+        config.put(ConfigDataKey.DISCORD_PROXY_STATUS_OFFLINE, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.offline")));
 
         // External
         config.put(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(false));
