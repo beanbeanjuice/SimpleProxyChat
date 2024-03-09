@@ -25,8 +25,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: '17'
-        distribution: 'oracle'
-        cache: gradle
+        distribution: 'adopt'
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
@@ -41,4 +40,4 @@ jobs:
       env:
         DEVELOPMENT_STRING: ${{ secrets.PUBLISH_STRING }}
         HANGAR_API_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
-      run: ./gradlew build publishPluginPublicationToHangar --stacktrace
+      run: ./gradlew shadowjar publishPluginPublicationToHangar --stacktrace

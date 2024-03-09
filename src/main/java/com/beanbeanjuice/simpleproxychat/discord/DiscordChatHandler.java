@@ -20,7 +20,7 @@ public class DiscordChatHandler extends ListenerAdapter {
     }
 
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (!event.getChannel().getId().equalsIgnoreCase((String) config.get(ConfigDataKey.CHANNEL_ID))) return;
+        if (!event.getChannel().getId().equalsIgnoreCase(config.getAsString(ConfigDataKey.CHANNEL_ID))) return;
         if (event.getAuthor().isBot()) return;
 
         sendFromDiscord.accept(event);
