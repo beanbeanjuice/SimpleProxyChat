@@ -62,7 +62,7 @@
 #                       INFORMATION
 #                 HEX Values are Supported
 #  Example: <#FFFFFF>Some text</#FFFFFF> this is a message!
-#               Supports Legacy Color Codes
+#         Supports Mini-Message/Legacy Color Codes
 # ==========================================================
 
 # True if you will be using Discord
@@ -102,8 +102,7 @@ file-version: 5
 #                       INFORMATION
 #                 HEX Values are Supported
 #  Example: <#FFFFFF>Some text</#FFFFFF> this is a message!
-#  If using the color codes ("&"), only use the COLOR codes.
-#               Supports Legacy Color Codes
+#         Supports Mini-Message/Legacy Color Codes
 # ==========================================================
 
 # Minecraft Stuff
