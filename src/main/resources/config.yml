@@ -2,7 +2,7 @@
 #                       INFORMATION
 #                 HEX Values are Supported
 #  Example: <#FFFFFF>Some text</#FFFFFF> this is a message!
-#               Supports Legacy Color Codes
+#         Supports Mini-Message/Legacy Color Codes
 # ==========================================================
 
 # True if you will be using Discord
