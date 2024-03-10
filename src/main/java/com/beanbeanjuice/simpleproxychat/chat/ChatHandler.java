@@ -3,6 +3,7 @@ package com.beanbeanjuice.simpleproxychat.chat;
 import com.beanbeanjuice.simpleproxychat.discord.Bot;
 import com.beanbeanjuice.simpleproxychat.discord.DiscordChatHandler;
 import com.beanbeanjuice.simpleproxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
@@ -19,8 +20,8 @@ import net.luckperms.api.query.QueryOptions;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -51,15 +52,13 @@ public class ChatHandler {
 
         serverName = Helper.convertAlias(config, serverName);
 
-        String minecraftMessage = minecraftConfigString
-                .replace("%message%", playerMessage)
-                .replace("%server%", serverName)
-                .replace("%player%", playerName);
+        List<Tuple<String, String>> replacements = new ArrayList<>();
+        replacements.add(Tuple.create("message", playerMessage));
+        replacements.add(Tuple.create("server", serverName));
+        replacements.add(Tuple.create("player", playerName));
 
-        String discordMessage = discordConfigString
-                .replace("%message%", playerMessage)
-                .replace("%server%", serverName)
-                .replace("%player%", playerName);
+        String minecraftMessage = replaceKeys(minecraftConfigString, replacements);
+        String discordMessage = replaceKeys(discordConfigString, replacements);
 
         if (config.getAsBoolean(ConfigDataKey.LUCKPERMS_ENABLED)) {
             minecraftMessage = replacePrefixSuffix(minecraftMessage, playerUUID);
@@ -71,16 +70,15 @@ public class ChatHandler {
 
         // Log to Discord
         if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE)) {
-            String title = config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_TITLE)
-                            .replace("%server%", serverName)
-                            .replace("%player%", playerName);
+            String title = replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_TITLE), replacements);
+            String message = replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_MESSAGE), replacements);
 
             title = replacePrefixSuffix(title, playerUUID);
             Color color = config.getAsColor(ConfigDataKey.MINECRAFT_DISCORD_EMBED_COLOR).orElse(Color.RED);
             discordBot.sendMessageEmbed(
                     new EmbedBuilder()
                             .setAuthor(title, null, getPlayerHeadURL(playerUUID))
-                            .setDescription(playerMessage)
+                            .setDescription(message)
                             .setColor(color)
                             .build()
             );
@@ -97,8 +95,11 @@ public class ChatHandler {
         String configString = config.getAsString(ConfigDataKey.MINECRAFT_LEAVE);
         String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_LEAVE);
 
-        String message = configString.replace("%player%", playerName);
-        String discordMessage = discordConfigString.replace("%player%", playerName);
+        List<Tuple<String, String>> replacements = new ArrayList<>();
+        replacements.add(Tuple.create("player", playerName));
+
+        String message = replaceKeys(configString, replacements);
+        String discordMessage = replaceKeys(discordConfigString, replacements);
 
         if (config.getAsBoolean(ConfigDataKey.LUCKPERMS_ENABLED)) {
             message = replacePrefixSuffix(message, playerUUID);
@@ -122,8 +123,11 @@ public class ChatHandler {
         String configString = config.getAsString(ConfigDataKey.MINECRAFT_JOIN);
         String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_JOIN);
 
-        String message = configString.replace("%player%", playerName);
-        String discordMessage = discordConfigString.replace("%player%", playerName);
+        List<Tuple<String, String>> replacements = new ArrayList<>();
+        replacements.add(Tuple.create("player", playerName));
+
+        String message = replaceKeys(configString, replacements);
+        String discordMessage = replaceKeys(discordConfigString, replacements);
 
         if (config.getAsBoolean(ConfigDataKey.LUCKPERMS_ENABLED)) {
             message = replacePrefixSuffix(message, playerUUID);
@@ -151,20 +155,14 @@ public class ChatHandler {
         from = Helper.convertAlias(config, from);
         to = Helper.convertAlias(config, to);
 
-        String consoleMessage = consoleConfigString
-                .replace("%from%", from)
-                .replace("%to%", to)
-                .replace("%player%", playerName);
+        List<Tuple<String, String>> replacements = new ArrayList<>();
+        replacements.add(Tuple.create("from", from));
+        replacements.add(Tuple.create("to", to));
+        replacements.add(Tuple.create("player", playerName));
 
-        String discordMessage = discordConfigString
-                .replace("%from%", from)
-                .replace("%to%", to)
-                .replace("%player%", playerName);
-
-        String minecraftMessage = minecraftConfigString
-                .replace("%from%", from)
-                .replace("%to%", to)
-                .replace("%player%", playerName);
+        String consoleMessage = replaceKeys(consoleConfigString, replacements);
+        String discordMessage = replaceKeys(discordConfigString, replacements);
+        String minecraftMessage = replaceKeys(minecraftConfigString, replacements);
 
         if (config.getAsBoolean(ConfigDataKey.LUCKPERMS_ENABLED)) {
             consoleMessage = replacePrefixSuffix(consoleMessage, playerUUID);
@@ -213,12 +211,30 @@ public class ChatHandler {
         String discordMessage = event.getMessage().getContentStripped();
 
         String hex = "#" + Integer.toHexString(roleColor.getRGB()).substring(2);
-        message = message
-                .replace("%role%", String.format("<%s>%s</%s>", hex, roleName, hex))
-                .replace("%user%", username)
-                .replace("%message%", discordMessage);
+
+        message = replaceKeys(
+                message,
+                Tuple.create("role", String.format("<%s>%s</%s>", hex, roleName, hex)),
+                Tuple.create("user", username),
+                Tuple.create("message", discordMessage)
+        );
 
         globalLogger.accept(message);
+    }
+
+    private String replaceKeys(String string, List<Tuple<String, String>> entries) {
+        for (Tuple<String, String> entry : entries)
+            string = string.replaceAll(String.format("%%%s%%", entry.getKey()), entry.getValue());
+
+        return string;
+    }
+
+    @SafeVarargs
+    private String replaceKeys(String string, Tuple<String, String>... entries) {
+        for (Tuple<String, String> entry : entries)
+            string = string.replaceAll(String.format("%%%s%%", entry.getKey()), entry.getValue());
+
+        return string;
     }
 
     private String replacePrefixSuffix(String message, UUID playerUUID) {
