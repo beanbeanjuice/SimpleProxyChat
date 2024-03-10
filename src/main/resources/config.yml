@@ -2,8 +2,7 @@
 #                       INFORMATION
 #                 HEX Values are Supported
 #  Example: <#FFFFFF>Some text</#FFFFFF> this is a message!
-#  If using the color codes ("&"), only use the COLOR codes.
-#     LuckPerms is supported. Use %prefix% or %suffix%.
+#         Supports Mini-Message/Legacy Color Codes
 # ==========================================================
 
 # True if you will be using Discord
