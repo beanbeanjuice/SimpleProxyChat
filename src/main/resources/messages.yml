@@ -2,8 +2,7 @@
 #                       INFORMATION
 #                 HEX Values are Supported
 #  Example: <#FFFFFF>Some text</#FFFFFF> this is a message!
-#  If using the color codes ("&"), only use the COLOR codes.
-#     LuckPerms is supported. Use %prefix% or %suffix%.
+#         Supports Mini-Message/Legacy Color Codes
 # ==========================================================
 
 # Minecraft Stuff
@@ -20,6 +19,7 @@ minecraft:
     embed:
       use: false
       title: "[%server%] %player%"
+      message: "%message%"
       color: "#FFC0CB"
   switch:
     use: true
@@ -47,4 +47,4 @@ discord:
     offline: "Offline"
 
 # DO NOT TOUCH THIS
-file-version: 1
+file-version: 2
