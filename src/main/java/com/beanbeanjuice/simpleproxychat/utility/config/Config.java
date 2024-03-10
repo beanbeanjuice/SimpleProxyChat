@@ -92,6 +92,7 @@ public class Config {
         config.put(ConfigDataKey.MINECRAFT_DISCORD_MESSAGE, new ConfigDataEntry(yamlMessages.getString("minecraft.discord.message")));
         config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE, new ConfigDataEntry(yamlMessages.getBoolean("minecraft.discord.embed.use")));
         config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_TITLE, new ConfigDataEntry(yamlMessages.getString("minecraft.discord.embed.title")));
+        config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_MESSAGE, new ConfigDataEntry(yamlMessages.getString("minecraft.discord.embed.message")));
         config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_COLOR, new ConfigDataEntry(yamlMessages.getString("minecraft.discord.embed.color")));
         config.put(ConfigDataKey.MINECRAFT_SWITCH_USE, new ConfigDataEntry(yamlMessages.getBoolean("minecraft.switch.use")));
         config.put(ConfigDataKey.MINECRAFT_SWITCH_DEFAULT, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("minecraft.switch.default"))));
