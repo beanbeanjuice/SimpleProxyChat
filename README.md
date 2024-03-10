@@ -2,7 +2,7 @@
   <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/SimpleProxyChat.png?raw=true" alt="SimpleProxyChat Logo"/>
 </p>
 <center>
-  A simple plugin to allow global cross-server communication and messaging with support for LuckPerms and Discord integration.
+  A simple plugin to allow <b>global</b> <i>cross-server</i> communication and messaging with support for <b>LuckPerms</b> and <b>Discord</b> integration.
 </center>
 
 ---
@@ -12,7 +12,7 @@
 </p>
 
 ### Without Discord
-1) Simply place the plugin in your `plugins` folder on **BungeeCord/Velocity** and restart your proxy!
+1) Simply place the plugin in your `plugins` folder on **BungeeCord/Waterfall/Velocity** and restart your proxy!
 
 ### With Discord
 1) Go to discord.com/developers and select **New Application**. You can select *any* name you want.
@@ -46,7 +46,7 @@
 
 * **Global Network Chat**
 * **Discord Support**
-* **Velocity/Waterfall/Bungee Support**
+* **Velocity/Waterfall/BungeeCord Support**
 * **Colored Chat**
 * **Cross-Server Communication**
 
@@ -56,13 +56,13 @@
   <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Configuration.png?raw=true" alt="configuration"/>
 </p>
 
+**config.yml**
 ```YAML
 # ==========================================================
 #                       INFORMATION
 #                 HEX Values are Supported
 #  Example: <#FFFFFF>Some text</#FFFFFF> this is a message!
-#  If using the color codes ("&"), only use the COLOR codes.
-#     LuckPerms is supported. Use %prefix% or %suffix%.
+#               Supports Legacy Color Codes
 # ==========================================================
 
 # True if you will be using Discord
@@ -96,13 +96,14 @@ use-permissions: false
 file-version: 5
 ```
 
+**messages.yml**
 ```YAML
 # ==========================================================
 #                       INFORMATION
 #                 HEX Values are Supported
 #  Example: <#FFFFFF>Some text</#FFFFFF> this is a message!
 #  If using the color codes ("&"), only use the COLOR codes.
-#     LuckPerms is supported. Use %prefix% or %suffix%.
+#               Supports Legacy Color Codes
 # ==========================================================
 
 # Minecraft Stuff
@@ -119,6 +120,7 @@ minecraft:
     embed:
       use: false
       title: "[%server%] %player%"
+      message: "%message%"
       color: "#FFC0CB"
   switch:
     use: true
@@ -146,7 +148,7 @@ discord:
     offline: "Offline"
 
 # DO NOT TOUCH THIS
-file-version: 1
+file-version: 2
 ```
 
 ---
