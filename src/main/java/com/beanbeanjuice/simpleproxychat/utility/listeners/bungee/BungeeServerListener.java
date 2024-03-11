@@ -15,10 +15,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
-import net.md_5.bungee.api.event.ChatEvent;
-import net.md_5.bungee.api.event.PlayerDisconnectEvent;
-import net.md_5.bungee.api.event.PostLoginEvent;
-import net.md_5.bungee.api.event.ServerSwitchEvent;
+import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
@@ -67,18 +64,21 @@ public class BungeeServerListener implements Listener {
     }
 
     void leave(ProxiedPlayer player) {
-        chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), plugin.getLogger()::info, this::sendToAllServers);
+        chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), player.getServer().getInfo().getName(), plugin.getLogger()::info, this::sendToAllServers);
     }
 
     @EventHandler
-    public void onPlayerJoinProxy(PostLoginEvent event) {
+    public void onPlayerJoinProxy(ServerConnectedEvent event) {
+        if (event.getPlayer().getGroups().contains("not-first-join")) return;  // If not first join, don't do anything.
+        event.getPlayer().addGroups("not-first-join");
+
         if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
 
         join(event.getPlayer());
     }
 
     void join(ProxiedPlayer player) {
-        chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), plugin.getLogger()::info, this::sendToAllServers);
+        chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), player.getServer().getInfo().getName(), plugin.getLogger()::info, this::sendToAllServers);
     }
 
     @EventHandler

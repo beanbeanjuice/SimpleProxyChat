@@ -55,6 +55,7 @@ public class ChatHandler {
         List<Tuple<String, String>> replacements = new ArrayList<>();
         replacements.add(Tuple.create("message", playerMessage));
         replacements.add(Tuple.create("server", serverName));
+        replacements.add(Tuple.create("to", serverName));
         replacements.add(Tuple.create("player", playerName));
 
         String minecraftMessage = replaceKeys(minecraftConfigString, replacements);
@@ -90,13 +91,15 @@ public class ChatHandler {
         minecraftLogger.accept(minecraftMessage);
     }
 
-    public void runProxyLeaveMessage(String playerName, UUID playerUUID,
+    public void runProxyLeaveMessage(String playerName, UUID playerUUID, String serverName,
                                      Consumer<String> consoleLogger, BiConsumer<String, Permission> minecraftLogger) {
         String configString = config.getAsString(ConfigDataKey.MINECRAFT_LEAVE);
         String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_LEAVE);
 
         List<Tuple<String, String>> replacements = new ArrayList<>();
         replacements.add(Tuple.create("player", playerName));
+        replacements.add(Tuple.create("server", Helper.convertAlias(config, serverName)));
+        replacements.add(Tuple.create("to", Helper.convertAlias(config, serverName)));
 
         String message = replaceKeys(configString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
@@ -118,13 +121,15 @@ public class ChatHandler {
             minecraftLogger.accept(message, Permission.READ_LEAVE_MESSAGE);
     }
 
-    public void runProxyJoinMessage(String playerName, UUID playerUUID,
+    public void runProxyJoinMessage(String playerName, UUID playerUUID, String serverName,
                                     Consumer<String> consoleLogger, BiConsumer<String, Permission> minecraftLogger) {
         String configString = config.getAsString(ConfigDataKey.MINECRAFT_JOIN);
         String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_JOIN);
 
         List<Tuple<String, String>> replacements = new ArrayList<>();
         replacements.add(Tuple.create("player", playerName));
+        replacements.add(Tuple.create("server", Helper.convertAlias(config, serverName)));
+        replacements.add(Tuple.create("to", Helper.convertAlias(config, serverName)));
 
         String message = replaceKeys(configString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
@@ -158,6 +163,7 @@ public class ChatHandler {
         List<Tuple<String, String>> replacements = new ArrayList<>();
         replacements.add(Tuple.create("from", from));
         replacements.add(Tuple.create("to", to));
+        replacements.add(Tuple.create("server", to));
         replacements.add(Tuple.create("player", playerName));
 
         String consoleMessage = replaceKeys(consoleConfigString, replacements);
