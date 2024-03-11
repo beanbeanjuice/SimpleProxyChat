@@ -94,7 +94,7 @@ public final class SimpleProxyChatBungee extends Plugin {
             if (!this.getDescription().getVersion().equals(spigotMCVersion)) {
                 this.getLogger().info("ATTENTION - There is a new update available: v" + spigotMCVersion);
             }
-        }), 0, 2, TimeUnit.HOURS);
+        }), 0, 12, TimeUnit.HOURS);
 
         // bStats Stuff
         this.getLogger().info("Starting bStats... (IF ENABLED)");
