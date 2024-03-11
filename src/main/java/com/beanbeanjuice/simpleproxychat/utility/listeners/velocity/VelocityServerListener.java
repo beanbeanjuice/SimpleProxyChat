@@ -8,7 +8,6 @@ import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
-import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.proxy.Player;
@@ -62,19 +61,15 @@ public class VelocityServerListener {
     }
 
     private void leave(Player player) {
-        chatHandler.runProxyLeaveMessage(player.getUsername(), player.getUniqueId(), plugin.getLogger()::info, this::sendToAllServers);
+        String serverName = "no-server";
+        if (player.getCurrentServer().isPresent())
+            serverName = player.getCurrentServer().get().getServerInfo().getName();
+        chatHandler.runProxyLeaveMessage(player.getUsername(), player.getUniqueId(), serverName, plugin.getLogger()::info, this::sendToAllServers);
     }
 
     // TODO: Add Vanish API
-    @Subscribe
-    public void onPostLogin(PostLoginEvent event) {
-        if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && VelocityVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
-
-        join(event.getPlayer());
-    }
-
-    private void join(Player player) {
-        chatHandler.runProxyJoinMessage(player.getUsername(), player.getUniqueId(), plugin.getLogger()::info, this::sendToAllServers);
+    private void join(Player player, String serverName) {
+        chatHandler.runProxyJoinMessage(player.getUsername(), player.getUniqueId(), serverName, plugin.getLogger()::info, this::sendToAllServers);
     }
 
     private void startServerStatusDetection() {
@@ -103,8 +98,13 @@ public class VelocityServerListener {
 
     @Subscribe
     public void onServerConnected(ServerConnectedEvent event) {
-        if (event.getPreviousServer().isEmpty()) return;
+        // First Join
+        if (event.getPreviousServer().isEmpty()) {
+            join(event.getPlayer(), event.getServer().getServerInfo().getName());
+            return;
+        }
 
+        // Switch Server
         RegisteredServer previousServer = event.getPreviousServer().get();
         String from = previousServer.getServerInfo().getName();
         String to = event.getServer().getServerInfo().getName();

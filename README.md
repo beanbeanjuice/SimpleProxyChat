@@ -109,10 +109,10 @@ file-version: 5
 minecraft:
   join:
     use: true
-    message: "&e%player% &ahas joined the network."
+    message: "&e%player% &ahas joined the network. (%server%)"
   leave:
     use: true
-    message: "&e%player% &chas left the network."
+    message: "&e%player% &chas left the network. (%server%)"
   message: "&8[&3%server%&8] &e%player% &9» &7%message%"
   discord:
     message: "**%server%** %player% » %message%"
@@ -130,10 +130,10 @@ minecraft:
 discord:
   join:
     use: true
-    message: "%player% has joined the network."
+    message: "%player% has joined the network. (%server%)"
   leave:
     use: true
-    message: "%player% has left the network."
+    message: "%player% has left the network. (%server%)"
   switch:
     use: true
     message: "%player% has switched from %from% to %to%."
@@ -149,6 +149,22 @@ discord:
 # DO NOT TOUCH THIS
 file-version: 2
 ```
+
+---
+
+<p align="center">
+  <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Placeholders.png?raw=true" alt="placeholders"/>
+</p>
+
+* `%server%` - The current connected server. Uses the alias if one is specified.
+* `%to%` - The current connected server. Uses the alias if one is specified.
+* `%from%` - The server the player just disconnected from. Uses the alias if one is specified.
+* `%player%` - The player's Minecraft username.
+* `%user%` - The player's Discord username.
+* `%role%` - The player's Discord role.
+* `%prefix%` - The player's prefix. **LuckPerms Only**
+* `%suffix%` - The player's suffix. **LuckPerms Only**
+* `%message%` - The player's message.
 
 ---
 
