@@ -65,13 +65,13 @@
 #         Supports Mini-Message/Legacy Color Codes
 # ==========================================================
 
-# True if you will be using Discord
+# True if you will be using Discord. The reload command does not work with this.
 use-discord: false
 
-# Discord Bot Token (IGNORE IF use_discord = false)
+# Discord Bot Token (IGNORE IF use_discord = false). The reload command does not work with this.
 BOT-TOKEN: "TOKEN_HERE"
 
-# Channel to send Discord messages to (IGNORE IF use_discord = false)
+# Channel to send Discord messages to (IGNORE IF use_discord = false). The reload command does not work with this.
 CHANNEL-ID: "GLOBAL_CHANNEL_ID"
 
 # The amount of seconds to check if a server is online/offline.
@@ -90,10 +90,15 @@ aliases:
 # simpleproxy.read.join - Read join messages.
 # simpleproxy.read.leave - Read leave messages.
 # simpleproxy.read.switch - Read switch messages.
+# simpleproxychat.reload - ALWAYS Active whether use-permissions is false or not.
 use-permissions: false
 
+# Whether to send if the statuses of the servers connected to the proxy when the proxy starts up.
+# THIS IS FOR DISCORD MESSAGES ONLY.
+use-initial-server-status: true
+
 # DO NOT TOUCH THIS
-file-version: 5
+file-version: 6
 ```
 
 **messages.yml**
@@ -109,10 +114,10 @@ file-version: 5
 minecraft:
   join:
     use: true
-    message: "&e%player% &ahas joined the network."
+    message: "&e%player% &ahas joined the network. (%server%)"
   leave:
     use: true
-    message: "&e%player% &chas left the network."
+    message: "&e%player% &chas left the network. (%server%)"
   message: "&8[&3%server%&8] &e%player% &9» &7%message%"
   discord:
     message: "**%server%** %player% » %message%"
@@ -121,44 +126,97 @@ minecraft:
       title: "[%server%] %player%"
       message: "%message%"
       color: "#FFC0CB"
+      use-timestamp: true
   switch:
     use: true
     default: "&e%player% &7moved from &c%from% &7to &a%to%&7."
     no-from: "&e%player% &7moved &7to &a%to%&7."
+  successful-reload: "&aThe plugin has been successfully reloaded!"
+  no-permission: "&cSorry, you do not have permission to run this command."
 
 # Discord Stuff
 discord:
   join:
     use: true
-    message: "%player% has joined the network."
+    message: "%player% has joined the network. (%server%)"
+    use-timestamp: true
   leave:
     use: true
-    message: "%player% has left the network."
+    message: "%player% has left the network. (%server%)"
+    use-timestamp: true
   switch:
     use: true
     message: "%player% has switched from %from% to %to%."
+    use-timestamp: true
   minecraft-message: "&8[&bDiscord&8] %role% &f%user% &9» &7%message%"
   proxy-status:
     enabled: "✅ Proxy enabled!"
     disabled: "⛔ Proxy disabled."
     title: "Server Status"
     message: "Status: "
-    online: "Online"
-    offline: "Offline"
+    online: "Online ✅"
+    offline: "Offline ⛔"
+    use-timestamp: true
 
 # DO NOT TOUCH THIS
-file-version: 2
+file-version: 3
 ```
 
 ---
 
-## Caveats
-1) As of right now, vanish support is only available on *BungeeCord/Waterfall*. The plugin will still function as normal, but if you go into vanish then it won't send a fake join/leave message.
-1) In order for prefixes and suffixes to work, you **must** have LuckPerms installed on the proxy. Then, you can use `%prefix%` and `%suffix%`.
+<p align="center">
+  <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Commands.png?raw=true" alt="commands"/>
+</p>
+
+* `/spc-reload` - Reloads the config files.
 
 ---
 
-## Statistics
+<p align="center">
+  <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Permissions.png?raw=true" alt="permissions"/>
+</p>
+
+* `simpleproxy.read.join` - Read join messages.
+* `simpleproxy.read.leave` - Read leave messages.
+* `simpleproxy.read.switch` - Read switch messages.
+* `simpleproxychat.reload` - Reload the config.
+
+---
+
+<p align="center">
+  <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Placeholders.png?raw=true" alt="placeholders"/>
+</p>
+
+* `%server%` - The current connected server. Uses the alias if one is specified.
+* `%original_server%` - Same as `%server%`, but does not use the alias.
+* `%to%` - The current connected server. Uses the alias if one is specified.
+* `%original_to%` - Same as `%to%`, but does not use the alias.
+* `%from%` - The server the player just disconnected from. Uses the alias if one is specified.
+* `%original_from%` - Same as `%from%`, but does not use the alias.
+* `%player%` - The player's Minecraft username.
+* `%user%` - The player's Discord username.
+* `%role%` - The player's Discord role.
+* `%prefix%` - The player's prefix. **LuckPerms Only**
+* `%suffix%` - The player's suffix. **LuckPerms Only**
+* `%message%` - The player's message.
+* `%epoch%` - This get's the current time (in milliseconds). Formats can be used like [this](https://gist.github.com/LeviSnoot/d9147767abeef2f770e9ddcd91eb85aa). An example would be `<t:%epoch%>`. **Discord Only**
+
+---
+
+<p align="center">
+  <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Caveats.png?raw=true" alt="caveats"/>
+</p>
+
+1) As of right now, vanish support is only available on *BungeeCord/Waterfall*. The plugin will still function as normal, but if you go into vanish then it won't send a fake join/leave message.
+1) In order for prefixes and suffixes to work, you **must** have LuckPerms installed on the proxy. Then, you can use `%prefix%` and `%suffix%`.
+1) `%epoch%` and the timestamps only work in certain places on Discord. As an alternative, you can select some of the embeds to have `use-timestamp: true`. This is out of my control sadly... 😔
+
+---
+
+<p align="center">
+  <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Statistics.png?raw=true" alt="statistics"/>
+</p>
+
 ### Velocity Statistics
 ![velocity statistics](https://bstats.org/signatures/velocity/SimpleProxyChat.svg)
 

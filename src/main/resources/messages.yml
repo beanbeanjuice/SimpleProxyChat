@@ -9,10 +9,10 @@
 minecraft:
   join:
     use: true
-    message: "&e%player% &ahas joined the network."
+    message: "&e%player% &ahas joined the network. (%server%)"
   leave:
     use: true
-    message: "&e%player% &chas left the network."
+    message: "&e%player% &chas left the network. (%server%)"
   message: "&8[&3%server%&8] &e%player% &9» &7%message%"
   discord:
     message: "**%server%** %player% » %message%"
@@ -21,30 +21,37 @@ minecraft:
       title: "[%server%] %player%"
       message: "%message%"
       color: "#FFC0CB"
+      use-timestamp: true
   switch:
     use: true
     default: "&e%player% &7moved from &c%from% &7to &a%to%&7."
     no-from: "&e%player% &7moved &7to &a%to%&7."
+  successful-reload: "&aThe plugin has been successfully reloaded!"
+  no-permission: "&cSorry, you do not have permission to run this command."
 
 # Discord Stuff
 discord:
   join:
     use: true
-    message: "%player% has joined the network."
+    message: "%player% has joined the network. (%server%)"
+    use-timestamp: true
   leave:
     use: true
-    message: "%player% has left the network."
+    message: "%player% has left the network. (%server%)"
+    use-timestamp: true
   switch:
     use: true
     message: "%player% has switched from %from% to %to%."
+    use-timestamp: true
   minecraft-message: "&8[&bDiscord&8] %role% &f%user% &9» &7%message%"
   proxy-status:
     enabled: "✅ Proxy enabled!"
     disabled: "⛔ Proxy disabled."
     title: "Server Status"
     message: "Status: "
-    online: "Online"
-    offline: "Offline"
+    online: "Online ✅"
+    offline: "Offline ⛔"
+    use-timestamp: true
 
 # DO NOT TOUCH THIS
-file-version: 2
+file-version: 3
