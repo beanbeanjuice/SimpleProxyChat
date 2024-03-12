@@ -8,6 +8,7 @@ import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataEntry;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.kyori.adventure.text.Component;
@@ -16,11 +17,8 @@ import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 import org.bstats.bungeecord.Metrics;
-import org.bstats.charts.MultiLineChart;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -29,6 +27,7 @@ public final class SimpleProxyChatBungee extends Plugin {
 
     private Config config;
     private Bot discordBot;
+    private Metrics metrics;
 
     @Override
     public void onEnable() {
@@ -99,17 +98,20 @@ public final class SimpleProxyChatBungee extends Plugin {
         // bStats Stuff
         this.getLogger().info("Starting bStats... (IF ENABLED)");
         int pluginId = 21146;
-        Metrics metrics = new Metrics(this, pluginId);
+        this.metrics = new Metrics(this, pluginId);
 
-        // Optional: Add custom charts
-        metrics.addCustomChart(new MultiLineChart("players_and_servers", () -> {
-            Map<String, Integer> valueMap = new HashMap<>();
-            valueMap.put("servers", 1);
-            valueMap.put("players", this.getProxy().getOnlineCount());
-            return valueMap;
-        }));
-
+        // Plugin has started.
         this.getLogger().log(Level.INFO, "The plugin has been started.");
+
+        this.getProxy().getScheduler().schedule(this, () -> {
+            this.config.overwrite(ConfigDataKey.PLUGIN_STARTING, new ConfigDataEntry(false));
+
+            ServerStatusManager manager = serverListener.getServerStatusManager();
+            manager.getAllStatusStrings().forEach((string) -> this.getLogger().info(string));
+
+            if (!config.getAsBoolean(ConfigDataKey.USE_INITIAL_SERVER_STATUS)) return;
+            this.discordBot.sendMessageEmbed(manager.getAllStatusEmbed());
+        }, config.getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL) * 2L, TimeUnit.SECONDS);
     }
 
     @Override

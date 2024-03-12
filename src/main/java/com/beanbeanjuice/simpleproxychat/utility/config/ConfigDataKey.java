@@ -8,6 +8,7 @@ public enum ConfigDataKey {
     SERVER_UPDATE_INTERVAL,
     ALIASES,
     USE_PERMISSIONS,
+    USE_INITIAL_SERVER_STATUS,
 
     // MESSAGES
     MINECRAFT_JOIN_USE,
@@ -40,5 +41,6 @@ public enum ConfigDataKey {
 
     // External
     VANISH_ENABLED,
-    LUCKPERMS_ENABLED
+    LUCKPERMS_ENABLED,
+    PLUGIN_STARTING
 }
