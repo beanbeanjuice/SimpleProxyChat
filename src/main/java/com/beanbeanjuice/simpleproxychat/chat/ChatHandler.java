@@ -79,6 +79,10 @@ public class ChatHandler {
             String message = replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_MESSAGE), replacements);
 
             title = replacePrefixSuffix(title, playerUUID, aliasedServerName, serverName);
+
+            title = Helper.stripColor(MiniMessage.miniMessage().deserialize(title));
+            message = Helper.stripColor(MiniMessage.miniMessage().deserialize(message));
+
             Color color = config.getAsColor(ConfigDataKey.MINECRAFT_DISCORD_EMBED_COLOR).orElse(Color.RED);
             discordBot.sendMessageEmbed(
                     new EmbedBuilder()
@@ -264,6 +268,7 @@ public class ChatHandler {
         if (!serverKey.equals("")) prefixStream = prefixStream.filter((node) -> node.getContexts().contains("server", serverKey));
 
         return prefixStream
+                .filter(Node::getValue)
                 .filter(NodeType.PREFIX::matches)
                 .map(NodeType.PREFIX::cast)
                 .map(PrefixNode::getKey)
@@ -279,6 +284,7 @@ public class ChatHandler {
         if (!serverKey.equals("")) suffixStream = suffixStream.filter((node) -> node.getContexts().contains("server", serverKey));
 
         return suffixStream
+                .filter(Node::getValue)
                 .filter(NodeType.SUFFIX::matches)
                 .map(NodeType.SUFFIX::cast)
                 .map(SuffixNode::getKey)
