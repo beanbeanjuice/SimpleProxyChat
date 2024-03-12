@@ -65,13 +65,13 @@
 #         Supports Mini-Message/Legacy Color Codes
 # ==========================================================
 
-# True if you will be using Discord
+# True if you will be using Discord. The reload command does not work with this.
 use-discord: false
 
-# Discord Bot Token (IGNORE IF use_discord = false)
+# Discord Bot Token (IGNORE IF use_discord = false). The reload command does not work with this.
 BOT-TOKEN: "TOKEN_HERE"
 
-# Channel to send Discord messages to (IGNORE IF use_discord = false)
+# Channel to send Discord messages to (IGNORE IF use_discord = false). The reload command does not work with this.
 CHANNEL-ID: "GLOBAL_CHANNEL_ID"
 
 # The amount of seconds to check if a server is online/offline.
@@ -90,6 +90,7 @@ aliases:
 # simpleproxy.read.join - Read join messages.
 # simpleproxy.read.leave - Read leave messages.
 # simpleproxy.read.switch - Read switch messages.
+# simpleproxychat.reload - ALWAYS Active whether use-permissions is false or not.
 use-permissions: false
 
 # Whether to send if the statuses of the servers connected to the proxy when the proxy starts up.
@@ -130,6 +131,8 @@ minecraft:
     use: true
     default: "&e%player% &7moved from &c%from% &7to &a%to%&7."
     no-from: "&e%player% &7moved &7to &a%to%&7."
+  successful-reload: "&aThe plugin has been successfully reloaded!"
+  no-permission: "&cSorry, you do not have permission to run this command."
 
 # Discord Stuff
 discord:
