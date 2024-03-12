@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
+import net.luckperms.api.node.Node;
 import net.luckperms.api.node.NodeType;
 import net.luckperms.api.node.types.PrefixNode;
 import net.luckperms.api.node.types.SuffixNode;
@@ -20,10 +21,12 @@ import net.luckperms.api.query.QueryOptions;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.time.Instant;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 public class ChatHandler {
 
@@ -50,19 +53,23 @@ public class ChatHandler {
         String minecraftConfigString = config.getAsString(ConfigDataKey.MINECRAFT_MESSAGE);
         String discordConfigString = config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_MESSAGE);
 
-        serverName = Helper.convertAlias(config, serverName);
+        String aliasedServerName = Helper.convertAlias(config, serverName);
 
         List<Tuple<String, String>> replacements = new ArrayList<>();
         replacements.add(Tuple.create("message", playerMessage));
-        replacements.add(Tuple.create("server", serverName));
+        replacements.add(Tuple.create("server", aliasedServerName));
+        replacements.add(Tuple.create("original_server", serverName));
+        replacements.add(Tuple.create("to", aliasedServerName));
+        replacements.add(Tuple.create("original_to", serverName));
         replacements.add(Tuple.create("player", playerName));
+        replacements.add(Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())));
 
         String minecraftMessage = replaceKeys(minecraftConfigString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
 
         if (config.getAsBoolean(ConfigDataKey.LUCKPERMS_ENABLED)) {
-            minecraftMessage = replacePrefixSuffix(minecraftMessage, playerUUID);
-            discordMessage = replacePrefixSuffix(discordMessage, playerUUID);
+            minecraftMessage = replacePrefixSuffix(minecraftMessage, playerUUID, aliasedServerName, serverName);
+            discordMessage = replacePrefixSuffix(discordMessage, playerUUID, aliasedServerName, serverName);
         }
 
         // Log to Console
@@ -73,15 +80,22 @@ public class ChatHandler {
             String title = replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_TITLE), replacements);
             String message = replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_MESSAGE), replacements);
 
-            title = replacePrefixSuffix(title, playerUUID);
+            title = replacePrefixSuffix(title, playerUUID, aliasedServerName, serverName);
+
+            title = Helper.stripColor(MiniMessage.miniMessage().deserialize(title));
+            message = Helper.stripColor(MiniMessage.miniMessage().deserialize(message));
+
             Color color = config.getAsColor(ConfigDataKey.MINECRAFT_DISCORD_EMBED_COLOR).orElse(Color.RED);
-            discordBot.sendMessageEmbed(
-                    new EmbedBuilder()
-                            .setAuthor(title, null, getPlayerHeadURL(playerUUID))
-                            .setDescription(message)
-                            .setColor(color)
-                            .build()
-            );
+
+            EmbedBuilder embedBuilder = new EmbedBuilder()
+                    .setAuthor(title, null, getPlayerHeadURL(playerUUID))
+                    .setDescription(message)
+                    .setColor(color);
+
+            if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE_TIMESTAMP))
+                embedBuilder.setTimestamp(Instant.now());
+
+            discordBot.sendMessageEmbed(embedBuilder.build());
         } else {
             discordBot.sendMessage(discordMessage);
         }
@@ -90,56 +104,78 @@ public class ChatHandler {
         minecraftLogger.accept(minecraftMessage);
     }
 
-    public void runProxyLeaveMessage(String playerName, UUID playerUUID,
+    public void runProxyLeaveMessage(String playerName, UUID playerUUID, String serverName,
                                      Consumer<String> consoleLogger, BiConsumer<String, Permission> minecraftLogger) {
         String configString = config.getAsString(ConfigDataKey.MINECRAFT_LEAVE);
-        String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_LEAVE);
+        String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_LEAVE_MESSAGE);
+
+        String aliasedServerName = Helper.convertAlias(config, serverName);
 
         List<Tuple<String, String>> replacements = new ArrayList<>();
         replacements.add(Tuple.create("player", playerName));
+        replacements.add(Tuple.create("server", aliasedServerName));
+        replacements.add(Tuple.create("original_server", serverName));
+        replacements.add(Tuple.create("to", aliasedServerName));
+        replacements.add(Tuple.create("original_to", serverName));
+        replacements.add(Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())));
 
         String message = replaceKeys(configString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
 
         if (config.getAsBoolean(ConfigDataKey.LUCKPERMS_ENABLED)) {
-            message = replacePrefixSuffix(message, playerUUID);
-            discordMessage = replacePrefixSuffix(discordMessage, playerUUID);
+            message = replacePrefixSuffix(message, playerUUID, aliasedServerName, serverName);
+            discordMessage = replacePrefixSuffix(discordMessage, playerUUID, aliasedServerName, serverName);
         }
 
         // Log to Console
         consoleLogger.accept(Helper.stripColor(MiniMessage.miniMessage().deserialize(message)));
 
         // Log to Discord
-        if (config.getAsBoolean(ConfigDataKey.DISCORD_LEAVE_USE))
-            discordBot.sendMessageEmbed(simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.RED).build());
+        if (config.getAsBoolean(ConfigDataKey.DISCORD_LEAVE_USE)) {
+            EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.RED);
+            if (config.getAsBoolean(ConfigDataKey.DISCORD_LEAVE_USE_TIMESTAMP)) embedBuilder.setTimestamp(Instant.now());
+            discordBot.sendMessageEmbed(embedBuilder.build());
+        }
 
         // Log to Minecraft
         if (config.getAsBoolean(ConfigDataKey.MINECRAFT_LEAVE_USE))
             minecraftLogger.accept(message, Permission.READ_LEAVE_MESSAGE);
     }
 
-    public void runProxyJoinMessage(String playerName, UUID playerUUID,
+    public void runProxyJoinMessage(String playerName, UUID playerUUID, String serverName,
                                     Consumer<String> consoleLogger, BiConsumer<String, Permission> minecraftLogger) {
         String configString = config.getAsString(ConfigDataKey.MINECRAFT_JOIN);
-        String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_JOIN);
+        String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_JOIN_MESSAGE);
+
+        String aliasedServerName = Helper.convertAlias(config, serverName);
 
         List<Tuple<String, String>> replacements = new ArrayList<>();
         replacements.add(Tuple.create("player", playerName));
+        replacements.add(Tuple.create("server", Helper.convertAlias(config, serverName)));
+        replacements.add(Tuple.create("to", Helper.convertAlias(config, serverName)));
+        replacements.add(Tuple.create("server", aliasedServerName));
+        replacements.add(Tuple.create("original_server", serverName));
+        replacements.add(Tuple.create("to", aliasedServerName));
+        replacements.add(Tuple.create("original_to", serverName));
+        replacements.add(Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())));
 
         String message = replaceKeys(configString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
 
         if (config.getAsBoolean(ConfigDataKey.LUCKPERMS_ENABLED)) {
-            message = replacePrefixSuffix(message, playerUUID);
-            discordMessage = replacePrefixSuffix(discordMessage, playerUUID);
+            message = replacePrefixSuffix(message, playerUUID, aliasedServerName, serverName);
+            discordMessage = replacePrefixSuffix(discordMessage, playerUUID, aliasedServerName, serverName);
         }
 
         // Log to Console
         consoleLogger.accept(Helper.stripColor(MiniMessage.miniMessage().deserialize(message)));
 
         // Log to Discord
-        if (config.getAsBoolean(ConfigDataKey.DISCORD_JOIN_USE))
-            discordBot.sendMessageEmbed(simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.GREEN).build());
+        if (config.getAsBoolean(ConfigDataKey.DISCORD_JOIN_USE)) {
+            EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.GREEN);
+            if (config.getAsBoolean(ConfigDataKey.DISCORD_JOIN_USE_TIMESTAMP)) embedBuilder.setTimestamp(Instant.now());
+            discordBot.sendMessageEmbed(embedBuilder.build());
+        }
 
         // Log to Minecraft
         if (config.getAsBoolean(ConfigDataKey.MINECRAFT_JOIN_USE))
@@ -149,33 +185,41 @@ public class ChatHandler {
     public void runProxySwitchMessage(String from, String to, String playerName, UUID playerUUID,
                                       Consumer<String> consoleLogger, Consumer<String> minecraftLogger) {
         String consoleConfigString = config.getAsString(ConfigDataKey.MINECRAFT_SWITCH_DEFAULT);
-        String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_SWITCH);
+        String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_SWITCH_MESSAGE);
         String minecraftConfigString = config.getAsString(ConfigDataKey.MINECRAFT_SWITCH_SHORT);
 
-        from = Helper.convertAlias(config, from);
-        to = Helper.convertAlias(config, to);
+        String aliasedFrom = Helper.convertAlias(config, from);
+        String aliasedTo = Helper.convertAlias(config, to);
 
         List<Tuple<String, String>> replacements = new ArrayList<>();
-        replacements.add(Tuple.create("from", from));
-        replacements.add(Tuple.create("to", to));
+        replacements.add(Tuple.create("from", aliasedFrom));
+        replacements.add(Tuple.create("original_from", from));
+        replacements.add(Tuple.create("to", aliasedTo));
+        replacements.add(Tuple.create("original_to", to));
+        replacements.add(Tuple.create("server", aliasedTo));
+        replacements.add(Tuple.create("original_server", to));
         replacements.add(Tuple.create("player", playerName));
+        replacements.add(Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())));
 
         String consoleMessage = replaceKeys(consoleConfigString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
         String minecraftMessage = replaceKeys(minecraftConfigString, replacements);
 
         if (config.getAsBoolean(ConfigDataKey.LUCKPERMS_ENABLED)) {
-            consoleMessage = replacePrefixSuffix(consoleMessage, playerUUID);
-            minecraftMessage = replacePrefixSuffix(minecraftMessage, playerUUID);
-            discordMessage = replacePrefixSuffix(discordMessage, playerUUID);
+            consoleMessage = replacePrefixSuffix(consoleMessage, playerUUID, aliasedTo, to);
+            minecraftMessage = replacePrefixSuffix(minecraftMessage, playerUUID, aliasedTo, to);
+            discordMessage = replacePrefixSuffix(discordMessage, playerUUID, aliasedTo, to);
         }
 
         // Log to Console
         consoleLogger.accept(Helper.stripColor(MiniMessage.miniMessage().deserialize(consoleMessage)));
 
         // Log to Discord
-        if (config.getAsBoolean(ConfigDataKey.DISCORD_SWITCH_USE))
-            discordBot.sendMessageEmbed(simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.YELLOW).build());
+        if (config.getAsBoolean(ConfigDataKey.DISCORD_SWITCH_USE)) {
+            EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.YELLOW);
+            if (config.getAsBoolean(ConfigDataKey.DISCORD_SWITCH_USE_TIMESTAMP)) embedBuilder.setTimestamp(Instant.now());
+            discordBot.sendMessageEmbed(embedBuilder.build());
+        }
 
         // Log to Minecraft
         if (config.getAsBoolean(ConfigDataKey.MINECRAFT_SWITCH_USE))
@@ -216,7 +260,8 @@ public class ChatHandler {
                 message,
                 Tuple.create("role", String.format("<%s>%s</%s>", hex, roleName, hex)),
                 Tuple.create("user", username),
-                Tuple.create("message", discordMessage)
+                Tuple.create("message", discordMessage),
+                Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond()))
         );
 
         globalLogger.accept(message);
@@ -237,29 +282,50 @@ public class ChatHandler {
         return string;
     }
 
-    private String replacePrefixSuffix(String message, UUID playerUUID) {
+    private List<String> getPrefixBasedOnServerContext(User user, String serverKey) {
+        Stream<Node> prefixStream = user.resolveInheritedNodes(QueryOptions.nonContextual()).stream();
+
+        if (!serverKey.equals("")) prefixStream = prefixStream.filter((node) -> node.getContexts().contains("server", serverKey));
+
+        return prefixStream
+                .filter(Node::getValue)
+                .filter(NodeType.PREFIX::matches)
+                .map(NodeType.PREFIX::cast)
+                .map(PrefixNode::getKey)
+                .map(prefix -> prefix.replace("prefix.", ""))
+                .sorted((left, right) -> Character.compare(right.charAt(0), left.charAt(0)))
+                .map(prefix -> prefix.split("\\.")[1])
+                .toList();
+    }
+
+    private List<String> getSuffixBasedOnServerContext(User user, String serverKey) {
+        Stream<Node> suffixStream = user.resolveInheritedNodes(QueryOptions.nonContextual()).stream();
+
+        if (!serverKey.equals("")) suffixStream = suffixStream.filter((node) -> node.getContexts().contains("server", serverKey));
+
+        return suffixStream
+                .filter(Node::getValue)
+                .filter(NodeType.SUFFIX::matches)
+                .map(NodeType.SUFFIX::cast)
+                .map(SuffixNode::getKey)
+                .map(suffix -> suffix.replace("suffix.", ""))
+                .sorted((left, right) -> Character.compare(right.charAt(0), left.charAt(0)))
+                .map(suffix -> suffix.split("\\.")[1])
+                .toList();
+    }
+
+    private String replacePrefixSuffix(String message, UUID playerUUID, String aliasedServerName, String serverName) {
         try {
             User user = LuckPermsProvider.get().getUserManager().loadUser(playerUUID).get();
 
-            List<String> prefixList = user.resolveInheritedNodes(QueryOptions.nonContextual())
-                    .stream()
-                    .filter(NodeType.PREFIX::matches)
-                    .map(NodeType.PREFIX::cast)
-                    .map(PrefixNode::getKey)
-                    .map(prefix -> prefix.replace("prefix.", ""))
-                    .sorted((left, right) -> Character.compare(right.charAt(0), left.charAt(0)))
-                    .map(prefix -> prefix.split("\\.")[1])
-                    .toList();
+            // Get prefix based on aliased name. If none show up, use original name. If none show up, use top prefix.
+            List<String> prefixList = getPrefixBasedOnServerContext(user, aliasedServerName);
+            if (prefixList.isEmpty()) prefixList = getPrefixBasedOnServerContext(user, serverName);
+            if (prefixList.isEmpty()) prefixList = getPrefixBasedOnServerContext(user, "");
 
-            List<String> suffixList = user.resolveInheritedNodes(QueryOptions.nonContextual())
-                    .stream()
-                    .filter(NodeType.SUFFIX::matches)
-                    .map(NodeType.SUFFIX::cast)
-                    .map(SuffixNode::getKey)
-                    .map(suffix -> suffix.replace("suffix.", ""))
-                    .sorted((left, right) -> Character.compare(right.charAt(0), left.charAt(0)))
-                    .map(suffix -> suffix.split("\\.")[1])
-                    .toList();
+            List<String> suffixList = getSuffixBasedOnServerContext(user, aliasedServerName);
+            if (suffixList.isEmpty()) suffixList = getSuffixBasedOnServerContext(user, serverName);
+            if (suffixList.isEmpty()) suffixList = getSuffixBasedOnServerContext(user, "");
 
             String prefix = prefixList.isEmpty() ? "" : Helper.translateLegacyCodes(prefixList.get(0));
             String suffix = suffixList.isEmpty() ? "" : Helper.translateLegacyCodes(suffixList.get(0));

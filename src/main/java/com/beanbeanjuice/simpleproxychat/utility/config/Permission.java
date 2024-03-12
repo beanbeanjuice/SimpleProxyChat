@@ -6,7 +6,8 @@ public enum Permission {
 
     READ_JOIN_MESSAGE("simpleproxychat.read.join"),
     READ_LEAVE_MESSAGE("simpleproxychat.read.leave"),
-    READ_SWITCH_MESSAGE("simpleproxychat.read.switch");
+    READ_SWITCH_MESSAGE("simpleproxychat.read.switch"),
+    RELOAD("simpleproxychat.reload");
 
     @Getter private final String permissionNode;
 
