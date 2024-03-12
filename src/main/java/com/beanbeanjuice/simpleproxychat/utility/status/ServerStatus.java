@@ -13,6 +13,12 @@ public class ServerStatus {
 
     private static final int COUNT_UNTIL_UPDATE = 5;
 
+    public ServerStatus() { }
+    public ServerStatus(boolean initialStatus) {
+        this.status = initialStatus;
+        this.previousStatus = initialStatus;
+    }
+
     private void resetCount() {
         onlineCount = 0;
         offlineCount = 0;
