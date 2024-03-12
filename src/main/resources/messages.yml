@@ -21,6 +21,7 @@ minecraft:
       title: "[%server%] %player%"
       message: "%message%"
       color: "#FFC0CB"
+      use-timestamp: true
   switch:
     use: true
     default: "&e%player% &7moved from &c%from% &7to &a%to%&7."
@@ -31,12 +32,15 @@ discord:
   join:
     use: true
     message: "%player% has joined the network. (%server%)"
+    use-timestamp: true
   leave:
     use: true
     message: "%player% has left the network. (%server%)"
+    use-timestamp: true
   switch:
     use: true
     message: "%player% has switched from %from% to %to%."
+    use-timestamp: true
   minecraft-message: "&8[&bDiscord&8] %role% &f%user% &9» &7%message%"
   proxy-status:
     enabled: "✅ Proxy enabled!"
@@ -45,6 +49,7 @@ discord:
     message: "Status: "
     online: "Online"
     offline: "Offline"
+    use-timestamp: true
 
 # DO NOT TOUCH THIS
-file-version: 2
+file-version: 3
