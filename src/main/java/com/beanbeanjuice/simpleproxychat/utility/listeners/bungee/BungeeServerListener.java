@@ -7,6 +7,7 @@ import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatus;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import de.myzelyam.api.vanish.*;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
@@ -25,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 public class BungeeServerListener implements Listener {
 
+    @Getter private ServerStatusManager serverStatusManager;
     private final SimpleProxyChatBungee plugin;
     private final ChatHandler chatHandler;
 
@@ -108,22 +110,27 @@ public class BungeeServerListener implements Listener {
     }
 
     private void startServerStatusDetection() {
-        ServerStatusManager manager = new ServerStatusManager(plugin.getConfig());
+        this.serverStatusManager = new ServerStatusManager(plugin.getConfig());
         int updateInterval = plugin.getConfig().getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL);
 
         plugin.getProxy().getScheduler().schedule(plugin, () -> plugin.getProxy().getServers().forEach((serverName, serverInfo) -> {
             serverInfo.ping((result, error) -> {
                 boolean newStatus = (error == null);  // Server offline if error != null
-                runStatusLogic(manager, serverName, newStatus);
+                runStatusLogic(serverName, newStatus);
             });
         }), updateInterval, updateInterval, TimeUnit.SECONDS);
     }
 
-    private void runStatusLogic(ServerStatusManager manager, String serverName, boolean newStatus) {
-        ServerStatus currentStatus = manager.getStatus(serverName);
+    private void runStatusLogic(String serverName, boolean newStatus) {
+        if (plugin.getConfig().getAsBoolean(ConfigDataKey.PLUGIN_STARTING)) {
+            this.serverStatusManager.setStatus(serverName, newStatus);
+            return;
+        }
+
+        ServerStatus currentStatus = this.serverStatusManager.getStatus(serverName);
         currentStatus.updateStatus(newStatus).ifPresent((isOnline) -> {
-            plugin.getDiscordBot().sendMessageEmbed(manager.getStatusEmbed(serverName, isOnline));
-            plugin.getLogger().info(manager.getStatusString(serverName, isOnline));
+            plugin.getDiscordBot().sendMessageEmbed(this.serverStatusManager.getStatusEmbed(serverName, isOnline));
+            plugin.getLogger().info(this.serverStatusManager.getStatusString(serverName, isOnline));
         });
     }
 
