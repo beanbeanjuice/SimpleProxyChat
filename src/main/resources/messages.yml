@@ -26,6 +26,8 @@ minecraft:
     use: true
     default: "&e%player% &7moved from &c%from% &7to &a%to%&7."
     no-from: "&e%player% &7moved &7to &a%to%&7."
+  successful-reload: "&aThe plugin has been successfully reloaded!"
+  no-permission: "&cSorry, you do not have permission to run this command."
 
 # Discord Stuff
 discord:
