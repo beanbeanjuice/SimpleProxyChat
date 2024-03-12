@@ -20,6 +20,7 @@ import net.luckperms.api.query.QueryOptions;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.time.Instant;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -57,6 +58,7 @@ public class ChatHandler {
         replacements.add(Tuple.create("server", serverName));
         replacements.add(Tuple.create("to", serverName));
         replacements.add(Tuple.create("player", playerName));
+        replacements.add(Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())));
 
         String minecraftMessage = replaceKeys(minecraftConfigString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
@@ -76,13 +78,16 @@ public class ChatHandler {
 
             title = replacePrefixSuffix(title, playerUUID);
             Color color = config.getAsColor(ConfigDataKey.MINECRAFT_DISCORD_EMBED_COLOR).orElse(Color.RED);
-            discordBot.sendMessageEmbed(
-                    new EmbedBuilder()
-                            .setAuthor(title, null, getPlayerHeadURL(playerUUID))
-                            .setDescription(message)
-                            .setColor(color)
-                            .build()
-            );
+
+            EmbedBuilder embedBuilder = new EmbedBuilder()
+                    .setAuthor(title, null, getPlayerHeadURL(playerUUID))
+                    .setDescription(message)
+                    .setColor(color);
+
+            if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE_TIMESTAMP))
+                embedBuilder.setTimestamp(Instant.now());
+
+            discordBot.sendMessageEmbed(embedBuilder.build());
         } else {
             discordBot.sendMessage(discordMessage);
         }
@@ -94,12 +99,13 @@ public class ChatHandler {
     public void runProxyLeaveMessage(String playerName, UUID playerUUID, String serverName,
                                      Consumer<String> consoleLogger, BiConsumer<String, Permission> minecraftLogger) {
         String configString = config.getAsString(ConfigDataKey.MINECRAFT_LEAVE);
-        String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_LEAVE);
+        String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_LEAVE_MESSAGE);
 
         List<Tuple<String, String>> replacements = new ArrayList<>();
         replacements.add(Tuple.create("player", playerName));
         replacements.add(Tuple.create("server", Helper.convertAlias(config, serverName)));
         replacements.add(Tuple.create("to", Helper.convertAlias(config, serverName)));
+        replacements.add(Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())));
 
         String message = replaceKeys(configString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
@@ -113,8 +119,11 @@ public class ChatHandler {
         consoleLogger.accept(Helper.stripColor(MiniMessage.miniMessage().deserialize(message)));
 
         // Log to Discord
-        if (config.getAsBoolean(ConfigDataKey.DISCORD_LEAVE_USE))
-            discordBot.sendMessageEmbed(simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.RED).build());
+        if (config.getAsBoolean(ConfigDataKey.DISCORD_LEAVE_USE)) {
+            EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.RED);
+            if (config.getAsBoolean(ConfigDataKey.DISCORD_LEAVE_USE_TIMESTAMP)) embedBuilder.setTimestamp(Instant.now());
+            discordBot.sendMessageEmbed(embedBuilder.build());
+        }
 
         // Log to Minecraft
         if (config.getAsBoolean(ConfigDataKey.MINECRAFT_LEAVE_USE))
@@ -124,12 +133,13 @@ public class ChatHandler {
     public void runProxyJoinMessage(String playerName, UUID playerUUID, String serverName,
                                     Consumer<String> consoleLogger, BiConsumer<String, Permission> minecraftLogger) {
         String configString = config.getAsString(ConfigDataKey.MINECRAFT_JOIN);
-        String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_JOIN);
+        String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_JOIN_MESSAGE);
 
         List<Tuple<String, String>> replacements = new ArrayList<>();
         replacements.add(Tuple.create("player", playerName));
         replacements.add(Tuple.create("server", Helper.convertAlias(config, serverName)));
         replacements.add(Tuple.create("to", Helper.convertAlias(config, serverName)));
+        replacements.add(Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())));
 
         String message = replaceKeys(configString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
@@ -143,8 +153,11 @@ public class ChatHandler {
         consoleLogger.accept(Helper.stripColor(MiniMessage.miniMessage().deserialize(message)));
 
         // Log to Discord
-        if (config.getAsBoolean(ConfigDataKey.DISCORD_JOIN_USE))
-            discordBot.sendMessageEmbed(simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.GREEN).build());
+        if (config.getAsBoolean(ConfigDataKey.DISCORD_JOIN_USE)) {
+            EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.GREEN);
+            if (config.getAsBoolean(ConfigDataKey.DISCORD_JOIN_USE_TIMESTAMP)) embedBuilder.setTimestamp(Instant.now());
+            discordBot.sendMessageEmbed(embedBuilder.build());
+        }
 
         // Log to Minecraft
         if (config.getAsBoolean(ConfigDataKey.MINECRAFT_JOIN_USE))
@@ -154,7 +167,7 @@ public class ChatHandler {
     public void runProxySwitchMessage(String from, String to, String playerName, UUID playerUUID,
                                       Consumer<String> consoleLogger, Consumer<String> minecraftLogger) {
         String consoleConfigString = config.getAsString(ConfigDataKey.MINECRAFT_SWITCH_DEFAULT);
-        String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_SWITCH);
+        String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_SWITCH_MESSAGE);
         String minecraftConfigString = config.getAsString(ConfigDataKey.MINECRAFT_SWITCH_SHORT);
 
         from = Helper.convertAlias(config, from);
@@ -165,6 +178,7 @@ public class ChatHandler {
         replacements.add(Tuple.create("to", to));
         replacements.add(Tuple.create("server", to));
         replacements.add(Tuple.create("player", playerName));
+        replacements.add(Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())));
 
         String consoleMessage = replaceKeys(consoleConfigString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
@@ -180,8 +194,11 @@ public class ChatHandler {
         consoleLogger.accept(Helper.stripColor(MiniMessage.miniMessage().deserialize(consoleMessage)));
 
         // Log to Discord
-        if (config.getAsBoolean(ConfigDataKey.DISCORD_SWITCH_USE))
-            discordBot.sendMessageEmbed(simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.YELLOW).build());
+        if (config.getAsBoolean(ConfigDataKey.DISCORD_SWITCH_USE)) {
+            EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.YELLOW);
+            if (config.getAsBoolean(ConfigDataKey.DISCORD_SWITCH_USE_TIMESTAMP)) embedBuilder.setTimestamp(Instant.now());
+            discordBot.sendMessageEmbed(embedBuilder.build());
+        }
 
         // Log to Minecraft
         if (config.getAsBoolean(ConfigDataKey.MINECRAFT_SWITCH_USE))
@@ -222,7 +239,8 @@ public class ChatHandler {
                 message,
                 Tuple.create("role", String.format("<%s>%s</%s>", hex, roleName, hex)),
                 Tuple.create("user", username),
-                Tuple.create("message", discordMessage)
+                Tuple.create("message", discordMessage),
+                Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond()))
         );
 
         globalLogger.accept(message);
