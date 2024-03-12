@@ -7,6 +7,7 @@ import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatus;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import de.myzelyam.api.vanish.*;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
@@ -15,10 +16,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
-import net.md_5.bungee.api.event.ChatEvent;
-import net.md_5.bungee.api.event.PlayerDisconnectEvent;
-import net.md_5.bungee.api.event.PostLoginEvent;
-import net.md_5.bungee.api.event.ServerSwitchEvent;
+import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
@@ -28,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 public class BungeeServerListener implements Listener {
 
+    @Getter private ServerStatusManager serverStatusManager;
     private final SimpleProxyChatBungee plugin;
     private final ChatHandler chatHandler;
 
@@ -67,18 +66,21 @@ public class BungeeServerListener implements Listener {
     }
 
     void leave(ProxiedPlayer player) {
-        chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), plugin.getLogger()::info, this::sendToAllServers);
+        chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), player.getServer().getInfo().getName(), plugin.getLogger()::info, this::sendToAllServers);
     }
 
     @EventHandler
-    public void onPlayerJoinProxy(PostLoginEvent event) {
+    public void onPlayerJoinProxy(ServerConnectedEvent event) {
+        if (event.getPlayer().getGroups().contains("not-first-join")) return;  // If not first join, don't do anything.
+        event.getPlayer().addGroups("not-first-join");
+
         if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
 
         join(event.getPlayer());
     }
 
     void join(ProxiedPlayer player) {
-        chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), plugin.getLogger()::info, this::sendToAllServers);
+        chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), player.getServer().getInfo().getName(), plugin.getLogger()::info, this::sendToAllServers);
     }
 
     @EventHandler
@@ -108,22 +110,27 @@ public class BungeeServerListener implements Listener {
     }
 
     private void startServerStatusDetection() {
-        ServerStatusManager manager = new ServerStatusManager(plugin.getConfig());
+        this.serverStatusManager = new ServerStatusManager(plugin.getConfig());
         int updateInterval = plugin.getConfig().getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL);
 
         plugin.getProxy().getScheduler().schedule(plugin, () -> plugin.getProxy().getServers().forEach((serverName, serverInfo) -> {
             serverInfo.ping((result, error) -> {
                 boolean newStatus = (error == null);  // Server offline if error != null
-                runStatusLogic(manager, serverName, newStatus);
+                runStatusLogic(serverName, newStatus);
             });
         }), updateInterval, updateInterval, TimeUnit.SECONDS);
     }
 
-    private void runStatusLogic(ServerStatusManager manager, String serverName, boolean newStatus) {
-        ServerStatus currentStatus = manager.getStatus(serverName);
+    private void runStatusLogic(String serverName, boolean newStatus) {
+        if (plugin.getConfig().getAsBoolean(ConfigDataKey.PLUGIN_STARTING)) {
+            this.serverStatusManager.setStatus(serverName, newStatus);
+            return;
+        }
+
+        ServerStatus currentStatus = this.serverStatusManager.getStatus(serverName);
         currentStatus.updateStatus(newStatus).ifPresent((isOnline) -> {
-            plugin.getDiscordBot().sendMessageEmbed(manager.getStatusEmbed(serverName, isOnline));
-            plugin.getLogger().info(manager.getStatusString(serverName, isOnline));
+            plugin.getDiscordBot().sendMessageEmbed(this.serverStatusManager.getStatusEmbed(serverName, isOnline));
+            plugin.getLogger().info(this.serverStatusManager.getStatusString(serverName, isOnline));
         });
     }
 
