@@ -1,6 +1,7 @@
 package com.beanbeanjuice.simpleproxychat;
 
 import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;
+import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import com.google.inject.Inject;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.velocity.VelocityServerListener;
@@ -20,15 +21,12 @@ import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bstats.charts.MultiLineChart;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
 import java.awt.*;
 import java.nio.file.Path;
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class SimpleProxyChatVelocity {
@@ -39,6 +37,7 @@ public class SimpleProxyChatVelocity {
     @Getter private final Logger logger;
     @Getter private final Config config;
     @Getter private Bot discordBot;
+    private Metrics metrics;
 
     @Inject
     public SimpleProxyChatVelocity(ProxyServer proxyServer, Logger logger, @DataDirectory Path dataDirectory, Metrics.Factory metricsFactory) {
@@ -99,7 +98,8 @@ public class SimpleProxyChatVelocity {
                 },
                 (message) -> getLogger().info(message)
         );
-        this.proxyServer.getEventManager().register(this, new VelocityServerListener(this, chatHandler));
+        VelocityServerListener serverListener = new VelocityServerListener(this, chatHandler);
+        this.proxyServer.getEventManager().register(this, serverListener);
 
         // Start Channel Topic Updater
         this.proxyServer.getScheduler()
@@ -127,15 +127,20 @@ public class SimpleProxyChatVelocity {
         // bStats Stuff
         this.logger.info("Starting bStats... (IF ENABLED)");
         int pluginId = 21147;
-        Metrics metrics = metricsFactory.make(this, pluginId);
+        this.metrics = metricsFactory.make(this, pluginId);
 
-        // You can also add custom charts:
-        metrics.addCustomChart(new MultiLineChart("players_and_servers", () -> {
-            Map<String, Integer> valueMap = new HashMap<>();
-            valueMap.put("servers", 1);
-            valueMap.put("players", proxyServer.getAllPlayers().size());
-            return valueMap;
-        }));
+        // Plugin has started.
+        this.getLogger().info("The plugin has been started.");
+
+        this.getProxyServer().getScheduler().buildTask(this, () -> {
+            this.config.overwrite(ConfigDataKey.PLUGIN_STARTING, new ConfigDataEntry(false));
+
+            ServerStatusManager manager = serverListener.getServerStatusManager();
+            manager.getAllStatusStrings().forEach(this.logger::info);
+
+            if (!config.getAsBoolean(ConfigDataKey.USE_INITIAL_SERVER_STATUS)) return;
+            discordBot.sendMessageEmbed(manager.getAllStatusEmbed());
+        }).delay(config.getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL) * 2L, TimeUnit.SECONDS).schedule();
     }
 
     @Subscribe(order = PostOrder.LAST)
