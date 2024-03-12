@@ -23,6 +23,8 @@ public class Config {
     private final File configFolder;
     private final HashMap<ConfigDataKey, ConfigDataEntry> config;
 
+    private boolean initialSetup = true;
+
     public Config(File configFolder) {
         this.configFolder = configFolder;
         config = new HashMap<>();
@@ -36,6 +38,14 @@ public class Config {
             yamlMessages.update();
             yamlConfig.save();
             yamlMessages.save();
+            readConfig();
+        } catch (IOException ignored) { }
+    }
+
+    public void reload() {
+        try {
+            yamlConfig.reload();
+            yamlMessages.reload();
             readConfig();
         } catch (IOException ignored) { }
     }
@@ -99,6 +109,8 @@ public class Config {
         config.put(ConfigDataKey.MINECRAFT_SWITCH_USE, new ConfigDataEntry(yamlMessages.getBoolean("minecraft.switch.use")));
         config.put(ConfigDataKey.MINECRAFT_SWITCH_DEFAULT, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("minecraft.switch.default"))));
         config.put(ConfigDataKey.MINECRAFT_SWITCH_SHORT, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("minecraft.switch.no-from"))));
+        config.put(ConfigDataKey.MINECRAFT_SUCCESSFUL_RELOAD, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("minecraft.successful-reload"))));
+        config.put(ConfigDataKey.MINECRAFT_NO_PERMISSION, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("minecraft.no-permission"))));
 
         config.put(ConfigDataKey.DISCORD_JOIN_USE, new ConfigDataEntry(yamlMessages.getBoolean("discord.join.use")));
         config.put(ConfigDataKey.DISCORD_JOIN_MESSAGE, new ConfigDataEntry(yamlMessages.getString("discord.join.message")));
@@ -119,9 +131,11 @@ public class Config {
         config.put(ConfigDataKey.DISCORD_PROXY_STATUS_USE_TIMESTAMP, new ConfigDataEntry(yamlMessages.getBoolean("discord.proxy-status.use-timestamp")));
 
         // External
+        if (!initialSetup) return;
         config.put(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(false));
         config.put(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(false));
         config.put(ConfigDataKey.PLUGIN_STARTING, new ConfigDataEntry(true));
+        initialSetup = false;
     }
 
     private YamlDocument loadConfig(String fileName) throws IOException {
