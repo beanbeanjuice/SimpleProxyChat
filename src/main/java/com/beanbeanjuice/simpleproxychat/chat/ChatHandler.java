@@ -50,12 +50,14 @@ public class ChatHandler {
         String minecraftConfigString = config.getAsString(ConfigDataKey.MINECRAFT_MESSAGE);
         String discordConfigString = config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_MESSAGE);
 
-        serverName = Helper.convertAlias(config, serverName);
+        String aliasedServerName = Helper.convertAlias(config, serverName);
 
         List<Tuple<String, String>> replacements = new ArrayList<>();
         replacements.add(Tuple.create("message", playerMessage));
-        replacements.add(Tuple.create("server", serverName));
-        replacements.add(Tuple.create("to", serverName));
+        replacements.add(Tuple.create("server", aliasedServerName));
+        replacements.add(Tuple.create("original_server", serverName));
+        replacements.add(Tuple.create("to", aliasedServerName));
+        replacements.add(Tuple.create("original_to", serverName));
         replacements.add(Tuple.create("player", playerName));
 
         String minecraftMessage = replaceKeys(minecraftConfigString, replacements);
@@ -96,10 +98,14 @@ public class ChatHandler {
         String configString = config.getAsString(ConfigDataKey.MINECRAFT_LEAVE);
         String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_LEAVE);
 
+        String aliasedServerName = Helper.convertAlias(config, serverName);
+
         List<Tuple<String, String>> replacements = new ArrayList<>();
         replacements.add(Tuple.create("player", playerName));
-        replacements.add(Tuple.create("server", Helper.convertAlias(config, serverName)));
-        replacements.add(Tuple.create("to", Helper.convertAlias(config, serverName)));
+        replacements.add(Tuple.create("server", aliasedServerName));
+        replacements.add(Tuple.create("original_server", serverName));
+        replacements.add(Tuple.create("to", aliasedServerName));
+        replacements.add(Tuple.create("original_to", serverName));
 
         String message = replaceKeys(configString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
@@ -126,10 +132,14 @@ public class ChatHandler {
         String configString = config.getAsString(ConfigDataKey.MINECRAFT_JOIN);
         String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_JOIN);
 
+        String aliasedServerName = Helper.convertAlias(config, serverName);
+
         List<Tuple<String, String>> replacements = new ArrayList<>();
         replacements.add(Tuple.create("player", playerName));
-        replacements.add(Tuple.create("server", Helper.convertAlias(config, serverName)));
-        replacements.add(Tuple.create("to", Helper.convertAlias(config, serverName)));
+        replacements.add(Tuple.create("server", aliasedServerName));
+        replacements.add(Tuple.create("original_server", serverName));
+        replacements.add(Tuple.create("to", aliasedServerName));
+        replacements.add(Tuple.create("original_to", serverName));
 
         String message = replaceKeys(configString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
@@ -157,13 +167,16 @@ public class ChatHandler {
         String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_SWITCH);
         String minecraftConfigString = config.getAsString(ConfigDataKey.MINECRAFT_SWITCH_SHORT);
 
-        from = Helper.convertAlias(config, from);
-        to = Helper.convertAlias(config, to);
+        String aliasedFrom = Helper.convertAlias(config, from);
+        String aliasedTo = Helper.convertAlias(config, to);
 
         List<Tuple<String, String>> replacements = new ArrayList<>();
-        replacements.add(Tuple.create("from", from));
-        replacements.add(Tuple.create("to", to));
-        replacements.add(Tuple.create("server", to));
+        replacements.add(Tuple.create("from", aliasedFrom));
+        replacements.add(Tuple.create("original_from", from));
+        replacements.add(Tuple.create("to", aliasedTo));
+        replacements.add(Tuple.create("original_to", to));
+        replacements.add(Tuple.create("server", aliasedTo));
+        replacements.add(Tuple.create("original_server", to));
         replacements.add(Tuple.create("player", playerName));
 
         String consoleMessage = replaceKeys(consoleConfigString, replacements);
