@@ -165,6 +165,25 @@ file-version: 3
 ---
 
 <p align="center">
+  <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Commands.png?raw=true" alt="commands"/>
+</p>
+
+* `/spc-reload` - Reloads the config files.
+
+---
+
+<p align="center">
+  <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Permissions.png?raw=true" alt="permissions"/>
+</p>
+
+* `simpleproxy.read.join` - Read join messages.
+* `simpleproxy.read.leave` - Read leave messages.
+* `simpleproxy.read.switch` - Read switch messages.
+* `simpleproxychat.reload` - Reload the config.
+
+---
+
+<p align="center">
   <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Placeholders.png?raw=true" alt="placeholders"/>
 </p>
 
@@ -184,14 +203,20 @@ file-version: 3
 
 ---
 
-## Caveats
+<p align="center">
+  <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Caveats.png?raw=true" alt="caveats"/>
+</p>
+
 1) As of right now, vanish support is only available on *BungeeCord/Waterfall*. The plugin will still function as normal, but if you go into vanish then it won't send a fake join/leave message.
 1) In order for prefixes and suffixes to work, you **must** have LuckPerms installed on the proxy. Then, you can use `%prefix%` and `%suffix%`.
 1) `%epoch%` and the timestamps only work in certain places on Discord. As an alternative, you can select some of the embeds to have `use-timestamp: true`. This is out of my control sadly... 😔
 
 ---
 
-## Statistics
+<p align="center">
+  <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Statistics.png?raw=true" alt="statistics"/>
+</p>
+
 ### Velocity Statistics
 ![velocity statistics](https://bstats.org/signatures/velocity/SimpleProxyChat.svg)
 
