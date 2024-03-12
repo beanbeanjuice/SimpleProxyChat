@@ -125,6 +125,7 @@ minecraft:
       title: "[%server%] %player%"
       message: "%message%"
       color: "#FFC0CB"
+      use-timestamp: true
   switch:
     use: true
     default: "&e%player% &7moved from &c%from% &7to &a%to%&7."
@@ -135,12 +136,15 @@ discord:
   join:
     use: true
     message: "%player% has joined the network. (%server%)"
+    use-timestamp: true
   leave:
     use: true
     message: "%player% has left the network. (%server%)"
+    use-timestamp: true
   switch:
     use: true
     message: "%player% has switched from %from% to %to%."
+    use-timestamp: true
   minecraft-message: "&8[&bDiscord&8] %role% &f%user% &9» &7%message%"
   proxy-status:
     enabled: "✅ Proxy enabled!"
@@ -149,9 +153,10 @@ discord:
     message: "Status: "
     online: "Online ✅"
     offline: "Offline ⛔"
+    use-timestamp: true
 
 # DO NOT TOUCH THIS
-file-version: 2
+file-version: 3
 ```
 
 ---
@@ -172,12 +177,14 @@ file-version: 2
 * `%prefix%` - The player's prefix. **LuckPerms Only**
 * `%suffix%` - The player's suffix. **LuckPerms Only**
 * `%message%` - The player's message.
+* `%epoch%` - This get's the current time (in milliseconds). Formats can be used like [this](https://gist.github.com/LeviSnoot/d9147767abeef2f770e9ddcd91eb85aa). An example would be `<t:%epoch%>`. **Discord Only**
 
 ---
 
 ## Caveats
 1) As of right now, vanish support is only available on *BungeeCord/Waterfall*. The plugin will still function as normal, but if you go into vanish then it won't send a fake join/leave message.
 1) In order for prefixes and suffixes to work, you **must** have LuckPerms installed on the proxy. Then, you can use `%prefix%` and `%suffix%`.
+1) `%epoch%` and the timestamps only work in certain places on Discord. As an alternative, you can select some of the embeds to have `use-timestamp: true`. This is out of my control sadly... 😔
 
 ---
 
