@@ -92,8 +92,12 @@ aliases:
 # simpleproxy.read.switch - Read switch messages.
 use-permissions: false
 
+# Whether to send if the statuses of the servers connected to the proxy when the proxy starts up.
+# THIS IS FOR DISCORD MESSAGES ONLY.
+use-initial-server-status: true
+
 # DO NOT TOUCH THIS
-file-version: 5
+file-version: 6
 ```
 
 **messages.yml**
@@ -147,8 +151,8 @@ discord:
     disabled: "⛔ Proxy disabled."
     title: "Server Status"
     message: "Status: "
-    online: "Online"
-    offline: "Offline"
+    online: "Online ✅"
+    offline: "Offline ⛔"
     use-timestamp: true
 
 # DO NOT TOUCH THIS
