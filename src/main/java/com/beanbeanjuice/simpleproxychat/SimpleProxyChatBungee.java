@@ -1,5 +1,6 @@
 package com.beanbeanjuice.simpleproxychat;
 
+import com.beanbeanjuice.simpleproxychat.commands.bungee.BungeeReloadCommand;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeServerListener;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeVanishListener;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
@@ -73,8 +74,12 @@ public final class SimpleProxyChatBungee extends Plugin {
                 (message) -> getLogger().info(message)
         );
 
+        // Registering Listeners
         BungeeServerListener serverListener = new BungeeServerListener(this, chatHandler);
         this.getProxy().getPluginManager().registerListener(this, serverListener);
+
+        // Registering Commands
+        this.getProxy().getPluginManager().registerCommand(this, new BungeeReloadCommand(config));
 
         // Enable vanish support.
         if (pm.getPlugin("PremiumVanish") != null || pm.getPlugin("SuperVanish") != null) {

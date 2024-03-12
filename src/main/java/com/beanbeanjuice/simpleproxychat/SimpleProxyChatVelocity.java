@@ -1,5 +1,6 @@
 package com.beanbeanjuice.simpleproxychat;
 
+import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityReloadCommand;
 import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import com.google.inject.Inject;
@@ -10,6 +11,8 @@ import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataEntry;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.velocitypowered.api.command.CommandManager;
+import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
@@ -100,6 +103,15 @@ public class SimpleProxyChatVelocity {
         );
         VelocityServerListener serverListener = new VelocityServerListener(this, chatHandler);
         this.proxyServer.getEventManager().register(this, serverListener);
+
+        // Register Commands
+        CommandManager commandManager = proxyServer.getCommandManager();
+        CommandMeta commandMeta = commandManager.metaBuilder("spc-reload")
+                .aliases("spcreload")
+                .plugin(this)
+                .build();
+
+        commandManager.register(commandMeta, new VelocityReloadCommand(config));
 
         // Start Channel Topic Updater
         this.proxyServer.getScheduler()
