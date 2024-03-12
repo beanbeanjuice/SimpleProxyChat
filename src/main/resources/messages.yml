@@ -43,8 +43,8 @@ discord:
     disabled: "⛔ Proxy disabled."
     title: "Server Status"
     message: "Status: "
-    online: "Online"
-    offline: "Offline"
+    online: "Online ✅"
+    offline: "Offline ⛔"
 
 # DO NOT TOUCH THIS
 file-version: 2

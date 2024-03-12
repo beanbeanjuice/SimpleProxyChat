@@ -82,6 +82,7 @@ public class Config {
                 .forEach((key) -> aliases.put(key, aliasSection.getString(key)));
         config.put(ConfigDataKey.ALIASES, new ConfigDataEntry(aliases));
         config.put(ConfigDataKey.USE_PERMISSIONS, new ConfigDataEntry(yamlConfig.getBoolean("use-permissions")));
+        config.put(ConfigDataKey.USE_INITIAL_SERVER_STATUS, new ConfigDataEntry(yamlConfig.getBoolean("use-initial-server-status")));
 
         // message.yml
         config.put(ConfigDataKey.MINECRAFT_JOIN_USE, new ConfigDataEntry(yamlMessages.getBoolean("minecraft.join.use")));
@@ -115,6 +116,7 @@ public class Config {
         // External
         config.put(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(false));
         config.put(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(false));
+        config.put(ConfigDataKey.PLUGIN_STARTING, new ConfigDataEntry(true));
     }
 
     private YamlDocument loadConfig(String fileName) throws IOException {
