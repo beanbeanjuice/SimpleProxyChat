@@ -162,8 +162,11 @@ file-version: 3
 </p>
 
 * `%server%` - The current connected server. Uses the alias if one is specified.
+* `%original_server%` - Same as `%server%`, but does not use the alias.
 * `%to%` - The current connected server. Uses the alias if one is specified.
+* `%original_to%` - Same as `%to%`, but does not use the alias.
 * `%from%` - The server the player just disconnected from. Uses the alias if one is specified.
+* `%original_from%` - Same as `%from%`, but does not use the alias.
 * `%player%` - The player's Minecraft username.
 * `%user%` - The player's Discord username.
 * `%role%` - The player's Discord role.
