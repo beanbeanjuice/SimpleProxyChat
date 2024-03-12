@@ -95,16 +95,20 @@ public class Config {
         config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_TITLE, new ConfigDataEntry(yamlMessages.getString("minecraft.discord.embed.title")));
         config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_MESSAGE, new ConfigDataEntry(yamlMessages.getString("minecraft.discord.embed.message")));
         config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_COLOR, new ConfigDataEntry(yamlMessages.getString("minecraft.discord.embed.color")));
+        config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE_TIMESTAMP, new ConfigDataEntry(yamlMessages.getBoolean("minecraft.discord.embed.use-timestamp")));
         config.put(ConfigDataKey.MINECRAFT_SWITCH_USE, new ConfigDataEntry(yamlMessages.getBoolean("minecraft.switch.use")));
         config.put(ConfigDataKey.MINECRAFT_SWITCH_DEFAULT, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("minecraft.switch.default"))));
         config.put(ConfigDataKey.MINECRAFT_SWITCH_SHORT, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("minecraft.switch.no-from"))));
 
         config.put(ConfigDataKey.DISCORD_JOIN_USE, new ConfigDataEntry(yamlMessages.getBoolean("discord.join.use")));
-        config.put(ConfigDataKey.DISCORD_JOIN, new ConfigDataEntry(yamlMessages.getString("discord.join.message")));
+        config.put(ConfigDataKey.DISCORD_JOIN_MESSAGE, new ConfigDataEntry(yamlMessages.getString("discord.join.message")));
+        config.put(ConfigDataKey.DISCORD_JOIN_USE_TIMESTAMP, new ConfigDataEntry(yamlMessages.getBoolean("discord.join.use-timestamp")));
         config.put(ConfigDataKey.DISCORD_LEAVE_USE, new ConfigDataEntry(yamlMessages.getBoolean("discord.leave.use")));
-        config.put(ConfigDataKey.DISCORD_LEAVE, new ConfigDataEntry(yamlMessages.getString("discord.leave.message")));
+        config.put(ConfigDataKey.DISCORD_LEAVE_MESSAGE, new ConfigDataEntry(yamlMessages.getString("discord.leave.message")));
+        config.put(ConfigDataKey.DISCORD_LEAVE_USE_TIMESTAMP, new ConfigDataEntry(yamlMessages.getBoolean("discord.leave.use-timestamp")));
         config.put(ConfigDataKey.DISCORD_SWITCH_USE, new ConfigDataEntry(yamlMessages.getBoolean("discord.switch.use")));
-        config.put(ConfigDataKey.DISCORD_SWITCH, new ConfigDataEntry(yamlMessages.getString("discord.switch.message")));
+        config.put(ConfigDataKey.DISCORD_SWITCH_MESSAGE, new ConfigDataEntry(yamlMessages.getString("discord.switch.message")));
+        config.put(ConfigDataKey.DISCORD_SWITCH_USE_TIMESTAMP, new ConfigDataEntry(yamlMessages.getBoolean("discord.switch.use-timestamp")));
         config.put(ConfigDataKey.DISCORD_MINECRAFT_MESSAGE, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("discord.minecraft-message"))));
         config.put(ConfigDataKey.DISCORD_PROXY_ENABLED, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.enabled")));
         config.put(ConfigDataKey.DISCORD_PROXY_DISABLED, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.disabled")));
@@ -112,6 +116,7 @@ public class Config {
         config.put(ConfigDataKey.DISCORD_PROXY_MESSAGE, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.message")));
         config.put(ConfigDataKey.DISCORD_PROXY_STATUS_ONLINE, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.online")));
         config.put(ConfigDataKey.DISCORD_PROXY_STATUS_OFFLINE, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.offline")));
+        config.put(ConfigDataKey.DISCORD_PROXY_STATUS_USE_TIMESTAMP, new ConfigDataEntry(yamlMessages.getBoolean("discord.proxy-status.use-timestamp")));
 
         // External
         config.put(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(false));
