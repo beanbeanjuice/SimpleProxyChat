@@ -1,6 +1,7 @@
 package com.beanbeanjuice.simpleproxychat;
 
 import com.beanbeanjuice.simpleproxychat.commands.bungee.BungeeReloadCommand;
+import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeServerListener;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeVanishListener;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
@@ -71,7 +72,7 @@ public final class SimpleProxyChatBungee extends Plugin {
                     Component minimessage = MiniMessage.miniMessage().deserialize(message);
                     this.getProxy().broadcast(BungeeComponentSerializer.get().serialize(minimessage));
                 },
-                (message) -> getLogger().info(message)
+                (message) -> getLogger().info(Helper.sanitize(message))
         );
 
         // Registering Listeners
