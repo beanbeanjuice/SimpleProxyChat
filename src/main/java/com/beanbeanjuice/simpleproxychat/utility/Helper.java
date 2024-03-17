@@ -4,6 +4,7 @@ import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +36,9 @@ public class Helper {
                 .replaceAll("&m", convertToTag("strikethrough"))
                 .replaceAll("&n", convertToTag("underlined"))
                 .replaceAll("&o", convertToTag("italic"))
-                .replaceAll("&r", convertToTag("reset"));
+                .replaceAll("&r", convertToTag("reset"))
+
+                .replaceAll("&#([A-Fa-f0-9]{6})", "<#$1>");  // "&#FFC0CBHello! -> <#FFC0CB>Hello!
     }
 
     public static String convertAlias(Config config, String serverName) {
@@ -45,6 +48,10 @@ public class Helper {
 
     private static String convertToTag(String string) {
         return "<" + string + ">";
+    }
+
+    public static String sanitize(String message) {
+        return stripColor(MiniMessage.miniMessage().deserialize(message));
     }
 
     public static String stripColor(Component input) {
