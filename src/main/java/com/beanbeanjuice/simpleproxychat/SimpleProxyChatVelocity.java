@@ -95,11 +95,11 @@ public class SimpleProxyChatVelocity {
                 config,
                 discordBot,
                 (message) -> {
+                    logger.info(Helper.sanitize(message));
                     Component messageComponent = MiniMessage.miniMessage().deserialize(message);
-                    logger.info(Helper.stripColor(messageComponent));
                     proxyServer.getAllPlayers().forEach((player) -> player.sendMessage(messageComponent));
                 },
-                (message) -> getLogger().info(message)
+                (message) -> logger.info(Helper.sanitize(message))
         );
         VelocityServerListener serverListener = new VelocityServerListener(this, chatHandler);
         this.proxyServer.getEventManager().register(this, serverListener);
