@@ -10,7 +10,6 @@ import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.Node;
@@ -26,6 +25,7 @@ import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ChatHandler {
@@ -49,7 +49,7 @@ public class ChatHandler {
     }
 
     public void runProxyChatMessage(String serverName, String playerName, UUID playerUUID,
-                                    String playerMessage, Consumer<String> consoleLogger, Consumer<String> minecraftLogger) {
+                                    String playerMessage, Consumer<String> minecraftLogger) {
         String minecraftConfigString = config.getAsString(ConfigDataKey.MINECRAFT_MESSAGE);
         String discordConfigString = config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_MESSAGE);
 
@@ -73,7 +73,7 @@ public class ChatHandler {
         }
 
         // Log to Console
-        consoleLogger.accept(Helper.stripColor(MiniMessage.miniMessage().deserialize(minecraftMessage)));
+        pluginLogger.accept(minecraftMessage);
 
         // Log to Discord
         if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE)) {
@@ -81,9 +81,6 @@ public class ChatHandler {
             String message = replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_MESSAGE), replacements);
 
             title = replacePrefixSuffix(title, playerUUID, aliasedServerName, serverName);
-
-            title = Helper.stripColor(MiniMessage.miniMessage().deserialize(title));
-            message = Helper.stripColor(MiniMessage.miniMessage().deserialize(message));
 
             Color color = config.getAsColor(ConfigDataKey.MINECRAFT_DISCORD_EMBED_COLOR).orElse(Color.RED);
 
@@ -105,7 +102,7 @@ public class ChatHandler {
     }
 
     public void runProxyLeaveMessage(String playerName, UUID playerUUID, String serverName,
-                                     Consumer<String> consoleLogger, BiConsumer<String, Permission> minecraftLogger) {
+                                     BiConsumer<String, Permission> minecraftLogger) {
         String configString = config.getAsString(ConfigDataKey.MINECRAFT_LEAVE);
         String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_LEAVE_MESSAGE);
 
@@ -128,7 +125,7 @@ public class ChatHandler {
         }
 
         // Log to Console
-        consoleLogger.accept(Helper.stripColor(MiniMessage.miniMessage().deserialize(message)));
+        pluginLogger.accept(message);
 
         // Log to Discord
         if (config.getAsBoolean(ConfigDataKey.DISCORD_LEAVE_USE)) {
@@ -143,7 +140,7 @@ public class ChatHandler {
     }
 
     public void runProxyJoinMessage(String playerName, UUID playerUUID, String serverName,
-                                    Consumer<String> consoleLogger, BiConsumer<String, Permission> minecraftLogger) {
+                                    BiConsumer<String, Permission> minecraftLogger) {
         String configString = config.getAsString(ConfigDataKey.MINECRAFT_JOIN);
         String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_JOIN_MESSAGE);
 
@@ -168,7 +165,7 @@ public class ChatHandler {
         }
 
         // Log to Console
-        consoleLogger.accept(Helper.stripColor(MiniMessage.miniMessage().deserialize(message)));
+        pluginLogger.accept(message);
 
         // Log to Discord
         if (config.getAsBoolean(ConfigDataKey.DISCORD_JOIN_USE)) {
@@ -183,7 +180,7 @@ public class ChatHandler {
     }
 
     public void runProxySwitchMessage(String from, String to, String playerName, UUID playerUUID,
-                                      Consumer<String> consoleLogger, Consumer<String> minecraftLogger) {
+                                      Consumer<String> minecraftLogger) {
         String consoleConfigString = config.getAsString(ConfigDataKey.MINECRAFT_SWITCH_DEFAULT);
         String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_SWITCH_MESSAGE);
         String minecraftConfigString = config.getAsString(ConfigDataKey.MINECRAFT_SWITCH_SHORT);
@@ -212,7 +209,7 @@ public class ChatHandler {
         }
 
         // Log to Console
-        consoleLogger.accept(Helper.stripColor(MiniMessage.miniMessage().deserialize(consoleMessage)));
+        pluginLogger.accept(consoleMessage);
 
         // Log to Discord
         if (config.getAsBoolean(ConfigDataKey.DISCORD_SWITCH_USE)) {
@@ -226,9 +223,15 @@ public class ChatHandler {
             minecraftLogger.accept(minecraftMessage);
     }
 
+    /**
+     * Creates a sanitized {@link EmbedBuilder} based on the message.
+     * @param playerUUID The {@link UUID} of the in-game player.
+     * @param message The {@link String} message to send in the Discord server.
+     * @return A sanitized {@link EmbedBuilder} containing the contents.
+     */
     private EmbedBuilder simpleAuthorEmbedBuilder(@NotNull UUID playerUUID, @NotNull String message) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setAuthor(Helper.stripColor(MiniMessage.miniMessage().deserialize(message)), null, getPlayerHeadURL(playerUUID));
+        embedBuilder.setAuthor(message, null, getPlayerHeadURL(playerUUID));
         return embedBuilder;
     }
 
@@ -285,32 +288,48 @@ public class ChatHandler {
     private List<String> getPrefixBasedOnServerContext(User user, String serverKey) {
         Stream<Node> prefixStream = user.resolveInheritedNodes(QueryOptions.nonContextual()).stream();
 
-        if (!serverKey.equals("")) prefixStream = prefixStream.filter((node) -> node.getContexts().contains("server", serverKey));
+        if (!serverKey.isEmpty()) prefixStream = prefixStream.filter((node) -> node.getContexts().contains("server", serverKey));
 
         return prefixStream
                 .filter(Node::getValue)
                 .filter(NodeType.PREFIX::matches)
                 .map(NodeType.PREFIX::cast)
                 .map(PrefixNode::getKey)
-                .map(prefix -> prefix.replace("prefix.", ""))
-                .sorted((left, right) -> Character.compare(right.charAt(0), left.charAt(0)))
-                .map(prefix -> prefix.split("\\.")[1])
+                .map(prefix -> prefix.replace("prefix.", "")) // 200.Owner.is.awesome
+                .map(prefix -> prefix.split("\\."))  // [200, Owner, is, awesome]
+                .sorted((left, right) -> {  // Sorting it properly.
+                    try {
+                        Integer leftWeight = Integer.parseInt(left[0]);
+                        Integer rightWeight = Integer.parseInt(right[0]);
+
+                        return rightWeight.compareTo(leftWeight);
+                    } catch (NumberFormatException e) { return 0; }
+                })
+                .map(prefix -> Arrays.stream(prefix).skip(1).collect(Collectors.joining(".")))  // Owner.is.awesome
                 .toList();
     }
 
     private List<String> getSuffixBasedOnServerContext(User user, String serverKey) {
         Stream<Node> suffixStream = user.resolveInheritedNodes(QueryOptions.nonContextual()).stream();
 
-        if (!serverKey.equals("")) suffixStream = suffixStream.filter((node) -> node.getContexts().contains("server", serverKey));
+        if (!serverKey.isEmpty()) suffixStream = suffixStream.filter((node) -> node.getContexts().contains("server", serverKey));
 
         return suffixStream
                 .filter(Node::getValue)
                 .filter(NodeType.SUFFIX::matches)
                 .map(NodeType.SUFFIX::cast)
                 .map(SuffixNode::getKey)
-                .map(suffix -> suffix.replace("suffix.", ""))
-                .sorted((left, right) -> Character.compare(right.charAt(0), left.charAt(0)))
-                .map(suffix -> suffix.split("\\.")[1])
+                .map(suffix -> suffix.replace("suffix.", "")) // 200.Owner.is.awesome
+                .map(suffix -> suffix.split("\\."))  // [200, Owner, is, awesome]
+                .sorted((left, right) -> {  // Sorting it properly.
+                    try {
+                        Integer leftWeight = Integer.parseInt(left[0]);
+                        Integer rightWeight = Integer.parseInt(right[0]);
+
+                        return rightWeight.compareTo(leftWeight);
+                    } catch (NumberFormatException e) { return 0; }
+                })
+                .map(suffix -> Arrays.stream(suffix).skip(1).collect(Collectors.joining(".")))  // Owner.is.awesome
                 .toList();
     }
 

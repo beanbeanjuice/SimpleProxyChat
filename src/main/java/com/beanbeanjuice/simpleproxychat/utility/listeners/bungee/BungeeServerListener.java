@@ -2,6 +2,7 @@ package com.beanbeanjuice.simpleproxychat.utility.listeners.bungee;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
+import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatus;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
@@ -47,15 +48,16 @@ public class BungeeServerListener implements Listener {
         String playerName = player.getName();
         String playerMessage = event.getMessage();
 
-        chatHandler.runProxyChatMessage(serverName, playerName, player.getUniqueId(), playerMessage, plugin.getLogger()::info, (message) -> {
-            List<UUID> blacklistedUUIDs = currentServer.getInfo().getPlayers().stream()
-                    .map(ProxiedPlayer::getUniqueId)
-                    .toList();
+        chatHandler.runProxyChatMessage(serverName, playerName, player.getUniqueId(), playerMessage,
+                (message) -> {
+                    List<UUID> blacklistedUUIDs = currentServer.getInfo().getPlayers().stream()
+                            .map(ProxiedPlayer::getUniqueId)
+                            .toList();
 
-            plugin.getProxy().getPlayers().stream()
-                    .filter((streamPlayer) -> !blacklistedUUIDs.contains(streamPlayer.getUniqueId()))
-                    .forEach((streamPlayer) -> streamPlayer.sendMessage(ChatMessageType.CHAT, convertToBungee(message)));
-        });
+                    plugin.getProxy().getPlayers().stream()
+                            .filter((streamPlayer) -> !blacklistedUUIDs.contains(streamPlayer.getUniqueId()))
+                            .forEach((streamPlayer) -> streamPlayer.sendMessage(ChatMessageType.CHAT, convertToBungee(message)));
+                });
     }
 
     @EventHandler
@@ -66,7 +68,7 @@ public class BungeeServerListener implements Listener {
     }
 
     void leave(ProxiedPlayer player) {
-        chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), player.getServer().getInfo().getName(), plugin.getLogger()::info, this::sendToAllServers);
+        chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), player.getServer().getInfo().getName(), this::sendToAllServers);
     }
 
     @EventHandler
@@ -80,7 +82,7 @@ public class BungeeServerListener implements Listener {
     }
 
     void join(ProxiedPlayer player) {
-        chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), player.getServer().getInfo().getName(), plugin.getLogger()::info, this::sendToAllServers);
+        chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), player.getServer().getInfo().getName(), this::sendToAllServers);
     }
 
     @EventHandler
@@ -97,7 +99,6 @@ public class BungeeServerListener implements Listener {
                 event.getPlayer().getServer().getInfo().getName(),
                 player.getName(),
                 player.getUniqueId(),
-                plugin.getLogger()::info,
                 (message) -> from.getPlayers().stream()
                         .filter((streamPlayer) -> streamPlayer != player)
                         .filter((streamPlayer) -> {

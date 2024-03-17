@@ -41,17 +41,18 @@ public class VelocityServerListener {
             String playerName = event.getPlayer().getUsername();
             String playerMessage = event.getMessage();
 
-            chatHandler.runProxyChatMessage(serverName, playerName, event.getPlayer().getUniqueId(), playerMessage, plugin.getLogger()::info, (message) -> {
-                List<UUID> blacklistedUUIDs = connection.getServer().getPlayersConnected().stream()
-                        .map(Player::getUniqueId)
-                        .toList();
+            chatHandler.runProxyChatMessage(serverName, playerName, event.getPlayer().getUniqueId(), playerMessage,
+                    (message) -> {
+                        List<UUID> blacklistedUUIDs = connection.getServer().getPlayersConnected().stream()
+                                .map(Player::getUniqueId)
+                                .toList();
 
-                Component component = MiniMessage.miniMessage().deserialize(message);
+                        Component component = MiniMessage.miniMessage().deserialize(message);
 
-                plugin.getProxyServer().getAllPlayers().stream()
-                        .filter((streamPlayer) -> !blacklistedUUIDs.contains(streamPlayer.getUniqueId()))
-                        .forEach((streamPlayer) -> streamPlayer.sendMessage(component));
-            });
+                        plugin.getProxyServer().getAllPlayers().stream()
+                                .filter((streamPlayer) -> !blacklistedUUIDs.contains(streamPlayer.getUniqueId()))
+                                .forEach((streamPlayer) -> streamPlayer.sendMessage(component));
+                    });
         });
     }
 
@@ -67,12 +68,12 @@ public class VelocityServerListener {
         String serverName = "no-server";
         if (player.getCurrentServer().isPresent())
             serverName = player.getCurrentServer().get().getServerInfo().getName();
-        chatHandler.runProxyLeaveMessage(player.getUsername(), player.getUniqueId(), serverName, plugin.getLogger()::info, this::sendToAllServers);
+        chatHandler.runProxyLeaveMessage(player.getUsername(), player.getUniqueId(), serverName, this::sendToAllServers);
     }
 
     // TODO: Add Vanish API
     private void join(Player player, String serverName) {
-        chatHandler.runProxyJoinMessage(player.getUsername(), player.getUniqueId(), serverName, plugin.getLogger()::info, this::sendToAllServers);
+        chatHandler.runProxyJoinMessage(player.getUsername(), player.getUniqueId(), serverName, this::sendToAllServers);
     }
 
     private void startServerStatusDetection() {
@@ -124,7 +125,6 @@ public class VelocityServerListener {
                 to,
                 playerName,
                 playerUUID,
-                plugin.getLogger()::info,
                 (message) -> {
                     Component component = MiniMessage.miniMessage().deserialize(message);
                     previousServer.getPlayersConnected().stream()
