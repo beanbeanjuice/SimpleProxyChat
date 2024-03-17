@@ -3,6 +3,7 @@ package com.beanbeanjuice.simpleproxychat.discord;
 import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
@@ -11,8 +12,8 @@ import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +24,7 @@ public class Bot {
     private final Config config;
     private final JDA bot;
 
-    public Bot(@NotNull Config config) throws InterruptedException {
+    public Bot(Config config) throws InterruptedException {
         this.config = config;
 
         if (!config.getAsBoolean(ConfigDataKey.USE_DISCORD)) {
@@ -41,10 +42,10 @@ public class Bot {
                 .build().awaitReady();
     }
 
-    public void sendMessage(@NotNull String message) {
+    public void sendMessage(String message) {
         if (bot == null) return;
 
-        message = Helper.stripColor(MiniMessage.miniMessage().deserialize(message));
+        message = Helper.sanitize(message);
 
         message = Arrays.stream(message.split(" ")).map((originalString) -> {
             if (!originalString.startsWith("@")) return originalString;
@@ -62,12 +63,56 @@ public class Bot {
         bot.getTextChannelById(config.getAsString(ConfigDataKey.CHANNEL_ID)).sendMessage(message).queue();
     }
 
-    public void sendMessageEmbed(@NotNull MessageEmbed embed) {
+    /**
+     * Embed needs to be sanitized before running this function.
+     * @param embed The {@link MessageEmbed} to send in the channel.
+     */
+    public void sendMessageEmbed(MessageEmbed embed) {
         if (bot == null) return;
-        bot.getTextChannelById(config.getAsString(ConfigDataKey.CHANNEL_ID)).sendMessageEmbeds(embed).queue();
+        bot.getTextChannelById(config.getAsString(ConfigDataKey.CHANNEL_ID))
+                .sendMessageEmbeds(sanitizeEmbed(embed))
+                .queue();
     }
 
-    public void updateChannelTopic(@NotNull String topic) {
+    private MessageEmbed sanitizeEmbed(MessageEmbed oldEmbed) {
+        EmbedBuilder embedBuilder = new EmbedBuilder(oldEmbed);
+
+        if (oldEmbed.getTitle() != null)
+            embedBuilder.setTitle(Helper.sanitize(oldEmbed.getTitle()));
+
+        if (oldEmbed.getAuthor() != null)
+            embedBuilder.setAuthor(
+                    Helper.sanitize(oldEmbed.getAuthor().getName()),
+                    oldEmbed.getAuthor().getUrl(),
+                    oldEmbed.getAuthor().getIconUrl()
+            );
+
+        if (oldEmbed.getDescription() != null)
+            embedBuilder.setDescription(Helper.sanitize(oldEmbed.getDescription()));
+
+        if (oldEmbed.getFooter() != null)
+            embedBuilder.setFooter(
+                    Helper.sanitize(oldEmbed.getFooter().getText()),
+                    oldEmbed.getFooter().getIconUrl()
+            );
+
+        if (!oldEmbed.getFields().isEmpty()) {
+            List<MessageEmbed.Field> fields = new ArrayList<>(oldEmbed.getFields());  // Make copy.
+            embedBuilder.clearFields();  // Clear fields.
+
+            for (MessageEmbed.Field field : fields) {
+                embedBuilder.addField(
+                        Helper.sanitize(field.getName()),
+                        Helper.sanitize(field.getValue()),
+                        field.isInline()
+                );
+            }
+        }
+
+        return embedBuilder.build();
+    }
+
+    public void updateChannelTopic(String topic) {
         if (bot == null) return;
         bot.getTextChannelById(config.getAsString(ConfigDataKey.CHANNEL_ID)).getManager().setTopic(topic).queue();
     }
