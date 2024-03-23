@@ -87,15 +87,19 @@ aliases:
   smp: smp1
 
 # Whether to use the permission system.
-# simpleproxy.read.join - Read join messages.
-# simpleproxy.read.leave - Read leave messages.
-# simpleproxy.read.switch - Read switch messages.
+# simpleproxychat.read.join - Read join messages.
+# simpleproxychat.read.leave - Read leave messages.
+# simpleproxychat.read.fake - Read the fake join/leave messages. Players must also have the REAL join/leave permission.
+# simpleproxychat.read.switch - Read switch messages.
 # simpleproxychat.reload - ALWAYS Active whether use-permissions is false or not.
 use-permissions: false
 
 # Whether to send if the statuses of the servers connected to the proxy when the proxy starts up.
 # THIS IS FOR DISCORD MESSAGES ONLY.
 use-initial-server-status: true
+
+# Whether to send a fake join/leave message when vanishing/unvanishing.
+use-fake-messages: true
 
 # Format: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
 # Timezone: https://www.joda.org/joda-time/timezones.html
@@ -155,6 +159,9 @@ discord:
     message: "%player% has switched from %from% to %to%."
     use-timestamp: true
   minecraft-message: "&8[&bDiscord&8] %role% &f%user% &9» &7%message%"
+  topic:
+    online: "There are %online% players online."
+    offline: "The proxy is offline."
   proxy-status:
     enabled: "✅ Proxy enabled!"
     disabled: "⛔ Proxy disabled."
@@ -165,7 +172,7 @@ discord:
     use-timestamp: true
 
 # DO NOT TOUCH THIS
-file-version: 3
+file-version: 4
 ```
 
 ---
@@ -182,9 +189,10 @@ file-version: 3
   <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Permissions.png?raw=true" alt="permissions"/>
 </p>
 
-* `simpleproxy.read.join` - Read join messages.
-* `simpleproxy.read.leave` - Read leave messages.
-* `simpleproxy.read.switch` - Read switch messages.
+* `simpleproxychat.read.join` - Read join messages.
+* `simpleproxychat.read.leave` - Read leave messages.
+* `simpleproxychat.read.fake` - Read fake join/leave messages. Must have the real permission too.
+* `simpleproxychat.read.switch` - Read switch messages.
 * `simpleproxychat.reload` - Reload the config.
 
 ---
