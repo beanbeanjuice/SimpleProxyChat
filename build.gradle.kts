@@ -71,6 +71,9 @@ dependencies {
 
     // LuckPerms Support
     compileOnly("net.luckperms:api:5.4")
+
+    // Timestamp
+    implementation("joda-time:joda-time:2.12.7")
 }
 
 configure<ProcessResources>("processResources") {

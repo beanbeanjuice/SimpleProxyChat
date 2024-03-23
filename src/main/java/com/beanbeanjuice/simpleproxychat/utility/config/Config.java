@@ -8,6 +8,7 @@ import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
+import org.joda.time.DateTimeZone;
 
 import java.awt.*;
 import java.io.File;
@@ -94,8 +95,22 @@ public class Config {
         config.put(ConfigDataKey.USE_PERMISSIONS, new ConfigDataEntry(yamlConfig.getBoolean("use-permissions")));
         config.put(ConfigDataKey.USE_INITIAL_SERVER_STATUS, new ConfigDataEntry(yamlConfig.getBoolean("use-initial-server-status")));
         config.put(ConfigDataKey.USE_FAKE_MESSAGES, new ConfigDataEntry(yamlConfig.getBoolean("use-fake-messages")));
+        config.put(ConfigDataKey.TIMESTAMP_FORMAT, new ConfigDataEntry(yamlConfig.getString("timestamp.format")));
+        config.put(ConfigDataKey.TIMESTAMP_TIMEZONE, new ConfigDataEntry(yamlConfig.getString("timestamp.timezone")));
 
-        // message.yml
+        // Checking timezone.
+        try {
+            DateTimeZone.forID(getAsString(ConfigDataKey.TIMESTAMP_TIMEZONE));
+        } catch (IllegalArgumentException e) {
+            System.err.printf(
+                    "%s is not a valid timezone. Using default timezone. %s%n",
+                    getAsString(ConfigDataKey.TIMESTAMP_TIMEZONE),
+                    "https://www.joda.org/joda-time/timezones.html"
+            );
+            overwrite(ConfigDataKey.TIMESTAMP_TIMEZONE, new ConfigDataEntry("America/Los_Angeles"));
+        }
+
+        // messages.yml
         config.put(ConfigDataKey.MINECRAFT_JOIN_USE, new ConfigDataEntry(yamlMessages.getBoolean("minecraft.join.use")));
         config.put(ConfigDataKey.MINECRAFT_JOIN, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("minecraft.join.message"))));
         config.put(ConfigDataKey.MINECRAFT_LEAVE_USE, new ConfigDataEntry(yamlMessages.getBoolean("minecraft.leave.use")));
