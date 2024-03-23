@@ -86,7 +86,7 @@ public final class SimpleProxyChatBungee extends Plugin {
         if (pm.getPlugin("PremiumVanish") != null || pm.getPlugin("SuperVanish") != null) {
             this.config.overwrite(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(true));
             this.getLogger().log(Level.INFO, "Enabled PremiumVanish/SuperVanish Support");
-            this.getProxy().getPluginManager().registerListener(this, new BungeeVanishListener(serverListener));
+            this.getProxy().getPluginManager().registerListener(this, new BungeeVanishListener(serverListener, config));
         }
 
         // Discord Topic Updater
