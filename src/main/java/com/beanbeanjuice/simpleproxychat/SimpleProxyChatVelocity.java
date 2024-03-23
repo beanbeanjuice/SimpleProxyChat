@@ -20,6 +20,7 @@ import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.PluginManager;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import de.myzelyam.api.vanish.VelocityVanishAPI;
 import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.kyori.adventure.text.Component;
@@ -115,7 +116,16 @@ public class SimpleProxyChatVelocity {
 
         // Start Channel Topic Updater
         this.proxyServer.getScheduler()
-                .buildTask(this, () -> discordBot.channelUpdaterFunction(proxyServer.getPlayerCount()))
+                .buildTask(this, () -> {
+                    int numPlayers = proxyServer.getPlayerCount();
+
+                    if (config.getAsBoolean(ConfigDataKey.VANISH_ENABLED))
+                        numPlayers = (int) proxyServer.getAllPlayers().stream()
+                                .filter((player) -> !VelocityVanishAPI.isInvisible(player))
+                                .count();
+
+                    discordBot.channelUpdaterFunction(proxyServer.getPlayerCount());
+                })
                 .delay(5, TimeUnit.MINUTES)
                 .repeat(5, TimeUnit.MINUTES)
                 .schedule();
@@ -163,6 +173,8 @@ public class SimpleProxyChatVelocity {
                         .setColor(Color.RED)
                         .build()
         );
+
+        discordBot.updateChannelTopic(config.getAsString(ConfigDataKey.DISCORD_TOPIC_OFFLINE));
 
         discordBot.getJDA().ifPresent((jda) -> {
             try {
