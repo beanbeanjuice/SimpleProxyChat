@@ -37,5 +37,11 @@ use-permissions: false
 # THIS IS FOR DISCORD MESSAGES ONLY.
 use-initial-server-status: true
 
+# Format: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
+# Timezone: https://www.joda.org/joda-time/timezones.html
+timestamp:
+  format: "hh:mm a"
+  timezone: "America/Los_Angeles"
+
 # DO NOT TOUCH THIS
-file-version: 6
+file-version: 7
