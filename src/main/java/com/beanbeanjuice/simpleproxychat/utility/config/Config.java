@@ -94,6 +94,7 @@ public class Config {
         config.put(ConfigDataKey.ALIASES, new ConfigDataEntry(aliases));
         config.put(ConfigDataKey.USE_PERMISSIONS, new ConfigDataEntry(yamlConfig.getBoolean("use-permissions")));
         config.put(ConfigDataKey.USE_INITIAL_SERVER_STATUS, new ConfigDataEntry(yamlConfig.getBoolean("use-initial-server-status")));
+        config.put(ConfigDataKey.USE_FAKE_MESSAGES, new ConfigDataEntry(yamlConfig.getBoolean("use-fake-messages")));
         config.put(ConfigDataKey.TIMESTAMP_FORMAT, new ConfigDataEntry(yamlConfig.getString("timestamp.format")));
         config.put(ConfigDataKey.TIMESTAMP_TIMEZONE, new ConfigDataEntry(yamlConfig.getString("timestamp.timezone")));
 
