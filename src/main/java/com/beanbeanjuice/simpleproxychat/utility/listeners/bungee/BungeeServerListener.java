@@ -79,13 +79,22 @@ public class BungeeServerListener implements Listener {
 
         if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
 
-        join(event.getPlayer(), false);
+        join(event.getPlayer(), event.getServer(), false);
     }
 
-    public void join(ProxiedPlayer player, boolean isFake) {
-
-        if (isFake) chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), player.getServer().getInfo().getName(), this::sendToAllServersVanish);
-        else chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), player.getServer().getInfo().getName(), this::sendToAllServers);
+    public void join(ProxiedPlayer player, Server server, boolean isFake) {
+        // Bungee is "dumb" and needs to be delayed...
+        try {
+            plugin.getProxy().getScheduler().schedule(
+                    plugin,
+                    () -> {
+                        if (isFake) chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), server.getInfo().getName(), this::sendToAllServersVanish);
+                        else chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), player.getServer().getInfo().getName(), this::sendToAllServers);
+                    },
+                    50L, TimeUnit.MILLISECONDS);  // 50ms is 1 tick
+        } catch (Exception e) {
+            plugin.getLogger().warning("BungeeCord error. This is a bungeecord issue and cannot be fixed: " + e.getMessage());
+        }
     }
 
     @EventHandler
