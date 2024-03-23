@@ -138,6 +138,8 @@ public class Config {
         config.put(ConfigDataKey.DISCORD_SWITCH_MESSAGE, new ConfigDataEntry(yamlMessages.getString("discord.switch.message")));
         config.put(ConfigDataKey.DISCORD_SWITCH_USE_TIMESTAMP, new ConfigDataEntry(yamlMessages.getBoolean("discord.switch.use-timestamp")));
         config.put(ConfigDataKey.DISCORD_MINECRAFT_MESSAGE, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("discord.minecraft-message"))));
+        config.put(ConfigDataKey.DISCORD_TOPIC_ONLINE, new ConfigDataEntry(yamlMessages.getString("discord.topic.online")));
+        config.put(ConfigDataKey.DISCORD_TOPIC_OFFLINE, new ConfigDataEntry(yamlMessages.getString("discord.topic.offline")));
         config.put(ConfigDataKey.DISCORD_PROXY_ENABLED, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.enabled")));
         config.put(ConfigDataKey.DISCORD_PROXY_DISABLED, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.disabled")));
         config.put(ConfigDataKey.DISCORD_PROXY_TITLE, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.title")));
