@@ -9,6 +9,7 @@ public enum ConfigDataKey {
     ALIASES,
     USE_PERMISSIONS,
     USE_INITIAL_SERVER_STATUS,
+    USE_FAKE_MESSAGES,
 
     // MESSAGES
     MINECRAFT_JOIN_USE,

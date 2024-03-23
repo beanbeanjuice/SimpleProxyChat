@@ -93,6 +93,7 @@ public class Config {
         config.put(ConfigDataKey.ALIASES, new ConfigDataEntry(aliases));
         config.put(ConfigDataKey.USE_PERMISSIONS, new ConfigDataEntry(yamlConfig.getBoolean("use-permissions")));
         config.put(ConfigDataKey.USE_INITIAL_SERVER_STATUS, new ConfigDataEntry(yamlConfig.getBoolean("use-initial-server-status")));
+        config.put(ConfigDataKey.USE_FAKE_MESSAGES, new ConfigDataEntry(yamlConfig.getBoolean("use-fake-messages")));
 
         // message.yml
         config.put(ConfigDataKey.MINECRAFT_JOIN_USE, new ConfigDataEntry(yamlMessages.getBoolean("minecraft.join.use")));
