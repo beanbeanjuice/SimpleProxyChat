@@ -28,7 +28,7 @@ public class BungeeVanishListener implements Listener {
     public void onAppear(BungeePlayerShowEvent event) {
         if (!config.getAsBoolean(ConfigDataKey.USE_FAKE_MESSAGES)) return;
 
-        listener.join(event.getPlayer(), true);
+        listener.join(event.getPlayer(), event.getPlayer().getServer(), true);
     }
 
 }
