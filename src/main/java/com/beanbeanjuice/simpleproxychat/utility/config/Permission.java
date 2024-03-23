@@ -6,7 +6,6 @@ public enum Permission {
 
     READ_JOIN_MESSAGE("simpleproxychat.read.join"),
     READ_LEAVE_MESSAGE("simpleproxychat.read.leave"),
-    READ_FAKE_MESSAGE("simpleproxychat.read.fake"),
     READ_SWITCH_MESSAGE("simpleproxychat.read.switch"),
     RELOAD("simpleproxychat.reload");
 

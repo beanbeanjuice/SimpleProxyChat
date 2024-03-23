@@ -97,14 +97,8 @@ use-permissions: false
 # THIS IS FOR DISCORD MESSAGES ONLY.
 use-initial-server-status: true
 
-# Format: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
-# Timezone: https://www.joda.org/joda-time/timezones.html
-timestamp:
-  format: "hh:mm a"
-  timezone: "America/Los_Angeles"
-
 # DO NOT TOUCH THIS
-file-version: 7
+file-version: 6
 ```
 
 **messages.yml**
@@ -206,7 +200,6 @@ file-version: 3
 * `%suffix%` - The player's suffix. **LuckPerms Only**
 * `%message%` - The player's message.
 * `%epoch%` - This get's the current time (in milliseconds). Formats can be used like [this](https://gist.github.com/LeviSnoot/d9147767abeef2f770e9ddcd91eb85aa). An example would be `<t:%epoch%>`. **Discord Only**
-* `%time%` - Similar to `%epoch%`, but uses a special formatting and timezone found in `config.yml`. **Discord and Minecraft**
 
 ---
 

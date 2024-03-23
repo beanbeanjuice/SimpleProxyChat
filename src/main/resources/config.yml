@@ -27,10 +27,9 @@ aliases:
   smp: smp1
 
 # Whether to use the permission system.
-# simpleproxychat.read.join - Read join messages.
-# simpleproxychat.read.leave - Read leave messages.
-# simpleproxychat.read.fake - Read the fake join/leave messages. Players must also have the REAL join/leave permission.
-# simpleproxychat.read.switch - Read switch messages.
+# simpleproxy.read.join - Read join messages.
+# simpleproxy.read.leave - Read leave messages.
+# simpleproxy.read.switch - Read switch messages.
 # simpleproxychat.reload - ALWAYS Active whether use-permissions is false or not.
 use-permissions: false
 
@@ -38,14 +37,5 @@ use-permissions: false
 # THIS IS FOR DISCORD MESSAGES ONLY.
 use-initial-server-status: true
 
-# Whether to send a fake join/leave message when vanishing/unvanishing.
-use-fake-messages: true
-
-# Format: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
-# Timezone: https://www.joda.org/joda-time/timezones.html
-timestamp:
-  format: "hh:mm a"
-  timezone: "America/Los_Angeles"
-
 # DO NOT TOUCH THIS
-file-version: 7
+file-version: 6

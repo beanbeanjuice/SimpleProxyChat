@@ -119,7 +119,7 @@ public class Bot {
 
     public void channelUpdaterFunction(int players) {
         if (bot == null) return;
-        String topicMessage = config.getAsString(ConfigDataKey.DISCORD_TOPIC_ONLINE).replace("%online%", String.valueOf(players));
+        String topicMessage = String.format("There are %d players online.", players);
         updateChannelTopic(topicMessage);
     }
 
