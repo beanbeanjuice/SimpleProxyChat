@@ -27,9 +27,10 @@ aliases:
   smp: smp1
 
 # Whether to use the permission system.
-# simpleproxy.read.join - Read join messages.
-# simpleproxy.read.leave - Read leave messages.
-# simpleproxy.read.switch - Read switch messages.
+# simpleproxychat.read.join - Read join messages.
+# simpleproxychat.read.leave - Read leave messages.
+# simpleproxychat.read.fake - Read the fake join/leave messages. Players must also have the REAL join/leave permission.
+# simpleproxychat.read.switch - Read switch messages.
 # simpleproxychat.reload - ALWAYS Active whether use-permissions is false or not.
 use-permissions: false
 
@@ -37,5 +38,8 @@ use-permissions: false
 # THIS IS FOR DISCORD MESSAGES ONLY.
 use-initial-server-status: true
 
+# Whether to send a fake join/leave message when vanishing/unvanishing.
+use-fake-messages: true
+
 # DO NOT TOUCH THIS
-file-version: 6
+file-version: 7
