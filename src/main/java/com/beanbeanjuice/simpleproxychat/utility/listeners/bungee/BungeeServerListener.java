@@ -64,11 +64,12 @@ public class BungeeServerListener implements Listener {
     public void onPlayerLeaveProxy(PlayerDisconnectEvent event) {
         if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
 
-        leave(event.getPlayer());
+        leave(event.getPlayer(), false);
     }
 
-    void leave(ProxiedPlayer player) {
-        chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), player.getServer().getInfo().getName(), this::sendToAllServers);
+    void leave(ProxiedPlayer player, boolean isFake) {
+        if (isFake) chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), player.getServer().getInfo().getName(), this::sendToAllServersVanish);
+        else chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), player.getServer().getInfo().getName(), this::sendToAllServers);
     }
 
     @EventHandler
@@ -78,11 +79,22 @@ public class BungeeServerListener implements Listener {
 
         if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
 
-        join(event.getPlayer());
+        join(event.getPlayer(), event.getServer(), false);
     }
 
-    void join(ProxiedPlayer player) {
-        chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), player.getServer().getInfo().getName(), this::sendToAllServers);
+    public void join(ProxiedPlayer player, Server server, boolean isFake) {
+        // Bungee is "dumb" and needs to be delayed...
+        try {
+            plugin.getProxy().getScheduler().schedule(
+                    plugin,
+                    () -> {
+                        if (isFake) chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), server.getInfo().getName(), this::sendToAllServersVanish);
+                        else chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), player.getServer().getInfo().getName(), this::sendToAllServers);
+                    },
+                    50L, TimeUnit.MILLISECONDS);  // 50ms is 1 tick
+        } catch (Exception e) {
+            plugin.getLogger().warning("BungeeCord error. This is a bungeecord issue and cannot be fixed: " + e.getMessage());
+        }
     }
 
     @EventHandler
@@ -143,6 +155,21 @@ public class BungeeServerListener implements Listener {
                             return true;
                         })
                         .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, convertToBungee(message)));
+    }
+
+    private void sendToAllServersVanish(String message, Permission permission) {
+        plugin.getProxy().getPlayers().stream()
+                .filter((player) -> {
+                    if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
+                        return player.hasPermission(permission.getPermissionNode());
+                    return true;
+                })
+                .filter((player) -> {
+                    if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
+                        return player.hasPermission(Permission.READ_FAKE_MESSAGE.getPermissionNode());
+                    return true;
+                })
+                .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, convertToBungee(message)));
     }
 
     private BaseComponent[] convertToBungee(String message) {

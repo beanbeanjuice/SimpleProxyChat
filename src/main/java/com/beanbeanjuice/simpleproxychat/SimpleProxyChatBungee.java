@@ -11,6 +11,8 @@ import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataEntry;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
+import de.myzelyam.api.vanish.BungeeVanishAPI;
+import de.myzelyam.api.vanish.VanishAPI;
 import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.kyori.adventure.text.Component;
@@ -86,12 +88,19 @@ public final class SimpleProxyChatBungee extends Plugin {
         if (pm.getPlugin("PremiumVanish") != null || pm.getPlugin("SuperVanish") != null) {
             this.config.overwrite(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(true));
             this.getLogger().log(Level.INFO, "Enabled PremiumVanish/SuperVanish Support");
-            this.getProxy().getPluginManager().registerListener(this, new BungeeVanishListener(serverListener));
+            this.getProxy().getPluginManager().registerListener(this, new BungeeVanishListener(serverListener, config));
         }
 
         // Discord Topic Updater
         this.getProxy().getScheduler().schedule(this, () -> {
-            discordBot.channelUpdaterFunction(this.getProxy().getPlayers().size());
+            int numPlayers = this.getProxy().getPlayers().size();
+
+            if (config.getAsBoolean(ConfigDataKey.VANISH_ENABLED))
+                numPlayers = (int) this.getProxy().getPlayers().stream()
+                        .filter((player) -> !BungeeVanishAPI.isInvisible(player))
+                        .count();
+
+            discordBot.channelUpdaterFunction(numPlayers);
         }, 5, 5, TimeUnit.MINUTES);
 
         // Update Checker
@@ -130,7 +139,7 @@ public final class SimpleProxyChatBungee extends Plugin {
                         .build()
         );
 
-        discordBot.updateChannelTopic("The proxy is offline.");
+        discordBot.updateChannelTopic(config.getAsString(ConfigDataKey.DISCORD_TOPIC_OFFLINE));
     }
 
 }
