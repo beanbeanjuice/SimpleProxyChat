@@ -44,9 +44,6 @@ discord:
     message: "%player% has switched from %from% to %to%."
     use-timestamp: true
   minecraft-message: "&8[&bDiscord&8] %role% &f%user% &9» &7%message%"
-  topic:
-    online: "There are %online% players online."
-    offline: "The proxy is offline."
   proxy-status:
     enabled: "✅ Proxy enabled!"
     disabled: "⛔ Proxy disabled."
@@ -57,4 +54,4 @@ discord:
     use-timestamp: true
 
 # DO NOT TOUCH THIS
-file-version: 4
+file-version: 3

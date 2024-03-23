@@ -18,10 +18,6 @@ import net.luckperms.api.node.types.PrefixNode;
 import net.luckperms.api.node.types.SuffixNode;
 import net.luckperms.api.query.QueryOptions;
 import org.jetbrains.annotations.NotNull;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import java.awt.*;
 import java.time.Instant;
@@ -67,7 +63,6 @@ public class ChatHandler {
         replacements.add(Tuple.create("original_to", serverName));
         replacements.add(Tuple.create("player", playerName));
         replacements.add(Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())));
-        replacements.add(Tuple.create("time", getTimeString()));
 
         String minecraftMessage = replaceKeys(minecraftConfigString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
@@ -120,7 +115,6 @@ public class ChatHandler {
         replacements.add(Tuple.create("to", aliasedServerName));
         replacements.add(Tuple.create("original_to", serverName));
         replacements.add(Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())));
-        replacements.add(Tuple.create("time", getTimeString()));
 
         String message = replaceKeys(configString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
@@ -161,7 +155,6 @@ public class ChatHandler {
         replacements.add(Tuple.create("to", aliasedServerName));
         replacements.add(Tuple.create("original_to", serverName));
         replacements.add(Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())));
-        replacements.add(Tuple.create("time", getTimeString()));
 
         String message = replaceKeys(configString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
@@ -204,7 +197,6 @@ public class ChatHandler {
         replacements.add(Tuple.create("original_server", to));
         replacements.add(Tuple.create("player", playerName));
         replacements.add(Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())));
-        replacements.add(Tuple.create("time", getTimeString()));
 
         String consoleMessage = replaceKeys(consoleConfigString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
@@ -272,8 +264,7 @@ public class ChatHandler {
                 Tuple.create("role", String.format("<%s>%s</%s>", hex, roleName, hex)),
                 Tuple.create("user", username),
                 Tuple.create("message", discordMessage),
-                Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())),
-                Tuple.create("time", getTimeString())
+                Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond()))
         );
 
         globalLogger.accept(message);
@@ -363,19 +354,6 @@ public class ChatHandler {
             pluginLogger.accept("There was an error contacting the LuckPerms API: " + e.getMessage());
             return message;
         }
-    }
-
-    /**
-     * @see <a href="https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html">Format</a>
-     */
-    private String getTimeString() {
-        DateTimeZone zone = DateTimeZone.forID(config.getAsString(ConfigDataKey.TIMESTAMP_TIMEZONE));
-        DateTimeFormatter format = DateTimeFormat.forPattern(config.getAsString(ConfigDataKey.TIMESTAMP_FORMAT));
-
-        long timeInMillis = System.currentTimeMillis();
-        DateTime time = new DateTime(timeInMillis).withZone(zone);
-
-        return time.toString(format);
     }
 
 }
