@@ -41,5 +41,11 @@ use-initial-server-status: true
 # Whether to send a fake join/leave message when vanishing/unvanishing.
 use-fake-messages: true
 
+# Format: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
+# Timezone: https://www.joda.org/joda-time/timezones.html
+timestamp:
+  format: "hh:mm a"
+  timezone: "America/Los_Angeles"
+
 # DO NOT TOUCH THIS
 file-version: 7
