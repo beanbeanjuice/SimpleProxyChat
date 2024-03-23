@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.beanbeanjuice"
-version = "0.2.4"
+version = "0.2.3"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -71,9 +71,6 @@ dependencies {
 
     // LuckPerms Support
     compileOnly("net.luckperms:api:5.4")
-
-    // Timestamp
-    implementation("joda-time:joda-time:2.12.7")
 }
 
 configure<ProcessResources>("processResources") {
