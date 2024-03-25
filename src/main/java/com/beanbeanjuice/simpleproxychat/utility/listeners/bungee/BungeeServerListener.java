@@ -89,7 +89,7 @@ public class BungeeServerListener implements Listener {
                     plugin,
                     () -> {
                         if (isFake) chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), server.getInfo().getName(), this::sendToAllServersVanish);
-                        else chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), player.getServer().getInfo().getName(), this::sendToAllServers);
+                        else chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), server.getInfo().getName(), this::sendToAllServers);
                     },
                     50L, TimeUnit.MILLISECONDS);  // 50ms is 1 tick
         } catch (Exception e) {
