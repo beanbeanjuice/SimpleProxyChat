@@ -24,8 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 public class VelocityServerListener {
 
-    @Getter
-    private ServerStatusManager serverStatusManager;
+    @Getter private ServerStatusManager serverStatusManager;
     private final SimpleProxyChatVelocity plugin;
     private final ChatHandler chatHandler;
 
@@ -87,25 +86,12 @@ public class VelocityServerListener {
             String serverName = registeredServer.getServerInfo().getName();
 
             registeredServer.ping().thenAccept((ping) -> {  // Server is online.
-                runStatusLogic(serverName, true);
+                this.serverStatusManager.runStatusLogic(serverName, true, plugin.getDiscordBot(), plugin.getLogger()::info);
             }).exceptionally((exception) -> {  // Server is offline.
-                runStatusLogic(serverName, false);
+                this.serverStatusManager.runStatusLogic(serverName, false, plugin.getDiscordBot(), plugin.getLogger()::info);
                 return null;
             });
         })).delay(updateInterval, TimeUnit.SECONDS).repeat(updateInterval, TimeUnit.SECONDS).schedule();
-    }
-
-    private void runStatusLogic(String serverName, boolean newStatus) {
-        if (plugin.getConfig().getAsBoolean(ConfigDataKey.PLUGIN_STARTING)) {
-            this.serverStatusManager.setStatus(serverName, newStatus);
-            return;
-        }
-
-        ServerStatus currentStatus = this.serverStatusManager.getStatus(serverName);
-        currentStatus.updateStatus(newStatus).ifPresent((isOnline) -> {
-            plugin.getDiscordBot().sendMessageEmbed(this.serverStatusManager.getStatusEmbed(serverName, isOnline));
-            plugin.getLogger().info(this.serverStatusManager.getStatusString(serverName, isOnline));
-        });
     }
 
     @Subscribe
