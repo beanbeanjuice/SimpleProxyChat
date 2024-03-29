@@ -2,7 +2,7 @@
   <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/SimpleProxyChat.png?raw=true" alt="SimpleProxyChat Logo"/>
 </p>
 <center>
-  A simple plugin to allow <b>global</b> <i>cross-server</i> communication and messaging with support for <b>LuckPerms</b> and <b>Discord</b> integration.
+  A simple plugin to allow <b>global</b> <i>cross-server</i> communication and messaging with support for <b>LuckPerms</b>, <b>LiteBans</b>, and <b>Discord</b> integration.
 </center>
 
 ---
@@ -45,6 +45,8 @@
 </p>
 
 * **Global Network Chat**
+* **LuckPerms Support**
+* **LiteBans Support**
 * **Discord Support**
 * **Velocity/Waterfall/BungeeCord Support**
 * **Colored Chat**
