@@ -17,7 +17,6 @@ import net.luckperms.api.node.NodeType;
 import net.luckperms.api.node.types.PrefixNode;
 import net.luckperms.api.node.types.SuffixNode;
 import net.luckperms.api.query.QueryOptions;
-import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -30,7 +29,6 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ChatHandler {
 
@@ -237,13 +235,13 @@ public class ChatHandler {
      * @param message The {@link String} message to send in the Discord server.
      * @return A sanitized {@link EmbedBuilder} containing the contents.
      */
-    private EmbedBuilder simpleAuthorEmbedBuilder(@NotNull UUID playerUUID, @NotNull String message) {
+    private EmbedBuilder simpleAuthorEmbedBuilder(UUID playerUUID, String message) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setAuthor(message, null, getPlayerHeadURL(playerUUID));
         return embedBuilder;
     }
 
-    private String getPlayerHeadURL(@NotNull UUID playerUUID) {
+    private String getPlayerHeadURL(UUID playerUUID) {
         return MINECRAFT_PLAYER_HEAD_URL.replace("{PLAYER_UUID}", playerUUID.toString());
     }
 
@@ -294,12 +292,14 @@ public class ChatHandler {
         return string;
     }
 
-    private List<String> getPrefixBasedOnServerContext(User user, String serverKey) {
-        Stream<Node> prefixStream = user.resolveInheritedNodes(QueryOptions.nonContextual()).stream();
-
-        if (!serverKey.isEmpty()) prefixStream = prefixStream.filter((node) -> node.getContexts().contains("server", serverKey));
-
-        return prefixStream
+    private List<String> getPrefixBasedOnServerContext(User user, String... serverKeys) {
+        return user.resolveInheritedNodes(QueryOptions.nonContextual())
+                .stream()
+                .filter((node) -> {
+                    if (!node.getContexts().containsKey("server")) return true;
+                    for (String key : serverKeys) if (node.getContexts().contains("server", key)) return true;
+                    return false;
+                })
                 .filter(Node::getValue)
                 .filter(NodeType.PREFIX::matches)
                 .map(NodeType.PREFIX::cast)
@@ -318,12 +318,14 @@ public class ChatHandler {
                 .toList();
     }
 
-    private List<String> getSuffixBasedOnServerContext(User user, String serverKey) {
-        Stream<Node> suffixStream = user.resolveInheritedNodes(QueryOptions.nonContextual()).stream();
-
-        if (!serverKey.isEmpty()) suffixStream = suffixStream.filter((node) -> node.getContexts().contains("server", serverKey));
-
-        return suffixStream
+    private List<String> getSuffixBasedOnServerContext(User user, String... serverKeys) {
+        return user.resolveInheritedNodes(QueryOptions.nonContextual())
+                .stream()
+                .filter((node) -> {
+                    if (!node.getContexts().containsKey("server")) return true;
+                    for (String key : serverKeys) if (node.getContexts().contains("server", key)) return true;
+                    return false;
+                })
                 .filter(Node::getValue)
                 .filter(NodeType.SUFFIX::matches)
                 .map(NodeType.SUFFIX::cast)
@@ -347,13 +349,8 @@ public class ChatHandler {
             User user = LuckPermsProvider.get().getUserManager().loadUser(playerUUID).get();
 
             // Get prefix based on aliased name. If none show up, use original name. If none show up, use top prefix.
-            List<String> prefixList = getPrefixBasedOnServerContext(user, aliasedServerName);
-            if (prefixList.isEmpty()) prefixList = getPrefixBasedOnServerContext(user, serverName);
-            if (prefixList.isEmpty()) prefixList = getPrefixBasedOnServerContext(user, "");
-
-            List<String> suffixList = getSuffixBasedOnServerContext(user, aliasedServerName);
-            if (suffixList.isEmpty()) suffixList = getSuffixBasedOnServerContext(user, serverName);
-            if (suffixList.isEmpty()) suffixList = getSuffixBasedOnServerContext(user, "");
+            List<String> prefixList = getPrefixBasedOnServerContext(user, serverName, aliasedServerName, "");
+            List<String> suffixList = getSuffixBasedOnServerContext(user, serverName, aliasedServerName, "");
 
             String prefix = prefixList.isEmpty() ? "" : Helper.translateLegacyCodes(prefixList.get(0));
             String suffix = suffixList.isEmpty() ? "" : Helper.translateLegacyCodes(suffixList.get(0));

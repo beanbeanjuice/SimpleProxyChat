@@ -8,6 +8,7 @@ import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatus;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import de.myzelyam.api.vanish.*;
+import litebans.api.Database;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -42,9 +43,11 @@ public class BungeeServerListener implements Listener {
     public void onProxyChatEvent(ChatEvent event) {
         if (event.isCommand() || event.isProxyCommand()) return;  // Ignore if it is a command.
 
+        ProxiedPlayer player = (ProxiedPlayer) event.getSender();
+        if (plugin.getConfig().getAsBoolean(ConfigDataKey.LITEBANS_ENABLED) && Database.get().isPlayerMuted(player.getUniqueId(), null)) return;
+
         Server currentServer = (Server) event.getReceiver();
         String serverName = currentServer.getInfo().getName();
-        ProxiedPlayer player = (ProxiedPlayer) event.getSender();
         String playerName = player.getName();
         String playerMessage = event.getMessage();
 
@@ -89,7 +92,7 @@ public class BungeeServerListener implements Listener {
                     plugin,
                     () -> {
                         if (isFake) chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), server.getInfo().getName(), this::sendToAllServersVanish);
-                        else chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), player.getServer().getInfo().getName(), this::sendToAllServers);
+                        else chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), server.getInfo().getName(), this::sendToAllServers);
                     },
                     50L, TimeUnit.MILLISECONDS);  // 50ms is 1 tick
         } catch (Exception e) {
@@ -129,22 +132,9 @@ public class BungeeServerListener implements Listener {
         plugin.getProxy().getScheduler().schedule(plugin, () -> plugin.getProxy().getServers().forEach((serverName, serverInfo) -> {
             serverInfo.ping((result, error) -> {
                 boolean newStatus = (error == null);  // Server offline if error != null
-                runStatusLogic(serverName, newStatus);
+                this.serverStatusManager.runStatusLogic(serverName, newStatus, plugin.getDiscordBot(), plugin.getLogger()::info);
             });
         }), updateInterval, updateInterval, TimeUnit.SECONDS);
-    }
-
-    private void runStatusLogic(String serverName, boolean newStatus) {
-        if (plugin.getConfig().getAsBoolean(ConfigDataKey.PLUGIN_STARTING)) {
-            this.serverStatusManager.setStatus(serverName, newStatus);
-            return;
-        }
-
-        ServerStatus currentStatus = this.serverStatusManager.getStatus(serverName);
-        currentStatus.updateStatus(newStatus).ifPresent((isOnline) -> {
-            plugin.getDiscordBot().sendMessageEmbed(this.serverStatusManager.getStatusEmbed(serverName, isOnline));
-            plugin.getLogger().info(this.serverStatusManager.getStatusString(serverName, isOnline));
-        });
     }
 
     private void sendToAllServers(String message, Permission permission) {
