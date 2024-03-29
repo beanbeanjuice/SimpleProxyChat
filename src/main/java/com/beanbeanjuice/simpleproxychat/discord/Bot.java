@@ -36,7 +36,7 @@ public class Bot {
 
         bot = JDABuilder
                 .createLight(config.getAsString(ConfigDataKey.BOT_TOKEN))
-                .setActivity(Activity.watching("Proxy"))
+                .setActivity(Activity.watching("Starting Proxy..."))
                 .enableCache(CacheFlag.ROLE_TAGS)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .setChunkingFilter(ChunkingFilter.ALL)
@@ -136,6 +136,20 @@ public class Bot {
                         .setColor(Color.GREEN)
                         .build()
         );
+
+        this.getJDA().ifPresent((jda) -> {
+            Activity.ActivityType type;
+            String text;
+
+            try {
+                type = Activity.ActivityType.valueOf(config.getAsString(ConfigDataKey.BOT_ACTIVITY_TYPE));
+                text = config.getAsString(ConfigDataKey.BOT_ACTIVITY_TEXT);
+            } catch (Exception e) {
+                type = Activity.ActivityType.WATCHING;
+                text = "CONFIG ERROR";
+            }
+            jda.getPresence().setActivity(Activity.of(type, text));
+        });
     }
 
     public void stop() {

@@ -85,6 +85,8 @@ public class Config {
         config.put(ConfigDataKey.USE_DISCORD, new ConfigDataEntry(Boolean.valueOf(yamlConfig.getString("use-discord"))));
         config.put(ConfigDataKey.BOT_TOKEN, new ConfigDataEntry(yamlConfig.getString("BOT-TOKEN")));
         config.put(ConfigDataKey.CHANNEL_ID, new ConfigDataEntry(yamlConfig.getString("CHANNEL-ID")));
+        config.put(ConfigDataKey.BOT_ACTIVITY_TYPE, new ConfigDataEntry(yamlConfig.getString("bot-activity.type")));
+        config.put(ConfigDataKey.BOT_ACTIVITY_TEXT, new ConfigDataEntry(yamlConfig.getString("bot-activity.text")));
         config.put(ConfigDataKey.SERVER_UPDATE_INTERVAL, new ConfigDataEntry(yamlConfig.getInt("server-update-interval")));
         HashMap<String, String> aliases = new HashMap<>();
         Section aliasSection = yamlConfig.getSection("aliases");
