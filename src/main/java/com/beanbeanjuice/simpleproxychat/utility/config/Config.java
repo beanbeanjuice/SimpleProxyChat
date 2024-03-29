@@ -152,6 +152,7 @@ public class Config {
         if (!initialSetup) return;
         config.put(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(false));
         config.put(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(false));
+        config.put(ConfigDataKey.LITEBANS_ENABLED, new ConfigDataEntry(false));
         config.put(ConfigDataKey.PLUGIN_STARTING, new ConfigDataEntry(true));
         initialSetup = false;
     }

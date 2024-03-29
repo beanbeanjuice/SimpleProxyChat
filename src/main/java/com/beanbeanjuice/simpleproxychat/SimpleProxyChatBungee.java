@@ -58,12 +58,14 @@ public final class SimpleProxyChatBungee extends Plugin {
 
         // Registering LuckPerms support.
         if (pm.getPlugin("LuckPerms") != null) {
-            try {
-                config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(true));
-                getLogger().info("LuckPerms support has been enabled.");
-            } catch (IllegalStateException e) {
-                getLogger().info("Error Enabling LuckPerms: " + e.getMessage());
-            }
+            config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(true));
+            getLogger().info("LuckPerms support has been enabled.");
+        }
+
+        // Registering LiteBans support.
+        if (pm.getPlugin("LiteBans") != null) {
+            config.overwrite(ConfigDataKey.LITEBANS_ENABLED, new ConfigDataEntry(true));
+            getLogger().info("LiteBans support has been enabled.");
         }
 
         // Registering Chat Listener

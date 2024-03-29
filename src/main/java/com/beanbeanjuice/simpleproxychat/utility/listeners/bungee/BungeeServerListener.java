@@ -8,6 +8,7 @@ import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatus;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import de.myzelyam.api.vanish.*;
+import litebans.api.Database;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -42,9 +43,11 @@ public class BungeeServerListener implements Listener {
     public void onProxyChatEvent(ChatEvent event) {
         if (event.isCommand() || event.isProxyCommand()) return;  // Ignore if it is a command.
 
+        ProxiedPlayer player = (ProxiedPlayer) event.getSender();
+        if (plugin.getConfig().getAsBoolean(ConfigDataKey.LITEBANS_ENABLED) && Database.get().isPlayerMuted(player.getUniqueId(), null)) return;
+
         Server currentServer = (Server) event.getReceiver();
         String serverName = currentServer.getInfo().getName();
-        ProxiedPlayer player = (ProxiedPlayer) event.getSender();
         String playerName = player.getName();
         String playerMessage = event.getMessage();
 
