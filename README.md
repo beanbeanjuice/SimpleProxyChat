@@ -76,6 +76,11 @@ BOT-TOKEN: "TOKEN_HERE"
 # Channel to send Discord messages to (IGNORE IF use_discord = false). The reload command does not work with this.
 CHANNEL-ID: "GLOBAL_CHANNEL_ID"
 
+bot-activity:
+  # Valid Types: PLAYING, STREAMING, LISTENING, WATCHING, COMPETING
+  type: "COMPETING"
+  text: "SimpleProxyChat by beanbeanjuice"
+
 # The amount of seconds to check if a server is online/offline.
 # Smaller numbers can cause errors. Beware.
 server-update-interval: 3
@@ -110,7 +115,7 @@ timestamp:
   timezone: "America/Los_Angeles"
 
 # DO NOT TOUCH THIS
-file-version: 7
+file-version: 8
 ```
 
 **messages.yml**
