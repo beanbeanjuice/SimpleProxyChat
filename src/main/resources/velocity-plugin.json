@@ -19,6 +19,10 @@
     {
       "id": "luckperms",
       "optional": true
+    },
+    {
+      "id": "litebans",
+      "optional": true
     }
   ],
   "main": "com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity"

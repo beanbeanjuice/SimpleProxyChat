@@ -54,5 +54,6 @@ public enum ConfigDataKey {
     // External
     VANISH_ENABLED,
     LUCKPERMS_ENABLED,
+    LITEBANS_ENABLED,
     PLUGIN_STARTING
 }

@@ -83,12 +83,14 @@ public class SimpleProxyChatVelocity {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         // Registering LuckPerms support.
         if (this.proxyServer.getPluginManager().getPlugin("luckperms").isPresent()) {
-            try {
-                config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(true));
-                getLogger().info("LuckPerms support has been enabled.");
-            } catch (IllegalStateException e) {
-                getLogger().info("Error Enabling LuckPerms: " + e.getMessage());
-            }
+            config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(true));
+            getLogger().info("LuckPerms support has been enabled.");
+        }
+
+        // Registering LiteBans support.
+        if (this.proxyServer.getPluginManager().getPlugin("litebans").isPresent()) {
+            config.overwrite(ConfigDataKey.LITEBANS_ENABLED, new ConfigDataEntry(true));
+            getLogger().info("LiteBans support has been enabled.");
         }
 
         // Register Chat Listener

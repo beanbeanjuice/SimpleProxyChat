@@ -13,6 +13,7 @@ import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import de.myzelyam.api.vanish.VelocityVanishAPI;
+import litebans.api.Database;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -36,6 +37,8 @@ public class VelocityServerListener {
 
     @Subscribe
     public void onPlayerChat(PlayerChatEvent event) {
+        if (plugin.getConfig().getAsBoolean(ConfigDataKey.LITEBANS_ENABLED) && Database.get().isPlayerMuted(event.getPlayer().getUniqueId(), null)) return;
+
         event.getPlayer().getCurrentServer().ifPresent((connection) -> {
             String serverName = connection.getServerInfo().getName();
             String playerName = event.getPlayer().getUsername();

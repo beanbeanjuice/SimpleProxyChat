@@ -72,6 +72,9 @@ dependencies {
     // LuckPerms Support
     compileOnly("net.luckperms:api:5.4")
 
+    // LiteBans Support
+    compileOnly("com.gitlab.ruany", "LiteBansAPI", "0.5.0")
+
     // Timestamp
     implementation("joda-time:joda-time:2.12.7")
 }
@@ -149,6 +152,10 @@ hangarPublish {
                     url("LuckPerms", "https://luckperms.net") {
                         required.set(false)
                     }
+
+                    url("LiteBans", "https://www.spigotmc.org/resources/litebans.3715/") {
+                        required.set(false)
+                    }
                 }
             }
 
@@ -173,6 +180,10 @@ hangarPublish {
                     }
 
                     url("LuckPerms", "https://luckperms.net") {
+                        required.set(false)
+                    }
+
+                    url("LiteBans", "https://www.spigotmc.org/resources/litebans.3715/") {
                         required.set(false)
                     }
                 }
