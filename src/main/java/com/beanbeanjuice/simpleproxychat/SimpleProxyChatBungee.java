@@ -2,6 +2,7 @@ package com.beanbeanjuice.simpleproxychat;
 
 import com.beanbeanjuice.simpleproxychat.commands.bungee.BungeeReloadCommand;
 import com.beanbeanjuice.simpleproxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeServerListener;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeVanishListener;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
@@ -18,6 +19,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 import org.bstats.bungeecord.Metrics;
@@ -107,9 +110,17 @@ public final class SimpleProxyChatBungee extends Plugin {
 
         // Update Checker
         this.getProxy().getScheduler().schedule(this, () -> UpdateChecker.checkUpdate((spigotMCVersion) -> {
-            if (!this.getDescription().getVersion().equals(spigotMCVersion)) {
-                this.getLogger().info("ATTENTION - There is a new update available: v" + spigotMCVersion);
-            }
+            if (this.getDescription().getVersion().equals(spigotMCVersion)) return;
+
+            String message = "ATTENTION - There is a new update available: v" + spigotMCVersion;
+
+            Component minimessage = MiniMessage.miniMessage().deserialize(message);
+
+            this.getLogger().info(message);
+            this.getProxy().getPlayers()
+                    .stream()
+                    .filter((player) -> player.hasPermission(Permission.READ_UPDATE_NOTIFICATION.getPermissionNode()))
+                    .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, BungeeComponentSerializer.get().serialize(minimessage)));
         }), 0, 12, TimeUnit.HOURS);
 
         // bStats Stuff
