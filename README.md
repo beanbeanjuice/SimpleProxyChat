@@ -2,7 +2,7 @@
   <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/SimpleProxyChat.png?raw=true" alt="SimpleProxyChat Logo"/>
 </p>
 <center>
-  A simple plugin to allow <b>global</b> <i>cross-server</i> communication and messaging with support for <b>LuckPerms</b> and <b>Discord</b> integration.
+  A simple plugin to allow <b>global</b> <i>cross-server</i> communication and messaging with support for <b>LuckPerms</b>, <b>LiteBans</b>, and <b>Discord</b> integration.
 </center>
 
 ---
@@ -45,6 +45,8 @@
 </p>
 
 * **Global Network Chat**
+* **LuckPerms Support**
+* **LiteBans Support**
 * **Discord Support**
 * **Velocity/Waterfall/BungeeCord Support**
 * **Colored Chat**
@@ -73,6 +75,11 @@ BOT-TOKEN: "TOKEN_HERE"
 
 # Channel to send Discord messages to (IGNORE IF use_discord = false). The reload command does not work with this.
 CHANNEL-ID: "GLOBAL_CHANNEL_ID"
+
+bot-activity:
+  # Valid Types: PLAYING, STREAMING, LISTENING, WATCHING, COMPETING
+  type: "COMPETING"
+  text: "SimpleProxyChat by beanbeanjuice"
 
 # The amount of seconds to check if a server is online/offline.
 # Smaller numbers can cause errors. Beware.
@@ -108,7 +115,7 @@ timestamp:
   timezone: "America/Los_Angeles"
 
 # DO NOT TOUCH THIS
-file-version: 7
+file-version: 8
 ```
 
 **messages.yml**
@@ -193,6 +200,7 @@ file-version: 4
 * `simpleproxychat.read.leave` - Read leave messages.
 * `simpleproxychat.read.fake` - Read fake join/leave messages. Must have the real permission too.
 * `simpleproxychat.read.switch` - Read switch messages.
+* `simpleproxychat.read.update` - Read update notifications.
 * `simpleproxychat.reload` - Reload the config.
 
 ---
