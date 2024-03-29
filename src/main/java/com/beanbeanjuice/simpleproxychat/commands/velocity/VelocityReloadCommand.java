@@ -1,12 +1,12 @@
 package com.beanbeanjuice.simpleproxychat.commands.velocity;
 
+import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 
 public class VelocityReloadCommand implements SimpleCommand {
 
@@ -20,7 +20,7 @@ public class VelocityReloadCommand implements SimpleCommand {
     public void execute(Invocation invocation) {
         CommandSource source = invocation.source();
         config.reload();
-        Component component = MiniMessage.miniMessage().deserialize(config.getAsString(ConfigDataKey.MINECRAFT_SUCCESSFUL_RELOAD));
+        Component component = Helper.stringToComponent(config.getAsString(ConfigDataKey.MINECRAFT_SUCCESSFUL_RELOAD));
         source.sendMessage(component);
     }
 

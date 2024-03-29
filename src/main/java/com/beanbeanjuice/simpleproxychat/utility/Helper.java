@@ -58,4 +58,8 @@ public class Helper {
         return PlainTextComponentSerializer.plainText().serialize(input);
     }
 
+    public static Component stringToComponent(String string) {
+        return MiniMessage.miniMessage().deserialize(string);
+    }
+
 }

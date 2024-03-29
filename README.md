@@ -195,6 +195,7 @@ file-version: 4
 * `simpleproxychat.read.leave` - Read leave messages.
 * `simpleproxychat.read.fake` - Read fake join/leave messages. Must have the real permission too.
 * `simpleproxychat.read.switch` - Read switch messages.
+* `simpleproxychat.read.update` - Read update notifications.
 * `simpleproxychat.reload` - Reload the config.
 
 ---

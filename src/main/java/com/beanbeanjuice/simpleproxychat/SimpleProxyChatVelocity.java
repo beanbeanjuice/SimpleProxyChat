@@ -2,6 +2,7 @@ package com.beanbeanjuice.simpleproxychat;
 
 import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityReloadCommand;
 import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;
+import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import com.google.inject.Inject;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
@@ -141,8 +142,14 @@ public class SimpleProxyChatVelocity {
                                         .flatMap(
                                                 pluginContainer -> pluginContainer.getDescription().getVersion()
                                         ).ifPresent((version) -> {
-                                                    if (!version.equalsIgnoreCase(spigotMCVersion))
-                                                        this.logger.info("ATTENTION - There is a new update available: v" + spigotMCVersion);
+                                                    if (version.equalsIgnoreCase(spigotMCVersion)) return;
+
+                                                    String message = "ATTENTION - There is a new update available: v" + spigotMCVersion;
+                                                    this.logger.info(message);
+                                                    this.proxyServer.getAllPlayers()
+                                                            .stream()
+                                                            .filter((player) -> player.hasPermission(Permission.READ_UPDATE_NOTIFICATION.getPermissionNode()))
+                                                            .forEach((player) -> player.sendMessage(Helper.stringToComponent("[SimpleProxyChat] " + message)));
                                                 }
                                         )
                         )
