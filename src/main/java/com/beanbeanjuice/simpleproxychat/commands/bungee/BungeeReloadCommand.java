@@ -22,7 +22,7 @@ public class BungeeReloadCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if (!sender.hasPermission(Permission.RELOAD.getPermissionNode()) && sender instanceof ProxiedPlayer) {
+        if (!sender.hasPermission(Permission.COMMAND_RELOAD.getPermissionNode()) && sender instanceof ProxiedPlayer) {
             String message = config.getAsString(ConfigDataKey.MINECRAFT_NO_PERMISSION);
             sender.sendMessage(convertToBungee(message));
             return;

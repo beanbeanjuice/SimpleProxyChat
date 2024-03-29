@@ -26,7 +26,7 @@ public class VelocityReloadCommand implements SimpleCommand {
 
     @Override
     public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission(Permission.RELOAD.getPermissionNode());
+        return invocation.source().hasPermission(Permission.COMMAND_RELOAD.getPermissionNode());
     }
 
 }

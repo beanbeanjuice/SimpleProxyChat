@@ -6,14 +6,13 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.jetbrains.annotations.NotNull;
 
 public class Helper {
 
     /**
      * @see <a href="https://docs.advntr.dev/minimessage/format.html">Mini-Message Decorations</a>
      */
-    public static String translateLegacyCodes(@NotNull String string) {
+    public static String translateLegacyCodes(String string) {
         return string
                 .replaceAll("&0", convertToTag(NamedTextColor.BLACK.asHexString()))
                 .replaceAll("&1", convertToTag(NamedTextColor.DARK_BLUE.asHexString()))
