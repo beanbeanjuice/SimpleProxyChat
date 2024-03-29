@@ -13,6 +13,8 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
+import java.awt.*;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -120,11 +122,41 @@ public class Bot {
     public void channelUpdaterFunction(int players) {
         if (bot == null) return;
         String topicMessage = config.getAsString(ConfigDataKey.DISCORD_TOPIC_ONLINE).replace("%online%", String.valueOf(players));
-        updateChannelTopic(topicMessage);
+        this.updateChannelTopic(topicMessage);
     }
 
     public Optional<JDA> getJDA() {
         return Optional.ofNullable(bot);
+    }
+
+    public void start() {
+        this.sendMessageEmbed(
+                new EmbedBuilder()
+                        .setTitle(config.getAsString(ConfigDataKey.DISCORD_PROXY_ENABLED))
+                        .setColor(Color.GREEN)
+                        .build()
+        );
+    }
+
+    public void stop() {
+        this.sendMessageEmbed(
+                new EmbedBuilder()
+                        .setTitle(config.getAsString(ConfigDataKey.DISCORD_PROXY_DISABLED))
+                        .setColor(Color.RED)
+                        .build()
+        );
+
+        this.updateChannelTopic(config.getAsString(ConfigDataKey.DISCORD_TOPIC_OFFLINE));
+
+        this.getJDA().ifPresent((jda) -> {
+            try {
+                jda.shutdown();
+                if (!jda.awaitShutdown(Duration.ofSeconds(10))) {
+                    jda.shutdownNow(); // Cancel all remaining requests
+                    jda.awaitShutdown(); // Wait until shutdown is complete (indefinitely)
+                }
+            } catch (InterruptedException ignored) { }
+        });
     }
 
 }

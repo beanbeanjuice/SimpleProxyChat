@@ -9,7 +9,7 @@ public enum Permission {
     READ_FAKE_MESSAGE("simpleproxychat.read.fake"),
     READ_SWITCH_MESSAGE("simpleproxychat.read.switch"),
     READ_UPDATE_NOTIFICATION("simpleproxychat.read.update"),
-    RELOAD("simpleproxychat.reload");
+    COMMAND_RELOAD("simpleproxychat.reload");
 
     @Getter private final String permissionNode;
 

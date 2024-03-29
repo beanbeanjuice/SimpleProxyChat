@@ -132,22 +132,9 @@ public class BungeeServerListener implements Listener {
         plugin.getProxy().getScheduler().schedule(plugin, () -> plugin.getProxy().getServers().forEach((serverName, serverInfo) -> {
             serverInfo.ping((result, error) -> {
                 boolean newStatus = (error == null);  // Server offline if error != null
-                runStatusLogic(serverName, newStatus);
+                this.serverStatusManager.runStatusLogic(serverName, newStatus, plugin.getDiscordBot(), plugin.getLogger()::info);
             });
         }), updateInterval, updateInterval, TimeUnit.SECONDS);
-    }
-
-    private void runStatusLogic(String serverName, boolean newStatus) {
-        if (plugin.getConfig().getAsBoolean(ConfigDataKey.PLUGIN_STARTING)) {
-            this.serverStatusManager.setStatus(serverName, newStatus);
-            return;
-        }
-
-        ServerStatus currentStatus = this.serverStatusManager.getStatus(serverName);
-        currentStatus.updateStatus(newStatus).ifPresent((isOnline) -> {
-            plugin.getDiscordBot().sendMessageEmbed(this.serverStatusManager.getStatusEmbed(serverName, isOnline));
-            plugin.getLogger().info(this.serverStatusManager.getStatusString(serverName, isOnline));
-        });
     }
 
     private void sendToAllServers(String message, Permission permission) {
