@@ -5,6 +5,8 @@ public enum ConfigDataKey {
     USE_DISCORD,
     BOT_TOKEN,
     CHANNEL_ID,
+    BOT_ACTIVITY_TYPE,
+    BOT_ACTIVITY_TEXT,
     SERVER_UPDATE_INTERVAL,
     ALIASES,
     USE_PERMISSIONS,
@@ -54,5 +56,6 @@ public enum ConfigDataKey {
     // External
     VANISH_ENABLED,
     LUCKPERMS_ENABLED,
+    LITEBANS_ENABLED,
     PLUGIN_STARTING
 }

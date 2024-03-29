@@ -2,6 +2,7 @@ package com.beanbeanjuice.simpleproxychat;
 
 import com.beanbeanjuice.simpleproxychat.commands.bungee.BungeeReloadCommand;
 import com.beanbeanjuice.simpleproxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeServerListener;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeVanishListener;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
@@ -18,6 +19,8 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 import org.bstats.bungeecord.Metrics;
@@ -26,12 +29,12 @@ import java.awt.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
-@Getter
 public final class SimpleProxyChatBungee extends Plugin {
 
-    private Config config;
-    private Bot discordBot;
-    private Metrics metrics;
+    @Getter private Config config;
+    @Getter private Bot discordBot;
+    @Getter private Metrics metrics;
+    private BungeeServerListener serverListener;
 
     @Override
     public void onEnable() {
@@ -40,56 +43,16 @@ public final class SimpleProxyChatBungee extends Plugin {
         this.config = new Config(this.getDataFolder());
         this.config.initialize();
 
-        PluginManager pm = this.getProxy().getPluginManager();
-
         this.getLogger().info("Initializing discord bot.");
 
         try { discordBot = new Bot(this.config); }
         catch (Exception e) { getLogger().warning("There was an error starting the discord bot: " + e.getMessage()); }
-
         discordBot.getJDA().ifPresentOrElse((jda) -> { }, () -> getLogger().warning("Discord logging is not enabled."));
+        discordBot.start();
 
-        discordBot.sendMessageEmbed(
-                new EmbedBuilder()
-                        .setTitle(config.getAsString(ConfigDataKey.DISCORD_PROXY_ENABLED))
-                        .setColor(Color.GREEN)
-                        .build()
-        );
-
-        // Registering LuckPerms support.
-        if (pm.getPlugin("LuckPerms") != null) {
-            try {
-                config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(true));
-                getLogger().info("LuckPerms support has been enabled.");
-            } catch (IllegalStateException e) {
-                getLogger().info("Error Enabling LuckPerms: " + e.getMessage());
-            }
-        }
-
-        // Registering Chat Listener
-        ChatHandler chatHandler = new ChatHandler(
-                config,
-                discordBot,
-                (message) -> {
-                    Component minimessage = MiniMessage.miniMessage().deserialize(message);
-                    this.getProxy().broadcast(BungeeComponentSerializer.get().serialize(minimessage));
-                },
-                (message) -> getLogger().info(Helper.sanitize(message))
-        );
-
-        // Registering Listeners
-        BungeeServerListener serverListener = new BungeeServerListener(this, chatHandler);
-        this.getProxy().getPluginManager().registerListener(this, serverListener);
-
-        // Registering Commands
-        this.getProxy().getPluginManager().registerCommand(this, new BungeeReloadCommand(config));
-
-        // Enable vanish support.
-        if (pm.getPlugin("PremiumVanish") != null || pm.getPlugin("SuperVanish") != null) {
-            this.config.overwrite(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(true));
-            this.getLogger().log(Level.INFO, "Enabled PremiumVanish/SuperVanish Support");
-            this.getProxy().getPluginManager().registerListener(this, new BungeeVanishListener(serverListener, config));
-        }
+        hookPlugins();
+        registerListeners();
+        registerCommands();
 
         // Discord Topic Updater
         this.getProxy().getScheduler().schedule(this, () -> {
@@ -105,9 +68,17 @@ public final class SimpleProxyChatBungee extends Plugin {
 
         // Update Checker
         this.getProxy().getScheduler().schedule(this, () -> UpdateChecker.checkUpdate((spigotMCVersion) -> {
-            if (!this.getDescription().getVersion().equals(spigotMCVersion)) {
-                this.getLogger().info("ATTENTION - There is a new update available: v" + spigotMCVersion);
-            }
+            if (this.getDescription().getVersion().equals(spigotMCVersion)) return;
+
+            String message = "ATTENTION - There is a new update available: v" + spigotMCVersion;
+
+            Component minimessage = MiniMessage.miniMessage().deserialize(message);
+
+            this.getLogger().info(message);
+            this.getProxy().getPlayers()
+                    .stream()
+                    .filter((player) -> player.hasPermission(Permission.READ_UPDATE_NOTIFICATION.getPermissionNode()))
+                    .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, BungeeComponentSerializer.get().serialize(minimessage)));
         }), 0, 12, TimeUnit.HOURS);
 
         // bStats Stuff
@@ -118,6 +89,7 @@ public final class SimpleProxyChatBungee extends Plugin {
         // Plugin has started.
         this.getLogger().log(Level.INFO, "The plugin has been started.");
 
+        // Send initial status.
         this.getProxy().getScheduler().schedule(this, () -> {
             this.config.overwrite(ConfigDataKey.PLUGIN_STARTING, new ConfigDataEntry(false));
 
@@ -129,17 +101,52 @@ public final class SimpleProxyChatBungee extends Plugin {
         }, config.getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL) * 2L, TimeUnit.SECONDS);
     }
 
-    @Override
-    public void onDisable() {
-        this.getLogger().log(Level.INFO, "The plugin is shutting down.");
-        discordBot.sendMessageEmbed(
-                new EmbedBuilder()
-                        .setTitle(config.getAsString(ConfigDataKey.DISCORD_PROXY_DISABLED))
-                        .setColor(Color.RED)
-                        .build()
+    private void hookPlugins() {
+        PluginManager pm = this.getProxy().getPluginManager();
+
+        // Enable vanish support.
+        if (pm.getPlugin("PremiumVanish") != null || pm.getPlugin("SuperVanish") != null) {
+            this.config.overwrite(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(true));
+            this.getLogger().log(Level.INFO, "Enabled PremiumVanish/SuperVanish Support");
+            this.getProxy().getPluginManager().registerListener(this, new BungeeVanishListener(serverListener, config));
+        }
+
+        // Registering LuckPerms support.
+        if (pm.getPlugin("LuckPerms") != null) {
+            config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(true));
+            getLogger().info("LuckPerms support has been enabled.");
+        }
+
+        // Registering LiteBans support.
+        if (pm.getPlugin("LiteBans") != null) {
+            config.overwrite(ConfigDataKey.LITEBANS_ENABLED, new ConfigDataEntry(true));
+            getLogger().info("LiteBans support has been enabled.");
+        }
+    }
+
+    private void registerListeners() {
+        ChatHandler chatHandler = new ChatHandler(
+                config,
+                discordBot,
+                (message) -> {
+                    Component minimessage = MiniMessage.miniMessage().deserialize(message);
+                    this.getProxy().broadcast(BungeeComponentSerializer.get().serialize(minimessage));
+                },
+                (message) -> getLogger().info(Helper.sanitize(message))
         );
 
-        discordBot.updateChannelTopic(config.getAsString(ConfigDataKey.DISCORD_TOPIC_OFFLINE));
+        serverListener = new BungeeServerListener(this, chatHandler);
+        this.getProxy().getPluginManager().registerListener(this, serverListener);
+    }
+
+    private void registerCommands() {
+        this.getProxy().getPluginManager().registerCommand(this, new BungeeReloadCommand(config));
+    }
+
+    @Override
+    public void onDisable() {
+        this.getLogger().info("The plugin is shutting down...");
+        discordBot.stop();
     }
 
 }

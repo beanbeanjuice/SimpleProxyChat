@@ -13,6 +13,7 @@ import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import de.myzelyam.api.vanish.VelocityVanishAPI;
+import litebans.api.Database;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -23,8 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 public class VelocityServerListener {
 
-    @Getter
-    private ServerStatusManager serverStatusManager;
+    @Getter private ServerStatusManager serverStatusManager;
     private final SimpleProxyChatVelocity plugin;
     private final ChatHandler chatHandler;
 
@@ -36,6 +36,8 @@ public class VelocityServerListener {
 
     @Subscribe
     public void onPlayerChat(PlayerChatEvent event) {
+        if (plugin.getConfig().getAsBoolean(ConfigDataKey.LITEBANS_ENABLED) && Database.get().isPlayerMuted(event.getPlayer().getUniqueId(), null)) return;
+
         event.getPlayer().getCurrentServer().ifPresent((connection) -> {
             String serverName = connection.getServerInfo().getName();
             String playerName = event.getPlayer().getUsername();
@@ -84,25 +86,12 @@ public class VelocityServerListener {
             String serverName = registeredServer.getServerInfo().getName();
 
             registeredServer.ping().thenAccept((ping) -> {  // Server is online.
-                runStatusLogic(serverName, true);
+                this.serverStatusManager.runStatusLogic(serverName, true, plugin.getDiscordBot(), plugin.getLogger()::info);
             }).exceptionally((exception) -> {  // Server is offline.
-                runStatusLogic(serverName, false);
+                this.serverStatusManager.runStatusLogic(serverName, false, plugin.getDiscordBot(), plugin.getLogger()::info);
                 return null;
             });
         })).delay(updateInterval, TimeUnit.SECONDS).repeat(updateInterval, TimeUnit.SECONDS).schedule();
-    }
-
-    private void runStatusLogic(String serverName, boolean newStatus) {
-        if (plugin.getConfig().getAsBoolean(ConfigDataKey.PLUGIN_STARTING)) {
-            this.serverStatusManager.setStatus(serverName, newStatus);
-            return;
-        }
-
-        ServerStatus currentStatus = this.serverStatusManager.getStatus(serverName);
-        currentStatus.updateStatus(newStatus).ifPresent((isOnline) -> {
-            plugin.getDiscordBot().sendMessageEmbed(this.serverStatusManager.getStatusEmbed(serverName, isOnline));
-            plugin.getLogger().info(this.serverStatusManager.getStatusString(serverName, isOnline));
-        });
     }
 
     @Subscribe
