@@ -1,5 +1,6 @@
 package com.beanbeanjuice.simpleproxychat.utility.status;
 
+import com.beanbeanjuice.simpleproxychat.discord.Bot;
 import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
@@ -9,6 +10,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.function.Consumer;
 
 public class ServerStatusManager {
 
@@ -72,5 +74,18 @@ public class ServerStatusManager {
             statusStrings.add(getStatusString(serverName, serverStatus.getStatus()));
         });
         return statusStrings;
+    }
+
+    public void runStatusLogic(String serverName, boolean newStatus, Bot discordBot, Consumer<String> logger) {
+        if (config.getAsBoolean(ConfigDataKey.PLUGIN_STARTING)) {
+            this.setStatus(serverName, newStatus);
+            return;
+        }
+
+        ServerStatus currentStatus = this.getStatus(serverName);
+        currentStatus.updateStatus(newStatus).ifPresent((isOnline) -> {
+            discordBot.sendMessageEmbed(this.getStatusEmbed(serverName, isOnline));
+            logger.accept(this.getStatusString(serverName, isOnline));
+        });
     }
 }
