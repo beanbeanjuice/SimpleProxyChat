@@ -52,6 +52,8 @@ public class ChatHandler {
 
     public void runProxyChatMessage(String serverName, String playerName, UUID playerUUID,
                                     String playerMessage, Consumer<String> minecraftLogger) {
+        if (Helper.serverHasChatLocked(config, serverName)) return;
+
         String minecraftConfigString = config.getAsString(ConfigDataKey.MINECRAFT_MESSAGE);
         String discordConfigString = config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_MESSAGE);
 
@@ -66,6 +68,7 @@ public class ChatHandler {
         replacements.add(Tuple.create("player", playerName));
         replacements.add(Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())));
         replacements.add(Tuple.create("time", getTimeString()));
+        replacements.add(Tuple.create("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
 
         String minecraftMessage = replaceKeys(minecraftConfigString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
@@ -119,6 +122,7 @@ public class ChatHandler {
         replacements.add(Tuple.create("original_to", serverName));
         replacements.add(Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())));
         replacements.add(Tuple.create("time", getTimeString()));
+        replacements.add(Tuple.create("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
 
         String message = replaceKeys(configString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
@@ -160,6 +164,7 @@ public class ChatHandler {
         replacements.add(Tuple.create("original_to", serverName));
         replacements.add(Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())));
         replacements.add(Tuple.create("time", getTimeString()));
+        replacements.add(Tuple.create("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
 
         String message = replaceKeys(configString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
@@ -203,6 +208,7 @@ public class ChatHandler {
         replacements.add(Tuple.create("player", playerName));
         replacements.add(Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())));
         replacements.add(Tuple.create("time", getTimeString()));
+        replacements.add(Tuple.create("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
 
         String consoleMessage = replaceKeys(consoleConfigString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
@@ -271,7 +277,8 @@ public class ChatHandler {
                 Tuple.create("user", username),
                 Tuple.create("message", discordMessage),
                 Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())),
-                Tuple.create("time", getTimeString())
+                Tuple.create("time", getTimeString()),
+                Tuple.create("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX))
         );
 
         globalLogger.accept(message);

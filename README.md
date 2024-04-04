@@ -209,6 +209,7 @@ file-version: 4
   <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Placeholders.png?raw=true" alt="placeholders"/>
 </p>
 
+* `%plugin-prefix%` - The plugin's designated prefix.
 * `%server%` - The current connected server. Uses the alias if one is specified.
 * `%original_server%` - Same as `%server%`, but does not use the alias.
 * `%to%` - The current connected server. Uses the alias if one is specified.

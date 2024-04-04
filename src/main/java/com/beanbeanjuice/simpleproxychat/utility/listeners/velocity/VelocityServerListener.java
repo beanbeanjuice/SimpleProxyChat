@@ -2,6 +2,7 @@ package com.beanbeanjuice.simpleproxychat.utility.listeners.velocity;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
+import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatus;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
@@ -18,6 +19,7 @@ import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -36,7 +38,7 @@ public class VelocityServerListener {
 
     @Subscribe
     public void onPlayerChat(PlayerChatEvent event) {
-        if (plugin.getConfig().getAsBoolean(ConfigDataKey.LITEBANS_ENABLED) && Database.get().isPlayerMuted(event.getPlayer().getUniqueId(), null)) return;
+        if (!Helper.playerCanChat(plugin.getConfig(), event.getPlayer().getUniqueId())) return;
 
         event.getPlayer().getCurrentServer().ifPresent((connection) -> {
             String serverName = connection.getServerInfo().getName();
@@ -45,14 +47,12 @@ public class VelocityServerListener {
 
             chatHandler.runProxyChatMessage(serverName, playerName, event.getPlayer().getUniqueId(), playerMessage,
                     (message) -> {
-                        List<UUID> blacklistedUUIDs = connection.getServer().getPlayersConnected().stream()
-                                .map(Player::getUniqueId)
-                                .toList();
+                        Collection<Player> blacklistedUUIDs = connection.getServer().getPlayersConnected();
 
                         Component component = MiniMessage.miniMessage().deserialize(message);
 
                         plugin.getProxyServer().getAllPlayers().stream()
-                                .filter((streamPlayer) -> !blacklistedUUIDs.contains(streamPlayer.getUniqueId()))
+                                .filter((streamPlayer) -> !blacklistedUUIDs.contains(streamPlayer))
                                 .forEach((streamPlayer) -> streamPlayer.sendMessage(component));
                     });
         });

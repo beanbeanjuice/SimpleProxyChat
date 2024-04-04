@@ -68,18 +68,23 @@ public final class SimpleProxyChatBungee extends Plugin {
 
         // Update Checker
         this.getProxy().getScheduler().schedule(this, () -> UpdateChecker.checkUpdate((spigotMCVersion) -> {
+            String currentVersion = this.getDescription().getVersion();
+
             if (this.getDescription().getVersion().equals(spigotMCVersion)) return;
 
-            String message = "ATTENTION - There is a new update available: v" + spigotMCVersion;
+            String message = config.getAsString(ConfigDataKey.UPDATE_MESSAGE)
+                    .replace("%old%", "v" + currentVersion)
+                    .replace("%new%", "v" + spigotMCVersion)
+                    .replace("%link%", "https://www.spigotmc.org/resources/115305/");
 
-            Component minimessage = MiniMessage.miniMessage().deserialize(message);
+            this.getLogger().info(Helper.sanitize(message));
 
-            this.getLogger().info(message);
+            Component minimessage = MiniMessage.miniMessage().deserialize(config.getAsString(ConfigDataKey.PLUGIN_PREFIX) + message);
             this.getProxy().getPlayers()
                     .stream()
                     .filter((player) -> player.hasPermission(Permission.READ_UPDATE_NOTIFICATION.getPermissionNode()))
                     .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, BungeeComponentSerializer.get().serialize(minimessage)));
-        }), 0, 12, TimeUnit.HOURS);
+        }), 0, 30, TimeUnit.SECONDS);
 
         // bStats Stuff
         this.getLogger().info("Starting bStats... (IF ENABLED)");
@@ -121,6 +126,12 @@ public final class SimpleProxyChatBungee extends Plugin {
         if (pm.getPlugin("LiteBans") != null) {
             config.overwrite(ConfigDataKey.LITEBANS_ENABLED, new ConfigDataEntry(true));
             getLogger().info("LiteBans support has been enabled.");
+        }
+
+        // Registering NetworkManager support.
+        if (pm.getPlugin("NetworkManager") != null) {
+            config.overwrite(ConfigDataKey.NETWORKMANAGER_ENABLED, new ConfigDataEntry(true));
+            getLogger().info("NetworkManager support has been enabled.");
         }
     }
 
