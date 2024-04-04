@@ -149,11 +149,11 @@ hangarPublish {
                 platformVersions.set(versions)
 
                 dependencies {
-                    url("PremiumVanish", "https://www.spigotmc.org/resources/premiumvanish-stay-hidden-bungee-velocity-support.14404/") {
+                    url("PremiumVanish", "https://www.spigotmc.org/resources/14404/") {
                         required.set(false)
                     }
 
-                    url("SuperVanish", "https://www.spigotmc.org/resources/supervanish-be-invisible.1331/") {
+                    url("SuperVanish", "https://www.spigotmc.org/resources/1331/") {
                         required.set(false)
                     }
 
@@ -161,7 +161,11 @@ hangarPublish {
                         required.set(false)
                     }
 
-                    url("LiteBans", "https://www.spigotmc.org/resources/litebans.3715/") {
+                    url("LiteBans", "https://www.spigotmc.org/resources/3715/") {
+                        required.set(false)
+                    }
+
+                    url("NetworkManager", "https://www.spigotmc.org/resources/28456/") {
                         required.set(false)
                     }
                 }
@@ -179,11 +183,11 @@ hangarPublish {
                 platformVersions.set(versions)
 
                 dependencies {
-                    url("PremiumVanish", "https://www.spigotmc.org/resources/premiumvanish-stay-hidden-bungee-velocity-support.14404/") {
+                    url("PremiumVanish", "https://www.spigotmc.org/resources/14404/") {
                         required.set(false)
                     }
 
-                    url("SuperVanish", "https://www.spigotmc.org/resources/supervanish-be-invisible.1331/") {
+                    url("SuperVanish", "https://www.spigotmc.org/resources/1331/") {
                         required.set(false)
                     }
 
@@ -191,7 +195,11 @@ hangarPublish {
                         required.set(false)
                     }
 
-                    url("LiteBans", "https://www.spigotmc.org/resources/litebans.3715/") {
+                    url("LiteBans", "https://www.spigotmc.org/resources/3715/") {
+                        required.set(false)
+                    }
+
+                    url("NetworkManager", "https://www.spigotmc.org/resources/28456/") {
                         required.set(false)
                     }
                 }
