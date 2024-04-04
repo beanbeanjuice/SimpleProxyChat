@@ -47,6 +47,7 @@
 * **Global Network Chat**
 * **LuckPerms Support**
 * **LiteBans Support**
+* **NetworkManager Support**
 * **Discord Support**
 * **Velocity/Waterfall/BungeeCord Support**
 * **Colored Chat**
