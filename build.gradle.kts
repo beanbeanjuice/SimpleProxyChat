@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.beanbeanjuice"
-version = "0.3.0"
+version = "0.3.1"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -33,6 +33,11 @@ repositories {
     maven {
         name = "papermc-repo"
         url = uri("https://repo.papermc.io/repository/maven-public/")
+    }
+
+    maven {
+        name = "networkmanager-repo"
+        url = uri("https://repo.networkmanager.xyz/repository/maven-public/")
     }
 }
 
@@ -73,7 +78,10 @@ dependencies {
     compileOnly("net.luckperms:api:5.4")
 
     // LiteBans Support
-    compileOnly("com.gitlab.ruany", "LiteBansAPI", "0.5.0")
+    compileOnly("com.gitlab.ruany:LiteBansAPI:0.5.0")
+
+    // NetworkManager Support
+    compileOnly("nl.chimpgamer.networkmanager:api:2.14.10")
 
     // Timestamp
     implementation("joda-time:joda-time:2.12.7")

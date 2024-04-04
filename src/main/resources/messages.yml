@@ -56,5 +56,11 @@ discord:
     offline: "Offline ⛔"
     use-timestamp: true
 
+# Prefix for the plugin. %plugin-prefix% usable anywhere.
+plugin-prefix: "&8[<bold><rainbow>SimpleProxyChat&r&8] "
+
+# The message for any updates that are sent.
+update-message: "&7There is an update! You are on &c%old%. New version is &a%new%&7: &6%link%"
+
 # DO NOT TOUCH THIS
-file-version: 4
+file-version: 5

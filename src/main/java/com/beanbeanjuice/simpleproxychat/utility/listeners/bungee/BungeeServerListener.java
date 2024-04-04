@@ -22,6 +22,7 @@ import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -44,7 +45,7 @@ public class BungeeServerListener implements Listener {
         if (event.isCommand() || event.isProxyCommand()) return;  // Ignore if it is a command.
 
         ProxiedPlayer player = (ProxiedPlayer) event.getSender();
-        if (plugin.getConfig().getAsBoolean(ConfigDataKey.LITEBANS_ENABLED) && Database.get().isPlayerMuted(player.getUniqueId(), null)) return;
+        if (!Helper.playerCanChat(plugin.getConfig(), player.getUniqueId())) return;
 
         Server currentServer = (Server) event.getReceiver();
         String serverName = currentServer.getInfo().getName();
@@ -53,12 +54,10 @@ public class BungeeServerListener implements Listener {
 
         chatHandler.runProxyChatMessage(serverName, playerName, player.getUniqueId(), playerMessage,
                 (message) -> {
-                    List<UUID> blacklistedUUIDs = currentServer.getInfo().getPlayers().stream()
-                            .map(ProxiedPlayer::getUniqueId)
-                            .toList();
+                    Collection<ProxiedPlayer> blacklistedUUIDs = currentServer.getInfo().getPlayers();
 
                     plugin.getProxy().getPlayers().stream()
-                            .filter((streamPlayer) -> !blacklistedUUIDs.contains(streamPlayer.getUniqueId()))
+                            .filter((streamPlayer) -> !blacklistedUUIDs.contains(streamPlayer))
                             .forEach((streamPlayer) -> streamPlayer.sendMessage(ChatMessageType.CHAT, convertToBungee(message)));
                 });
     }
@@ -144,6 +143,7 @@ public class BungeeServerListener implements Listener {
                                 return player.hasPermission(permission.getPermissionNode());
                             return true;
                         })
+                        .filter((player) -> !Helper.serverHasChatLocked(plugin.getConfig(), player.getServer().getInfo().getName()))
                         .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, convertToBungee(message)));
     }
 
