@@ -60,6 +60,7 @@ discord:
 plugin-prefix: "&8[<bold><rainbow>SimpleProxyChat&r&8] "
 
 # The message for any updates that are sent.
+# The plugin-prefix is automatically appended to the beginning of this message.
 update-message: "&7There is an update! You are on &c%old%. New version is &a%new%&7: &6%link%"
 
 # DO NOT TOUCH THIS

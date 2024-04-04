@@ -84,7 +84,7 @@ public final class SimpleProxyChatBungee extends Plugin {
                     .stream()
                     .filter((player) -> player.hasPermission(Permission.READ_UPDATE_NOTIFICATION.getPermissionNode()))
                     .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, BungeeComponentSerializer.get().serialize(minimessage)));
-        }), 0, 30, TimeUnit.SECONDS);
+        }), 0, 12, TimeUnit.HOURS);
 
         // bStats Stuff
         this.getLogger().info("Starting bStats... (IF ENABLED)");
