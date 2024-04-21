@@ -286,7 +286,7 @@ public class ChatHandler {
 
     private String replaceKeys(String string, List<Tuple<String, String>> entries) {
         for (Tuple<String, String> entry : entries)
-            string = string.replaceAll(String.format("%%%s%%", entry.getKey()), entry.getValue());
+            string = string.replace(String.format("%%%s%%", entry.getKey()), entry.getValue());
 
         return string;
     }
@@ -294,7 +294,7 @@ public class ChatHandler {
     @SafeVarargs
     private String replaceKeys(String string, Tuple<String, String>... entries) {
         for (Tuple<String, String> entry : entries)
-            string = string.replaceAll(String.format("%%%s%%", entry.getKey()), entry.getValue());
+            string = string.replace(String.format("%%%s%%", entry.getKey()), entry.getValue());
 
         return string;
     }
