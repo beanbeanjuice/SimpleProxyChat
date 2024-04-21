@@ -23,6 +23,10 @@
     {
       "id": "litebans",
       "optional": true
+    },
+    {
+      "id": "networkmanager",
+      "optional": true
     }
   ],
   "main": "com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity"

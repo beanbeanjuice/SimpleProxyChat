@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import java.awt.*;
 import java.time.Duration;

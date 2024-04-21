@@ -36,6 +36,7 @@ aliases:
 # simpleproxychat.read.leave - Read leave messages.
 # simpleproxychat.read.fake - Read the fake join/leave messages. Players must also have the REAL join/leave permission.
 # simpleproxychat.read.switch - Read switch messages.
+# simpleproxychat.read.update - ALWAYS active whether use-permissions is false or not.
 # simpleproxychat.reload - ALWAYS Active whether use-permissions is false or not.
 use-permissions: false
 
