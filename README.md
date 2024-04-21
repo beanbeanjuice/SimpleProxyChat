@@ -47,6 +47,7 @@
 * **Global Network Chat**
 * **LuckPerms Support**
 * **LiteBans Support**
+* **NetworkManager Support**
 * **Discord Support**
 * **Velocity/Waterfall/BungeeCord Support**
 * **Colored Chat**
@@ -98,6 +99,7 @@ aliases:
 # simpleproxychat.read.leave - Read leave messages.
 # simpleproxychat.read.fake - Read the fake join/leave messages. Players must also have the REAL join/leave permission.
 # simpleproxychat.read.switch - Read switch messages.
+# simpleproxychat.read.update - ALWAYS active whether use-permissions is false or not.
 # simpleproxychat.reload - ALWAYS Active whether use-permissions is false or not.
 use-permissions: false
 
@@ -178,8 +180,15 @@ discord:
     offline: "Offline ⛔"
     use-timestamp: true
 
+# Prefix for the plugin. %plugin-prefix% usable anywhere.
+plugin-prefix: "&8[<bold><rainbow>SimpleProxyChat&r&8] "
+
+# The message for any updates that are sent.
+# The plugin-prefix is automatically appended to the beginning of this message.
+update-message: "&7There is an update! You are on &c%old%. New version is &a%new%&7: &6%link%"
+
 # DO NOT TOUCH THIS
-file-version: 4
+file-version: 5
 ```
 
 ---
@@ -209,6 +218,7 @@ file-version: 4
   <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Placeholders.png?raw=true" alt="placeholders"/>
 </p>
 
+* `%plugin-prefix%` - The plugin's designated prefix.
 * `%server%` - The current connected server. Uses the alias if one is specified.
 * `%original_server%` - Same as `%server%`, but does not use the alias.
 * `%to%` - The current connected server. Uses the alias if one is specified.

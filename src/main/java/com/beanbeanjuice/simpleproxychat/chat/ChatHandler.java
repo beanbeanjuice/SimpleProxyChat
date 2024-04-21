@@ -52,20 +52,23 @@ public class ChatHandler {
 
     public void runProxyChatMessage(String serverName, String playerName, UUID playerUUID,
                                     String playerMessage, Consumer<String> minecraftLogger) {
+        if (Helper.serverHasChatLocked(config, serverName)) return;
+
         String minecraftConfigString = config.getAsString(ConfigDataKey.MINECRAFT_MESSAGE);
         String discordConfigString = config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_MESSAGE);
 
         String aliasedServerName = Helper.convertAlias(config, serverName);
 
         List<Tuple<String, String>> replacements = new ArrayList<>();
-        replacements.add(Tuple.create("message", playerMessage));
-        replacements.add(Tuple.create("server", aliasedServerName));
-        replacements.add(Tuple.create("original_server", serverName));
-        replacements.add(Tuple.create("to", aliasedServerName));
-        replacements.add(Tuple.create("original_to", serverName));
-        replacements.add(Tuple.create("player", playerName));
-        replacements.add(Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())));
-        replacements.add(Tuple.create("time", getTimeString()));
+        replacements.add(Tuple.of("message", playerMessage));
+        replacements.add(Tuple.of("server", aliasedServerName));
+        replacements.add(Tuple.of("original_server", serverName));
+        replacements.add(Tuple.of("to", aliasedServerName));
+        replacements.add(Tuple.of("original_to", serverName));
+        replacements.add(Tuple.of("player", playerName));
+        replacements.add(Tuple.of("epoch", String.valueOf(Instant.now().getEpochSecond())));
+        replacements.add(Tuple.of("time", getTimeString()));
+        replacements.add(Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
 
         String minecraftMessage = replaceKeys(minecraftConfigString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
@@ -112,13 +115,14 @@ public class ChatHandler {
         String aliasedServerName = Helper.convertAlias(config, serverName);
 
         List<Tuple<String, String>> replacements = new ArrayList<>();
-        replacements.add(Tuple.create("player", playerName));
-        replacements.add(Tuple.create("server", aliasedServerName));
-        replacements.add(Tuple.create("original_server", serverName));
-        replacements.add(Tuple.create("to", aliasedServerName));
-        replacements.add(Tuple.create("original_to", serverName));
-        replacements.add(Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())));
-        replacements.add(Tuple.create("time", getTimeString()));
+        replacements.add(Tuple.of("player", playerName));
+        replacements.add(Tuple.of("server", aliasedServerName));
+        replacements.add(Tuple.of("original_server", serverName));
+        replacements.add(Tuple.of("to", aliasedServerName));
+        replacements.add(Tuple.of("original_to", serverName));
+        replacements.add(Tuple.of("epoch", String.valueOf(Instant.now().getEpochSecond())));
+        replacements.add(Tuple.of("time", getTimeString()));
+        replacements.add(Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
 
         String message = replaceKeys(configString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
@@ -151,15 +155,16 @@ public class ChatHandler {
         String aliasedServerName = Helper.convertAlias(config, serverName);
 
         List<Tuple<String, String>> replacements = new ArrayList<>();
-        replacements.add(Tuple.create("player", playerName));
-        replacements.add(Tuple.create("server", Helper.convertAlias(config, serverName)));
-        replacements.add(Tuple.create("to", Helper.convertAlias(config, serverName)));
-        replacements.add(Tuple.create("server", aliasedServerName));
-        replacements.add(Tuple.create("original_server", serverName));
-        replacements.add(Tuple.create("to", aliasedServerName));
-        replacements.add(Tuple.create("original_to", serverName));
-        replacements.add(Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())));
-        replacements.add(Tuple.create("time", getTimeString()));
+        replacements.add(Tuple.of("player", playerName));
+        replacements.add(Tuple.of("server", Helper.convertAlias(config, serverName)));
+        replacements.add(Tuple.of("to", Helper.convertAlias(config, serverName)));
+        replacements.add(Tuple.of("server", aliasedServerName));
+        replacements.add(Tuple.of("original_server", serverName));
+        replacements.add(Tuple.of("to", aliasedServerName));
+        replacements.add(Tuple.of("original_to", serverName));
+        replacements.add(Tuple.of("epoch", String.valueOf(Instant.now().getEpochSecond())));
+        replacements.add(Tuple.of("time", getTimeString()));
+        replacements.add(Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
 
         String message = replaceKeys(configString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
@@ -194,15 +199,16 @@ public class ChatHandler {
         String aliasedTo = Helper.convertAlias(config, to);
 
         List<Tuple<String, String>> replacements = new ArrayList<>();
-        replacements.add(Tuple.create("from", aliasedFrom));
-        replacements.add(Tuple.create("original_from", from));
-        replacements.add(Tuple.create("to", aliasedTo));
-        replacements.add(Tuple.create("original_to", to));
-        replacements.add(Tuple.create("server", aliasedTo));
-        replacements.add(Tuple.create("original_server", to));
-        replacements.add(Tuple.create("player", playerName));
-        replacements.add(Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())));
-        replacements.add(Tuple.create("time", getTimeString()));
+        replacements.add(Tuple.of("from", aliasedFrom));
+        replacements.add(Tuple.of("original_from", from));
+        replacements.add(Tuple.of("to", aliasedTo));
+        replacements.add(Tuple.of("original_to", to));
+        replacements.add(Tuple.of("server", aliasedTo));
+        replacements.add(Tuple.of("original_server", to));
+        replacements.add(Tuple.of("player", playerName));
+        replacements.add(Tuple.of("epoch", String.valueOf(Instant.now().getEpochSecond())));
+        replacements.add(Tuple.of("time", getTimeString()));
+        replacements.add(Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
 
         String consoleMessage = replaceKeys(consoleConfigString, replacements);
         String discordMessage = replaceKeys(discordConfigString, replacements);
@@ -267,11 +273,12 @@ public class ChatHandler {
 
         message = replaceKeys(
                 message,
-                Tuple.create("role", String.format("<%s>%s</%s>", hex, roleName, hex)),
-                Tuple.create("user", username),
-                Tuple.create("message", discordMessage),
-                Tuple.create("epoch", String.valueOf(Instant.now().getEpochSecond())),
-                Tuple.create("time", getTimeString())
+                Tuple.of("role", String.format("<%s>%s</%s>", hex, roleName, hex)),
+                Tuple.of("user", username),
+                Tuple.of("message", discordMessage),
+                Tuple.of("epoch", String.valueOf(Instant.now().getEpochSecond())),
+                Tuple.of("time", getTimeString()),
+                Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX))
         );
 
         globalLogger.accept(message);
@@ -279,7 +286,7 @@ public class ChatHandler {
 
     private String replaceKeys(String string, List<Tuple<String, String>> entries) {
         for (Tuple<String, String> entry : entries)
-            string = string.replaceAll(String.format("%%%s%%", entry.getKey()), entry.getValue());
+            string = string.replace(String.format("%%%s%%", entry.getKey()), entry.getValue());
 
         return string;
     }
@@ -287,7 +294,7 @@ public class ChatHandler {
     @SafeVarargs
     private String replaceKeys(String string, Tuple<String, String>... entries) {
         for (Tuple<String, String> entry : entries)
-            string = string.replaceAll(String.format("%%%s%%", entry.getKey()), entry.getValue());
+            string = string.replace(String.format("%%%s%%", entry.getKey()), entry.getValue());
 
         return string;
     }
