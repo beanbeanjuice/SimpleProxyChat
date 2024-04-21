@@ -23,15 +23,12 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import de.myzelyam.api.vanish.VelocityVanishAPI;
 import lombok.Getter;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
-import java.awt.*;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 public class SimpleProxyChatVelocity {
@@ -51,18 +48,18 @@ public class SimpleProxyChatVelocity {
         this.logger = logger;
         this.metricsFactory = metricsFactory;
 
-        this.logger.info("The plugin is starting.");
+        this.getLogger().info("The plugin is starting.");
         this.config = new Config(dataDirectory.toFile());
         this.config.initialize();
 
-        this.logger.info("Initializing discord bot.");
+        this.getLogger().info("Initializing discord bot.");
         try { discordBot = new Bot(this.config); }
         catch (Exception e) { logger.warn("There was an error starting the discord bot: " + e.getMessage()); }
 
         // Plugin enabled.
-        discordBot.getJDA().ifPresentOrElse((jda) -> { }, () -> this.logger.warn("Discord logging is not enabled."));
+        discordBot.getJDA().ifPresentOrElse((jda) -> { }, () -> this.getLogger().error("Discord logging is not enabled."));
         discordBot.start();
-        this.logger.info("Plugin has been initialized.");
+        this.getLogger().info("Plugin has been initialized.");
     }
 
     @Subscribe(order = PostOrder.LAST)
@@ -103,7 +100,7 @@ public class SimpleProxyChatVelocity {
                                                             .replace("%new%", spigotMCVersion)
                                                             .replace("%link%", "https://www.spigotmc.org/resources/115305/");
 
-                                                    this.logger.info(message);
+                                                    this.getLogger().info(message);
                                                     this.proxyServer.getAllPlayers()
                                                             .stream()
                                                             .filter((player) -> player.hasPermission(Permission.READ_UPDATE_NOTIFICATION.getPermissionNode()))
@@ -114,7 +111,7 @@ public class SimpleProxyChatVelocity {
                 ).delay(0, TimeUnit.MINUTES).repeat(12, TimeUnit.HOURS).schedule();
 
         // bStats Stuff
-        this.logger.info("Starting bStats... (IF ENABLED)");
+        this.getLogger().info("Starting bStats... (IF ENABLED)");
         int pluginId = 21147;
         this.metrics = metricsFactory.make(this, pluginId);
 
@@ -126,7 +123,7 @@ public class SimpleProxyChatVelocity {
             this.config.overwrite(ConfigDataKey.PLUGIN_STARTING, new ConfigDataEntry(false));
 
             ServerStatusManager manager = serverListener.getServerStatusManager();
-            manager.getAllStatusStrings().forEach(this.logger::info);
+            manager.getAllStatusStrings().forEach(this.getLogger()::info);
 
             if (!config.getAsBoolean(ConfigDataKey.USE_INITIAL_SERVER_STATUS)) return;
             discordBot.sendMessageEmbed(manager.getAllStatusEmbed());
@@ -139,24 +136,24 @@ public class SimpleProxyChatVelocity {
         // Enable vanish support.
         if (pm.getPlugin("PremiumVanish").isPresent() || pm.getPlugin("SuperVanish").isPresent()) {
             this.config.overwrite(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(true));
-            this.logger.info("Enabled PremiumVanish/SuperVanish Support");
+            this.getLogger().info("PremiumVanish/SuperVanish support has been enabled.");
         }
 
         // Registering LuckPerms support.
         if (pm.getPlugin("luckperms").isPresent()) {
             config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(true));
-            getLogger().info("LuckPerms support has been enabled.");
+            this.getLogger().info("LuckPerms support has been enabled.");
         }
 
         // Registering LiteBans support.
         if (pm.getPlugin("litebans").isPresent()) {
             config.overwrite(ConfigDataKey.LITEBANS_ENABLED, new ConfigDataEntry(true));
-            getLogger().info("LiteBans support has been enabled.");
+            this.getLogger().info("LiteBans support has been enabled.");
         }
 
         if (pm.getPlugin("networkmanager").isPresent()) {
             config.overwrite(ConfigDataKey.NETWORKMANAGER_ENABLED, new ConfigDataEntry(true));
-            getLogger().info("NetworkManager support has been enabled.");
+            this.getLogger().info("NetworkManager support has been enabled.");
         }
     }
 
