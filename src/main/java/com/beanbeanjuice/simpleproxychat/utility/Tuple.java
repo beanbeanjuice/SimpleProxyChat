@@ -13,7 +13,7 @@ public class Tuple<KeyType, ValueType> {
         this.value = value;
     }
 
-    public static Tuple<String, String> create(String key, String value) {
+    public static Tuple<String, String> of(String key, String value) {
         return new Tuple<>(key, value);
     }
 

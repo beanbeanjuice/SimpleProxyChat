@@ -6,7 +6,9 @@ import litebans.api.Database;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.md_5.bungee.api.chat.BaseComponent;
 import nl.chimpgamer.networkmanager.api.NetworkManagerProvider;
 
 import java.util.UUID;
@@ -62,13 +64,22 @@ public class Helper {
         return PlainTextComponentSerializer.plainText().serialize(input);
     }
 
+    public static BaseComponent[] convertToBungee(String message) {
+        Component minimessage = MiniMessage.miniMessage().deserialize(message);
+        return BungeeComponentSerializer.get().serialize(minimessage);
+    }
+
     public static Component stringToComponent(String string) {
         return MiniMessage.miniMessage().deserialize(string);
     }
 
     public static boolean serverHasChatLocked(Config config, String serverName) {
-        if (config.getAsBoolean(ConfigDataKey.NETWORKMANAGER_ENABLED) && NetworkManagerProvider.Companion.get().getChatManager().isChatLocked(serverName))
-            return true;
+        if (config.getAsBoolean(ConfigDataKey.NETWORKMANAGER_ENABLED) &&
+                (
+                    NetworkManagerProvider.Companion.get().getChatManager().isChatLocked(serverName) ||
+                    NetworkManagerProvider.Companion.get().getChatManager().isChatLocked("all")
+                )
+        ) return true;
 
         // TODO: Other methods of checking if chat is locked.
         return false;
