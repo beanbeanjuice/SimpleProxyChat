@@ -13,19 +13,15 @@ import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataEntry;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import de.myzelyam.api.vanish.BungeeVanishAPI;
-import de.myzelyam.api.vanish.VanishAPI;
 import lombok.Getter;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 import org.bstats.bungeecord.Metrics;
 
-import java.awt.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
@@ -68,13 +64,18 @@ public final class SimpleProxyChatBungee extends Plugin {
 
         // Update Checker
         this.getProxy().getScheduler().schedule(this, () -> UpdateChecker.checkUpdate((spigotMCVersion) -> {
+            String currentVersion = this.getDescription().getVersion();
+
             if (this.getDescription().getVersion().equals(spigotMCVersion)) return;
 
-            String message = "ATTENTION - There is a new update available: v" + spigotMCVersion;
+            String message = config.getAsString(ConfigDataKey.UPDATE_MESSAGE)
+                    .replace("%old%", "v" + currentVersion)
+                    .replace("%new%", "v" + spigotMCVersion)
+                    .replace("%link%", "https://www.spigotmc.org/resources/115305/");
 
-            Component minimessage = MiniMessage.miniMessage().deserialize(message);
+            this.getLogger().info(Helper.sanitize(message));
 
-            this.getLogger().info(message);
+            Component minimessage = MiniMessage.miniMessage().deserialize(config.getAsString(ConfigDataKey.PLUGIN_PREFIX) + message);
             this.getProxy().getPlayers()
                     .stream()
                     .filter((player) -> player.hasPermission(Permission.READ_UPDATE_NOTIFICATION.getPermissionNode()))
@@ -107,7 +108,7 @@ public final class SimpleProxyChatBungee extends Plugin {
         // Enable vanish support.
         if (pm.getPlugin("PremiumVanish") != null || pm.getPlugin("SuperVanish") != null) {
             this.config.overwrite(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(true));
-            this.getLogger().log(Level.INFO, "Enabled PremiumVanish/SuperVanish Support");
+            this.getLogger().log(Level.INFO, "PremiumVanish/SuperVanish support has been enabled.");
             this.getProxy().getPluginManager().registerListener(this, new BungeeVanishListener(serverListener, config));
         }
 
@@ -122,16 +123,19 @@ public final class SimpleProxyChatBungee extends Plugin {
             config.overwrite(ConfigDataKey.LITEBANS_ENABLED, new ConfigDataEntry(true));
             getLogger().info("LiteBans support has been enabled.");
         }
+
+        // Registering NetworkManager support.
+        if (pm.getPlugin("NetworkManager") != null) {
+            config.overwrite(ConfigDataKey.NETWORKMANAGER_ENABLED, new ConfigDataEntry(true));
+            getLogger().info("NetworkManager support has been enabled.");
+        }
     }
 
     private void registerListeners() {
         ChatHandler chatHandler = new ChatHandler(
                 config,
                 discordBot,
-                (message) -> {
-                    Component minimessage = MiniMessage.miniMessage().deserialize(message);
-                    this.getProxy().broadcast(BungeeComponentSerializer.get().serialize(minimessage));
-                },
+                (message) -> this.getProxy().broadcast(Helper.convertToBungee(message)),
                 (message) -> getLogger().info(Helper.sanitize(message))
         );
 
