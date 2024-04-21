@@ -113,6 +113,8 @@ public class Config {
         }
 
         // messages.yml
+        config.put(ConfigDataKey.PLUGIN_PREFIX, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("plugin-prefix"))));
+
         config.put(ConfigDataKey.MINECRAFT_JOIN_USE, new ConfigDataEntry(yamlMessages.getBoolean("minecraft.join.use")));
         config.put(ConfigDataKey.MINECRAFT_JOIN, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("minecraft.join.message"))));
         config.put(ConfigDataKey.MINECRAFT_LEAVE_USE, new ConfigDataEntry(yamlMessages.getBoolean("minecraft.leave.use")));
@@ -149,12 +151,14 @@ public class Config {
         config.put(ConfigDataKey.DISCORD_PROXY_STATUS_ONLINE, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.online")));
         config.put(ConfigDataKey.DISCORD_PROXY_STATUS_OFFLINE, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.offline")));
         config.put(ConfigDataKey.DISCORD_PROXY_STATUS_USE_TIMESTAMP, new ConfigDataEntry(yamlMessages.getBoolean("discord.proxy-status.use-timestamp")));
+        config.put(ConfigDataKey.UPDATE_MESSAGE, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("update-message"))));
 
         // External
         if (!initialSetup) return;
         config.put(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(false));
         config.put(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(false));
         config.put(ConfigDataKey.LITEBANS_ENABLED, new ConfigDataEntry(false));
+        config.put(ConfigDataKey.NETWORKMANAGER_ENABLED, new ConfigDataEntry(false));
         config.put(ConfigDataKey.PLUGIN_STARTING, new ConfigDataEntry(true));
         initialSetup = false;
     }
