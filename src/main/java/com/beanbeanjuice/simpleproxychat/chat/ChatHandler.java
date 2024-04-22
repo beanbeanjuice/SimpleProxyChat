@@ -50,9 +50,24 @@ public class ChatHandler {
         discordBot.getJDA().ifPresent((jda) -> jda.addEventListener(new DiscordChatHandler(config, this::sendFromDiscord)));
     }
 
+    private Optional<String> getValidMessage(String message) {
+        String messagePrefix = config.getAsString(ConfigDataKey.PROXY_MESSAGE_PREFIX);
+
+        if (messagePrefix.isEmpty()) return Optional.of(message);
+        if (!message.startsWith(messagePrefix)) return Optional.empty();
+
+        message = message.substring(messagePrefix.length());
+        if (message.isEmpty()) return Optional.empty();
+        return Optional.of(message);
+    }
+
     public void runProxyChatMessage(String serverName, String playerName, UUID playerUUID,
                                     String playerMessage, Consumer<String> minecraftLogger) {
         if (Helper.serverHasChatLocked(config, serverName)) return;
+
+        Optional<String> optionalPlayerMessage = getValidMessage(playerMessage);
+        if (optionalPlayerMessage.isEmpty()) return;
+        playerMessage = optionalPlayerMessage.get();
 
         String minecraftConfigString = config.getAsString(ConfigDataKey.MINECRAFT_MESSAGE);
         String discordConfigString = config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_MESSAGE);
