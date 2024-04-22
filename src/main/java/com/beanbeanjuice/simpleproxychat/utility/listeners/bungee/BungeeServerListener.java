@@ -54,6 +54,10 @@ public class BungeeServerListener implements Listener {
 
                     plugin.getProxy().getPlayers().stream()
                             .filter((streamPlayer) -> !blacklistedUUIDs.contains(streamPlayer))
+                            .filter((streamPlayer) -> {
+                                if (!plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS)) return true;
+                                return streamPlayer.hasPermission(Permission.READ_CHAT_MESSAGE.getPermissionNode());
+                            })
                             .forEach((streamPlayer) -> streamPlayer.sendMessage(ChatMessageType.CHAT, convertToBungee(message)));
                 });
     }
