@@ -41,6 +41,11 @@ aliases:
 # simpleproxychat.reload - ALWAYS Active whether use-permissions is false or not.
 use-permissions: false
 
+# Only messages that start with this character will be sent through the plugin.
+# Set to '' to disable.
+# Example: If it is set to '$', then when a player sends $hello, it will be sent through the proxy.
+proxy-message-prefix: ''
+
 # Whether to send if the statuses of the servers connected to the proxy when the proxy starts up.
 # THIS IS FOR DISCORD MESSAGES ONLY.
 use-initial-server-status: true
