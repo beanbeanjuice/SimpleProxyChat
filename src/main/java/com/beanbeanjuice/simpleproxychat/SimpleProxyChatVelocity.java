@@ -3,6 +3,7 @@ package com.beanbeanjuice.simpleproxychat;
 import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityReloadCommand;
 import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
+import com.beanbeanjuice.simpleproxychat.utility.epoch.EpochHelper;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import com.google.inject.Inject;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
@@ -38,6 +39,7 @@ public class SimpleProxyChatVelocity {
     @Getter private final ProxyServer proxyServer;
     @Getter private final Logger logger;
     @Getter private final Config config;
+    @Getter private final EpochHelper epochHelper;
     @Getter private Bot discordBot;
     private Metrics metrics;
     private VelocityServerListener serverListener;
@@ -51,6 +53,8 @@ public class SimpleProxyChatVelocity {
         this.getLogger().info("The plugin is starting.");
         this.config = new Config(dataDirectory.toFile());
         this.config.initialize();
+
+        epochHelper = new EpochHelper(config);
 
         this.getLogger().info("Initializing discord bot.");
         try { discordBot = new Bot(this.config); }
@@ -161,6 +165,7 @@ public class SimpleProxyChatVelocity {
         // Register Chat Listener
         ChatHandler chatHandler = new ChatHandler(
                 config,
+                epochHelper,
                 discordBot,
                 (message) -> {
                     logger.info(Helper.sanitize(message));

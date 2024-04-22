@@ -114,11 +114,15 @@ use-fake-messages: true
 # Format: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
 # Timezone: https://www.joda.org/joda-time/timezones.html
 timestamp:
+  # If your server is prone to getting off-sync on the time you can use an API.
+  # WARNING: Using the API will make messages somewhat longer to send.
+  # Additionally, the maximum accuracy will only be up to 1 minute, rather than seconds.
+  use-api: false
   format: "hh:mm a"
   timezone: "America/Los_Angeles"
 
 # DO NOT TOUCH THIS
-file-version: 8
+file-version: 9
 ```
 
 **messages.yml**
