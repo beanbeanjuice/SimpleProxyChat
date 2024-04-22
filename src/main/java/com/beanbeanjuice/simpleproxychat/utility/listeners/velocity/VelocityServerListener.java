@@ -50,6 +50,10 @@ public class VelocityServerListener {
 
                         plugin.getProxyServer().getAllPlayers().stream()
                                 .filter((streamPlayer) -> !blacklistedUUIDs.contains(streamPlayer))
+                                .filter((streamPlayer) -> {
+                                    if (!plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS)) return true;
+                                    return streamPlayer.hasPermission(Permission.READ_CHAT_MESSAGE.getPermissionNode());
+                                })
                                 .forEach((streamPlayer) -> streamPlayer.sendMessage(component));
                     });
         });

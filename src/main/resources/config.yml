@@ -32,6 +32,7 @@ aliases:
   smp: smp1
 
 # Whether to use the permission system.
+# simpleproxychat.read.chat - Read chat messages.
 # simpleproxychat.read.join - Read join messages.
 # simpleproxychat.read.leave - Read leave messages.
 # simpleproxychat.read.fake - Read the fake join/leave messages. Players must also have the REAL join/leave permission.
