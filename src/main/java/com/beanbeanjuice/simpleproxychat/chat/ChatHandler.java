@@ -7,6 +7,7 @@ import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
+import com.beanbeanjuice.simpleproxychat.utility.epoch.EpochHelper;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -35,14 +36,16 @@ public class ChatHandler {
     private static final String MINECRAFT_PLAYER_HEAD_URL = "https://crafthead.net/avatar/{PLAYER_UUID}";
 
     private final Config config;
+    private final EpochHelper epochHelper;
     private final Bot discordBot;
 
     private final Consumer<String> globalLogger;
     private final Consumer<String> pluginLogger;
 
-    public ChatHandler(Config config, Bot discordBot, Consumer<String> globalLogger,
-                       Consumer<String> pluginLogger) {
+    public ChatHandler(Config config, EpochHelper epochHelper, Bot discordBot,
+                       Consumer<String> globalLogger, Consumer<String> pluginLogger) {
         this.config = config;
+        this.epochHelper = epochHelper;
         this.discordBot = discordBot;
 
         this.globalLogger = globalLogger;
@@ -376,7 +379,7 @@ public class ChatHandler {
         DateTimeZone zone = DateTimeZone.forID(config.getAsString(ConfigDataKey.TIMESTAMP_TIMEZONE));
         DateTimeFormatter format = DateTimeFormat.forPattern(config.getAsString(ConfigDataKey.TIMESTAMP_FORMAT));
 
-        long timeInMillis = System.currentTimeMillis();
+        long timeInMillis = epochHelper.getEpoch();
         DateTime time = new DateTime(timeInMillis).withZone(zone);
 
         return time.toString(format);
