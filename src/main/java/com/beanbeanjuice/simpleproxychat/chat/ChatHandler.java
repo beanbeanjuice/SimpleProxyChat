@@ -69,7 +69,7 @@ public class ChatHandler {
         replacements.add(Tuple.of("to", aliasedServerName));
         replacements.add(Tuple.of("original_to", serverName));
         replacements.add(Tuple.of("player", playerName));
-        replacements.add(Tuple.of("epoch", String.valueOf(Instant.now().getEpochSecond())));
+        replacements.add(Tuple.of("epoch", String.valueOf(epochHelper.getEpochSecond())));
         replacements.add(Tuple.of("time", getTimeString()));
         replacements.add(Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
 
@@ -99,7 +99,7 @@ public class ChatHandler {
                     .setColor(color);
 
             if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE_TIMESTAMP))
-                embedBuilder.setTimestamp(Instant.now());
+                embedBuilder.setTimestamp(epochHelper.getEpochInstant());
 
             discordBot.sendMessageEmbed(embedBuilder.build());
         } else {
@@ -123,7 +123,7 @@ public class ChatHandler {
         replacements.add(Tuple.of("original_server", serverName));
         replacements.add(Tuple.of("to", aliasedServerName));
         replacements.add(Tuple.of("original_to", serverName));
-        replacements.add(Tuple.of("epoch", String.valueOf(Instant.now().getEpochSecond())));
+        replacements.add(Tuple.of("epoch", String.valueOf(epochHelper.getEpochSecond())));
         replacements.add(Tuple.of("time", getTimeString()));
         replacements.add(Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
 
@@ -137,11 +137,10 @@ public class ChatHandler {
 
         // Log to Console
         pluginLogger.accept(message);
-
         // Log to Discord
         if (config.getAsBoolean(ConfigDataKey.DISCORD_LEAVE_USE)) {
             EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.RED);
-            if (config.getAsBoolean(ConfigDataKey.DISCORD_LEAVE_USE_TIMESTAMP)) embedBuilder.setTimestamp(Instant.now());
+            if (config.getAsBoolean(ConfigDataKey.DISCORD_LEAVE_USE_TIMESTAMP)) embedBuilder.setTimestamp(epochHelper.getEpochInstant());
             discordBot.sendMessageEmbed(embedBuilder.build());
         }
 
@@ -165,7 +164,7 @@ public class ChatHandler {
         replacements.add(Tuple.of("original_server", serverName));
         replacements.add(Tuple.of("to", aliasedServerName));
         replacements.add(Tuple.of("original_to", serverName));
-        replacements.add(Tuple.of("epoch", String.valueOf(Instant.now().getEpochSecond())));
+        replacements.add(Tuple.of("epoch", String.valueOf(epochHelper.getEpochSecond())));
         replacements.add(Tuple.of("time", getTimeString()));
         replacements.add(Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
 
@@ -183,7 +182,7 @@ public class ChatHandler {
         // Log to Discord
         if (config.getAsBoolean(ConfigDataKey.DISCORD_JOIN_USE)) {
             EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.GREEN);
-            if (config.getAsBoolean(ConfigDataKey.DISCORD_JOIN_USE_TIMESTAMP)) embedBuilder.setTimestamp(Instant.now());
+            if (config.getAsBoolean(ConfigDataKey.DISCORD_JOIN_USE_TIMESTAMP)) embedBuilder.setTimestamp(epochHelper.getEpochInstant());
             discordBot.sendMessageEmbed(embedBuilder.build());
         }
 
@@ -209,7 +208,7 @@ public class ChatHandler {
         replacements.add(Tuple.of("server", aliasedTo));
         replacements.add(Tuple.of("original_server", to));
         replacements.add(Tuple.of("player", playerName));
-        replacements.add(Tuple.of("epoch", String.valueOf(Instant.now().getEpochSecond())));
+        replacements.add(Tuple.of("epoch", String.valueOf(epochHelper.getEpochSecond())));
         replacements.add(Tuple.of("time", getTimeString()));
         replacements.add(Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
 
@@ -229,7 +228,7 @@ public class ChatHandler {
         // Log to Discord
         if (config.getAsBoolean(ConfigDataKey.DISCORD_SWITCH_USE)) {
             EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.YELLOW);
-            if (config.getAsBoolean(ConfigDataKey.DISCORD_SWITCH_USE_TIMESTAMP)) embedBuilder.setTimestamp(Instant.now());
+            if (config.getAsBoolean(ConfigDataKey.DISCORD_SWITCH_USE_TIMESTAMP)) embedBuilder.setTimestamp(epochHelper.getEpochInstant());
             discordBot.sendMessageEmbed(embedBuilder.build());
         }
 
@@ -279,7 +278,7 @@ public class ChatHandler {
                 Tuple.of("role", String.format("<%s>%s</%s>", hex, roleName, hex)),
                 Tuple.of("user", username),
                 Tuple.of("message", discordMessage),
-                Tuple.of("epoch", String.valueOf(Instant.now().getEpochSecond())),
+                Tuple.of("epoch", String.valueOf(epochHelper.getEpochSecond())),
                 Tuple.of("time", getTimeString()),
                 Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX))
         );
@@ -379,7 +378,7 @@ public class ChatHandler {
         DateTimeZone zone = DateTimeZone.forID(config.getAsString(ConfigDataKey.TIMESTAMP_TIMEZONE));
         DateTimeFormatter format = DateTimeFormat.forPattern(config.getAsString(ConfigDataKey.TIMESTAMP_FORMAT));
 
-        long timeInMillis = epochHelper.getEpoch();
+        long timeInMillis = epochHelper.getEpochMillisecond();
         DateTime time = new DateTime(timeInMillis).withZone(zone);
 
         return time.toString(format);
