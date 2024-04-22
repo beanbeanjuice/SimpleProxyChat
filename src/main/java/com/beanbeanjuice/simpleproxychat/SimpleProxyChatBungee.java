@@ -3,6 +3,7 @@ package com.beanbeanjuice.simpleproxychat;
 import com.beanbeanjuice.simpleproxychat.commands.bungee.BungeeReloadCommand;
 import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
+import com.beanbeanjuice.simpleproxychat.utility.epoch.EpochHelper;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeServerListener;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeVanishListener;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
@@ -28,6 +29,7 @@ import java.util.logging.Level;
 public final class SimpleProxyChatBungee extends Plugin {
 
     @Getter private Config config;
+    @Getter private EpochHelper epochHelper;
     @Getter private Bot discordBot;
     @Getter private Metrics metrics;
     private BungeeServerListener serverListener;
@@ -38,6 +40,8 @@ public final class SimpleProxyChatBungee extends Plugin {
 
         this.config = new Config(this.getDataFolder());
         this.config.initialize();
+
+        epochHelper = new EpochHelper(config);
 
         this.getLogger().info("Initializing discord bot.");
 
@@ -134,6 +138,7 @@ public final class SimpleProxyChatBungee extends Plugin {
     private void registerListeners() {
         ChatHandler chatHandler = new ChatHandler(
                 config,
+                epochHelper,
                 discordBot,
                 (message) -> this.getProxy().broadcast(Helper.convertToBungee(message)),
                 (message) -> getLogger().info(Helper.sanitize(message))
