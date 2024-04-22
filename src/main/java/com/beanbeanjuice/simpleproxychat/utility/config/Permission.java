@@ -4,6 +4,7 @@ import lombok.Getter;
 
 public enum Permission {
 
+    READ_CHAT_MESSAGE("simpleproxychat.read.chat"),
     READ_JOIN_MESSAGE("simpleproxychat.read.join"),
     READ_LEAVE_MESSAGE("simpleproxychat.read.leave"),
     READ_FAKE_MESSAGE("simpleproxychat.read.fake"),
