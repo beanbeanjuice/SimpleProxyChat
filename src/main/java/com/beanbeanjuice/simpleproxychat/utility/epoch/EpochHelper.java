@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -22,13 +23,21 @@ public class EpochHelper {
         timeAtLastRefresh = System.currentTimeMillis();
     }
 
-    public long getEpoch() {
+    public long getEpochMillisecond() {
         if (!config.getAsBoolean(ConfigDataKey.TIMESTAMP_USE_API)) return System.currentTimeMillis();
 
         Optional<Long> optionalEpochLong = getEpochFromAPI();
         if (optionalEpochLong.isEmpty()) return epochCache;
         epochCache = optionalEpochLong.get();
         return epochCache;
+    }
+
+    public Instant getEpochInstant() {
+        return Instant.ofEpochMilli(epochCache);
+    }
+
+    public long getEpochSecond() {
+        return getEpochMillisecond() / 1000;
     }
 
     private Optional<Long> getEpochFromAPI() {
