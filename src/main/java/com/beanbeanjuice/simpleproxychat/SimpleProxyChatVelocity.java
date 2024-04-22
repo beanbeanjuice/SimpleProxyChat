@@ -100,7 +100,7 @@ public class SimpleProxyChatVelocity {
                                                             .replace("%new%", spigotMCVersion)
                                                             .replace("%link%", "https://www.spigotmc.org/resources/115305/");
 
-                                                    this.getLogger().info(message);
+                                                    this.getLogger().info(Helper.sanitize(message));
                                                     this.proxyServer.getAllPlayers()
                                                             .stream()
                                                             .filter((player) -> player.hasPermission(Permission.READ_UPDATE_NOTIFICATION.getPermissionNode()))
