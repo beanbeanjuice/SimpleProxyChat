@@ -1,6 +1,5 @@
 package com.beanbeanjuice.simpleproxychat.utility.listeners.bungee;
 
-import lombok.Getter;
 import net.md_5.bungee.api.config.ServerInfo;
 
 import java.util.HashMap;
