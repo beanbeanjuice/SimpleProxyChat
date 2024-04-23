@@ -28,10 +28,12 @@ public class BungeeServerListener implements Listener {
     @Getter private ServerStatusManager serverStatusManager;
     private final SimpleProxyChatBungee plugin;
     private final ChatHandler chatHandler;
+    @Getter private final BungeePreviousServerHandler previousServerHandler;
 
     public BungeeServerListener(SimpleProxyChatBungee plugin, ChatHandler chatHandler) {
         this.plugin = plugin;
         this.chatHandler = chatHandler;
+        this.previousServerHandler = new BungeePreviousServerHandler();
 
         startServerStatusDetection();
     }
@@ -62,6 +64,24 @@ public class BungeeServerListener implements Listener {
                 });
     }
 
+    /*
+        This is needed because there is no specific event that can get the previous server AND check if the player
+        leaves the proxy.
+    */
+    @EventHandler
+    public void onPlayerLeaveServer(ServerDisconnectEvent event) {
+        previousServerHandler.put(event.getPlayer().getUniqueId(), event.getTarget());
+    }
+
+    /*
+        This is needed because there is no specific event that can get the previous server AND check if the player
+        leaves the proxy.
+    */
+    @EventHandler
+    public void onPlayerKick(ServerKickEvent event) {
+        previousServerHandler.put(event.getPlayer().getUniqueId(), event.getKickedFrom());
+    }
+
     @EventHandler
     public void onPlayerLeaveProxy(PlayerDisconnectEvent event) {
         if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
@@ -70,8 +90,18 @@ public class BungeeServerListener implements Listener {
     }
 
     void leave(ProxiedPlayer player, boolean isFake) {
-        if (isFake) chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), player.getServer().getInfo().getName(), this::sendToAllServersVanish);
-        else chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), player.getServer().getInfo().getName(), this::sendToAllServers);
+        // Bungee is "dumb" and needs to be delayed...
+        try {
+            plugin.getProxy().getScheduler().schedule(
+                    plugin,
+                    () -> {
+                        if (isFake) chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), previousServerHandler.get(player.getUniqueId()).getName(), this::sendToAllServersVanish);
+                        else chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), previousServerHandler.get(player.getUniqueId()).getName(), this::sendToAllServers);
+                    },
+                    50L, TimeUnit.MILLISECONDS);  // 50ms is 1 tick
+        } catch (Exception e) {
+            plugin.getLogger().warning("BungeeCord error. This is a bungeecord issue and cannot be fixed: " + e.getMessage());
+        }
     }
 
     @EventHandler
