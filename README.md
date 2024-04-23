@@ -215,6 +215,7 @@ file-version: 5
   <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Permissions.png?raw=true" alt="permissions"/>
 </p>
 
+* `simpleproxychat.read.chat` - Read chat messages.
 * `simpleproxychat.read.join` - Read join messages.
 * `simpleproxychat.read.leave` - Read leave messages.
 * `simpleproxychat.read.fake` - Read fake join/leave messages. Must have the real permission too.
