@@ -1,6 +1,8 @@
 package com.beanbeanjuice.simpleproxychat.commands.bungee;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
+import com.beanbeanjuice.simpleproxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
@@ -35,6 +37,10 @@ public class BungeeReloadCommand extends Command {
         plugin.getDiscordBot().updateActivity();
 
         String message = config.getAsString(ConfigDataKey.MINECRAFT_SUCCESSFUL_RELOAD);
+        message = Helper.replaceKeys(
+                message,
+                Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX))
+        );
         sender.sendMessage(convertToBungee(message));
     }
 

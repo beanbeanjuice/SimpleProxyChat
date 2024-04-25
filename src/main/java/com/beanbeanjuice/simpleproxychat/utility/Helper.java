@@ -11,6 +11,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import nl.chimpgamer.networkmanager.api.NetworkManagerProvider;
 
+import java.util.List;
 import java.util.UUID;
 
 public class Helper {
@@ -91,6 +92,21 @@ public class Helper {
 
         // TODO: Other methods of checking if player can talk.
         return true;
+    }
+
+    public static String replaceKeys(String string, List<Tuple<String, String>> entries) {
+        for (Tuple<String, String> entry : entries)
+            string = string.replace(String.format("%%%s%%", entry.getKey()), entry.getValue());
+
+        return string;
+    }
+
+    @SafeVarargs
+    public static String replaceKeys(String string, Tuple<String, String>... entries) {
+        for (Tuple<String, String> entry : entries)
+            string = string.replace(String.format("%%%s%%", entry.getKey()), entry.getValue());
+
+        return string;
     }
 
 }
