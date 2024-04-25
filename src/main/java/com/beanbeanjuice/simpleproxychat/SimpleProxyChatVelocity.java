@@ -185,7 +185,7 @@ public class SimpleProxyChatVelocity {
                 .plugin(this)
                 .build();
 
-        commandManager.register(commandMeta, new VelocityReloadCommand(config));
+        commandManager.register(commandMeta, new VelocityReloadCommand(this, config));
     }
 
     @Subscribe(order = PostOrder.LAST)
