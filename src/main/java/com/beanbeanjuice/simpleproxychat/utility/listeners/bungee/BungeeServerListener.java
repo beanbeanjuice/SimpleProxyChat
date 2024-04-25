@@ -70,7 +70,7 @@ public class BungeeServerListener implements Listener {
     */
     @EventHandler
     public void onPlayerLeaveServer(ServerDisconnectEvent event) {
-        previousServerHandler.put(event.getPlayer().getUniqueId(), event.getTarget());
+        previousServerHandler.put(event.getPlayer().getName(), event.getTarget());
     }
 
     /*
@@ -79,7 +79,7 @@ public class BungeeServerListener implements Listener {
     */
     @EventHandler
     public void onPlayerKick(ServerKickEvent event) {
-        previousServerHandler.put(event.getPlayer().getUniqueId(), event.getKickedFrom());
+        previousServerHandler.put(event.getPlayer().getName(), event.getKickedFrom());
     }
 
     @EventHandler
@@ -95,8 +95,8 @@ public class BungeeServerListener implements Listener {
             plugin.getProxy().getScheduler().schedule(
                     plugin,
                     () -> {
-                        if (isFake) chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), previousServerHandler.get(player.getUniqueId()).getName(), this::sendToAllServersVanish);
-                        else chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), previousServerHandler.get(player.getUniqueId()).getName(), this::sendToAllServers);
+                        if (isFake) chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), previousServerHandler.get(player.getName()).getName(), this::sendToAllServersVanish);
+                        else chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), previousServerHandler.get(player.getName()).getName(), this::sendToAllServers);
                     },
                     50L, TimeUnit.MILLISECONDS);  // 50ms is 1 tick
         } catch (Exception e) {
