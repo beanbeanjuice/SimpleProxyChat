@@ -1,6 +1,7 @@
 package com.beanbeanjuice.simpleproxychat;
 
 import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityReloadCommand;
+import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.epoch.EpochHelper;
@@ -96,13 +97,16 @@ public class SimpleProxyChatVelocity {
                                 (spigotMCVersion) -> this.proxyServer.getPluginManager().getPlugin("simpleproxychat")
                                         .flatMap(
                                                 pluginContainer -> pluginContainer.getDescription().getVersion()
-                                        ).ifPresent((version) -> {
-                                                    if (version.equalsIgnoreCase(spigotMCVersion)) return;
+                                        ).ifPresent((currentVersion) -> {
+                                                    if (currentVersion.equalsIgnoreCase(spigotMCVersion)) return;
 
-                                                    String message = config.getAsString(ConfigDataKey.UPDATE_MESSAGE)
-                                                            .replace("%old%", version)
-                                                            .replace("%new%", spigotMCVersion)
-                                                            .replace("%link%", "https://www.spigotmc.org/resources/115305/");
+                                                    String message = Helper.replaceKeys(
+                                                            config.getAsString(ConfigDataKey.UPDATE_MESSAGE),
+                                                            Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)),
+                                                            Tuple.of("old", currentVersion),
+                                                            Tuple.of("new", spigotMCVersion),
+                                                            Tuple.of("link", "https://www.spigotmc.org/resources/115305/")
+                                                    );
 
                                                     this.getLogger().info(Helper.sanitize(message));
                                                     this.proxyServer.getAllPlayers()
