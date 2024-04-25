@@ -2,6 +2,7 @@ package com.beanbeanjuice.simpleproxychat.commands.velocity;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity;
 import com.beanbeanjuice.simpleproxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
@@ -27,8 +28,12 @@ public class VelocityReloadCommand implements SimpleCommand {
         config.reload();
         plugin.getDiscordBot().updateActivity();
 
-        Component component = Helper.stringToComponent(config.getAsString(ConfigDataKey.MINECRAFT_SUCCESSFUL_RELOAD));
-        source.sendMessage(component);
+        String message = config.getAsString(ConfigDataKey.MINECRAFT_SUCCESSFUL_RELOAD);
+        message = Helper.replaceKeys(
+                message,
+                Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX))
+        );
+        source.sendMessage(Helper.stringToComponent(message));
     }
 
     @Override

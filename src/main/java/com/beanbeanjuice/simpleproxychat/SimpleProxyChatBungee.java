@@ -2,6 +2,7 @@ package com.beanbeanjuice.simpleproxychat;
 
 import com.beanbeanjuice.simpleproxychat.commands.bungee.BungeeReloadCommand;
 import com.beanbeanjuice.simpleproxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.epoch.EpochHelper;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeServerListener;
@@ -72,10 +73,14 @@ public final class SimpleProxyChatBungee extends Plugin {
 
             if (this.getDescription().getVersion().equals(spigotMCVersion)) return;
 
-            String message = config.getAsString(ConfigDataKey.UPDATE_MESSAGE)
-                    .replace("%old%", "v" + currentVersion)
-                    .replace("%new%", "v" + spigotMCVersion)
-                    .replace("%link%", "https://www.spigotmc.org/resources/115305/");
+            String message = config.getAsString(ConfigDataKey.UPDATE_MESSAGE);
+            message = Helper.replaceKeys(
+                    message,
+                    Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)),
+                    Tuple.of("old", currentVersion),
+                    Tuple.of("new", spigotMCVersion),
+                    Tuple.of("link", "https://www.spigotmc.org/resources/115305/")
+            );
 
             this.getLogger().info(Helper.sanitize(message));
 
