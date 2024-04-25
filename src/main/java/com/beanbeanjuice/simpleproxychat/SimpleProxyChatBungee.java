@@ -154,7 +154,7 @@ public final class SimpleProxyChatBungee extends Plugin {
     }
 
     private void registerCommands() {
-        this.getProxy().getPluginManager().registerCommand(this, new BungeeReloadCommand(config));
+        this.getProxy().getPluginManager().registerCommand(this, new BungeeReloadCommand(this, config));
     }
 
     @Override
