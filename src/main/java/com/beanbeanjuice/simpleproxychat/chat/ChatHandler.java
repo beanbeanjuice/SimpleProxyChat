@@ -24,7 +24,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.awt.*;
-import java.time.Instant;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -88,8 +87,8 @@ public class ChatHandler {
         replacements.add(Tuple.of("time", getTimeString()));
         replacements.add(Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
 
-        String minecraftMessage = replaceKeys(minecraftConfigString, replacements);
-        String discordMessage = replaceKeys(discordConfigString, replacements);
+        String minecraftMessage = Helper.replaceKeys(minecraftConfigString, replacements);
+        String discordMessage = Helper.replaceKeys(discordConfigString, replacements);
 
         if (config.getAsBoolean(ConfigDataKey.LUCKPERMS_ENABLED)) {
             minecraftMessage = replacePrefixSuffix(minecraftMessage, playerUUID, aliasedServerName, serverName);
@@ -101,8 +100,8 @@ public class ChatHandler {
 
         // Log to Discord
         if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE)) {
-            String title = replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_TITLE), replacements);
-            String message = replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_MESSAGE), replacements);
+            String title = Helper.replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_TITLE), replacements);
+            String message = Helper.replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_MESSAGE), replacements);
 
             title = replacePrefixSuffix(title, playerUUID, aliasedServerName, serverName);
 
@@ -142,8 +141,8 @@ public class ChatHandler {
         replacements.add(Tuple.of("time", getTimeString()));
         replacements.add(Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
 
-        String message = replaceKeys(configString, replacements);
-        String discordMessage = replaceKeys(discordConfigString, replacements);
+        String message = Helper.replaceKeys(configString, replacements);
+        String discordMessage = Helper.replaceKeys(discordConfigString, replacements);
 
         if (config.getAsBoolean(ConfigDataKey.LUCKPERMS_ENABLED)) {
             message = replacePrefixSuffix(message, playerUUID, aliasedServerName, serverName);
@@ -183,8 +182,8 @@ public class ChatHandler {
         replacements.add(Tuple.of("time", getTimeString()));
         replacements.add(Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
 
-        String message = replaceKeys(configString, replacements);
-        String discordMessage = replaceKeys(discordConfigString, replacements);
+        String message = Helper.replaceKeys(configString, replacements);
+        String discordMessage = Helper.replaceKeys(discordConfigString, replacements);
 
         if (config.getAsBoolean(ConfigDataKey.LUCKPERMS_ENABLED)) {
             message = replacePrefixSuffix(message, playerUUID, aliasedServerName, serverName);
@@ -227,9 +226,9 @@ public class ChatHandler {
         replacements.add(Tuple.of("time", getTimeString()));
         replacements.add(Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
 
-        String consoleMessage = replaceKeys(consoleConfigString, replacements);
-        String discordMessage = replaceKeys(discordConfigString, replacements);
-        String minecraftMessage = replaceKeys(minecraftConfigString, replacements);
+        String consoleMessage = Helper.replaceKeys(consoleConfigString, replacements);
+        String discordMessage = Helper.replaceKeys(discordConfigString, replacements);
+        String minecraftMessage = Helper.replaceKeys(minecraftConfigString, replacements);
 
         if (config.getAsBoolean(ConfigDataKey.LUCKPERMS_ENABLED)) {
             consoleMessage = replacePrefixSuffix(consoleMessage, playerUUID, aliasedTo, to);
@@ -288,7 +287,7 @@ public class ChatHandler {
 
         String hex = "#" + Integer.toHexString(roleColor.getRGB()).substring(2);
 
-        message = replaceKeys(
+        message = Helper.replaceKeys(
                 message,
                 Tuple.of("role", String.format("<%s>%s</%s>", hex, roleName, hex)),
                 Tuple.of("user", username),
@@ -299,21 +298,6 @@ public class ChatHandler {
         );
 
         globalLogger.accept(message);
-    }
-
-    private String replaceKeys(String string, List<Tuple<String, String>> entries) {
-        for (Tuple<String, String> entry : entries)
-            string = string.replace(String.format("%%%s%%", entry.getKey()), entry.getValue());
-
-        return string;
-    }
-
-    @SafeVarargs
-    private String replaceKeys(String string, Tuple<String, String>... entries) {
-        for (Tuple<String, String> entry : entries)
-            string = string.replace(String.format("%%%s%%", entry.getKey()), entry.getValue());
-
-        return string;
     }
 
     private List<String> getPrefixBasedOnServerContext(User user, String... serverKeys) {
