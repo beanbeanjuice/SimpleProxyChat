@@ -136,6 +136,10 @@ public class Bot {
                         .build()
         );
 
+        this.updateActivity();
+    }
+
+    public void updateActivity() {
         this.getJDA().ifPresent((jda) -> {
             Activity.ActivityType type;
             String text;
