@@ -19,7 +19,7 @@ public class BungeeVanishListener implements Listener {
 
     @EventHandler
     public void onVanish(BungeePlayerHideEvent event) {
-        listener.getPreviousServerHandler().put(event.getPlayer().getUniqueId(), event.getPlayer().getServer().getInfo());
+        listener.getPreviousServerHandler().put(event.getPlayer().getName(), event.getPlayer().getServer().getInfo());
 
         if (!config.getAsBoolean(ConfigDataKey.USE_FAKE_MESSAGES)) return;
 
