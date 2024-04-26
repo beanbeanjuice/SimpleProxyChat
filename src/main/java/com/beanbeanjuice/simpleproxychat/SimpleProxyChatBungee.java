@@ -51,8 +51,8 @@ public final class SimpleProxyChatBungee extends Plugin {
         discordBot.getJDA().ifPresentOrElse((jda) -> { }, () -> getLogger().warning("Discord logging is not enabled."));
         discordBot.start();
 
-        hookPlugins();
         registerListeners();
+        hookPlugins();
         registerCommands();
 
         // Discord Topic Updater
