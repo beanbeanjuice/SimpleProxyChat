@@ -57,13 +57,17 @@ public class SimpleProxyChatVelocity {
 
         epochHelper = new EpochHelper(config);
 
-        this.getLogger().info("Initializing discord bot.");
-        try { discordBot = new Bot(this.config); }
-        catch (Exception e) { logger.warn("There was an error starting the discord bot: " + e.getMessage()); }
+        this.proxyServer.getScheduler().buildTask(this, () -> {
+            this.getLogger().info("Initializing discord bot.");
+            try { discordBot = new Bot(this.config); }
+            catch (Exception e) { logger.warn("There was an error starting the discord bot: " + e.getMessage()); }
+            discordBot.getJDA().ifPresentOrElse((jda) -> { }, () -> this.getLogger().error("Discord logging is not enabled."));
+
+            // Bot ready.
+            discordBot.start();
+        }).schedule();
 
         // Plugin enabled.
-        discordBot.getJDA().ifPresentOrElse((jda) -> { }, () -> this.getLogger().error("Discord logging is not enabled."));
-        discordBot.start();
         this.getLogger().info("Plugin has been initialized.");
     }
 
