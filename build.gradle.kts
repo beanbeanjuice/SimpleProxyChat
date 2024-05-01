@@ -39,6 +39,11 @@ repositories {
         name = "networkmanager-repo"
         url = uri("https://repo.networkmanager.xyz/repository/maven-public/")
     }
+
+    maven {
+        name = "spicord-repo"
+        url = uri("https://repo.spicord.org/")
+    }
 }
 
 dependencies {
@@ -82,6 +87,9 @@ dependencies {
 
     // NetworkManager Support
     compileOnly("nl.chimpgamer.networkmanager:api:2.14.10")
+
+    // Spicord Support
+    compileOnly("org.spicord:spicord-common:5.4.0")
 
     // Timestamp
     implementation("joda-time:joda-time:2.12.7")
@@ -211,6 +219,7 @@ hangarPublish {
 tasks.withType<ShadowJar> {
     minimize()
     relocate("org.bstats", "com.beanbeanjuice.simpleproxychat.libs.org.bstats")
+    relocate("net.dv8tion", "com.beanbeanjuice.simpleproxychat.libs.net.dv8tion")
     archiveBaseName.set(rootProject.name)
     archiveClassifier.set("")
     archiveVersion.set(version as String)
