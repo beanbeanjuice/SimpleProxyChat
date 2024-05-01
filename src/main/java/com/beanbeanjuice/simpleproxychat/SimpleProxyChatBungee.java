@@ -44,12 +44,15 @@ public final class SimpleProxyChatBungee extends Plugin {
 
         epochHelper = new EpochHelper(config);
 
-        this.getLogger().info("Initializing discord bot.");
+        this.getProxy().getScheduler().runAsync(this, () -> {
+            this.getLogger().info("Initializing discord bot.");
+            try { discordBot = new Bot(this.config); }
+            catch (Exception e) { getLogger().warning("There was an error starting the discord bot: " + e.getMessage()); }
+            discordBot.getJDA().ifPresentOrElse((jda) -> { }, () -> getLogger().warning("Discord logging is not enabled."));
 
-        try { discordBot = new Bot(this.config); }
-        catch (Exception e) { getLogger().warning("There was an error starting the discord bot: " + e.getMessage()); }
-        discordBot.getJDA().ifPresentOrElse((jda) -> { }, () -> getLogger().warning("Discord logging is not enabled."));
-        discordBot.start();
+            // Bot ready.
+            discordBot.start();
+        });
 
         registerListeners();
         hookPlugins();
