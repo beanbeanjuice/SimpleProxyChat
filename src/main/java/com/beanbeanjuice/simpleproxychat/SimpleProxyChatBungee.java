@@ -52,9 +52,32 @@ public final class SimpleProxyChatBungee extends Plugin {
 
             // Bot ready.
             discordBot.start();
+
+            // Register Discord Listener
+            ChatHandler chatHandler = new ChatHandler(
+                    config,
+                    epochHelper,
+                    discordBot,
+                    (message) -> this.getProxy().broadcast(Helper.convertToBungee(message)),
+                    (message) -> getLogger().info(Helper.sanitize(message))
+            );
+
+            serverListener = new BungeeServerListener(this, chatHandler);
+            this.getProxy().getPluginManager().registerListener(this, serverListener);
+
+            // Send Initial Server Status
+            this.getProxy().getScheduler().schedule(this, () -> {
+                this.config.overwrite(ConfigDataKey.PLUGIN_STARTING, new ConfigDataEntry(false));
+
+                ServerStatusManager manager = serverListener.getServerStatusManager();
+                manager.getAllStatusStrings().forEach((string) -> this.getLogger().info(string));
+
+                if (!config.getAsBoolean(ConfigDataKey.USE_INITIAL_SERVER_STATUS)) return;
+                this.discordBot.sendMessageEmbed(manager.getAllStatusEmbed());
+            }, config.getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL) * 2L, TimeUnit.SECONDS);
         });
 
-        registerListeners();
+        // ! - registerListeners();
         hookPlugins();
         registerCommands();
 
@@ -101,17 +124,6 @@ public final class SimpleProxyChatBungee extends Plugin {
 
         // Plugin has started.
         this.getLogger().log(Level.INFO, "The plugin has been started.");
-
-        // Send initial status.
-        this.getProxy().getScheduler().schedule(this, () -> {
-            this.config.overwrite(ConfigDataKey.PLUGIN_STARTING, new ConfigDataEntry(false));
-
-            ServerStatusManager manager = serverListener.getServerStatusManager();
-            manager.getAllStatusStrings().forEach((string) -> this.getLogger().info(string));
-
-            if (!config.getAsBoolean(ConfigDataKey.USE_INITIAL_SERVER_STATUS)) return;
-            this.discordBot.sendMessageEmbed(manager.getAllStatusEmbed());
-        }, config.getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL) * 2L, TimeUnit.SECONDS);
     }
 
     private void hookPlugins() {
@@ -143,18 +155,9 @@ public final class SimpleProxyChatBungee extends Plugin {
         }
     }
 
-    private void registerListeners() {
-        ChatHandler chatHandler = new ChatHandler(
-                config,
-                epochHelper,
-                discordBot,
-                (message) -> this.getProxy().broadcast(Helper.convertToBungee(message)),
-                (message) -> getLogger().info(Helper.sanitize(message))
-        );
-
-        serverListener = new BungeeServerListener(this, chatHandler);
-        this.getProxy().getPluginManager().registerListener(this, serverListener);
-    }
+//    private void registerListeners() {
+//
+//    }
 
     private void registerCommands() {
         this.getProxy().getPluginManager().registerCommand(this, new BungeeReloadCommand(this, config));

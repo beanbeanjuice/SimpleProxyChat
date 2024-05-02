@@ -57,6 +57,17 @@ public class SimpleProxyChatVelocity {
 
         epochHelper = new EpochHelper(config);
 
+        // Plugin enabled.
+        this.getLogger().info("Plugin has been initialized.");
+    }
+
+    @Subscribe(order = PostOrder.LAST)
+    public void onProxyInitialization(ProxyInitializeEvent event) {
+        hookPlugins();
+        // ! - registerListeners();
+        registerCommands();
+
+        // Initialize discord bot.
         this.proxyServer.getScheduler().buildTask(this, () -> {
             this.getLogger().info("Initializing discord bot.");
             try { discordBot = new Bot(this.config); }
@@ -65,17 +76,33 @@ public class SimpleProxyChatVelocity {
 
             // Bot ready.
             discordBot.start();
+
+            // Register chat listener.
+            ChatHandler chatHandler = new ChatHandler(
+                    config,
+                    epochHelper,
+                    discordBot,
+                    (message) -> {
+                        logger.info(Helper.sanitize(message));
+                        Component messageComponent = MiniMessage.miniMessage().deserialize(message);
+                        proxyServer.getAllPlayers().forEach((player) -> player.sendMessage(messageComponent));
+                    },
+                    (message) -> logger.info(Helper.sanitize(message))
+            );
+            serverListener = new VelocityServerListener(this, chatHandler);
+            this.proxyServer.getEventManager().register(this, serverListener);
+
+            // Send initial server status.
+            this.getProxyServer().getScheduler().buildTask(this, () -> {
+                this.config.overwrite(ConfigDataKey.PLUGIN_STARTING, new ConfigDataEntry(false));
+
+                ServerStatusManager manager = serverListener.getServerStatusManager();
+                manager.getAllStatusStrings().forEach(this.getLogger()::info);
+
+                if (!config.getAsBoolean(ConfigDataKey.USE_INITIAL_SERVER_STATUS)) return;
+                discordBot.sendMessageEmbed(manager.getAllStatusEmbed());
+            }).delay(config.getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL) * 2L, TimeUnit.SECONDS).schedule();
         }).schedule();
-
-        // Plugin enabled.
-        this.getLogger().info("Plugin has been initialized.");
-    }
-
-    @Subscribe(order = PostOrder.LAST)
-    public void onProxyInitialization(ProxyInitializeEvent event) {
-        hookPlugins();
-        registerListeners();
-        registerCommands();
 
         // Start Channel Topic Updater
         this.proxyServer.getScheduler()
@@ -129,17 +156,6 @@ public class SimpleProxyChatVelocity {
 
         // Plugin has started.
         this.getLogger().info("The plugin has been started.");
-
-        // All Status
-        this.getProxyServer().getScheduler().buildTask(this, () -> {
-            this.config.overwrite(ConfigDataKey.PLUGIN_STARTING, new ConfigDataEntry(false));
-
-            ServerStatusManager manager = serverListener.getServerStatusManager();
-            manager.getAllStatusStrings().forEach(this.getLogger()::info);
-
-            if (!config.getAsBoolean(ConfigDataKey.USE_INITIAL_SERVER_STATUS)) return;
-            discordBot.sendMessageEmbed(manager.getAllStatusEmbed());
-        }).delay(config.getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL) * 2L, TimeUnit.SECONDS).schedule();
     }
 
     private void hookPlugins() {
@@ -169,22 +185,22 @@ public class SimpleProxyChatVelocity {
         }
     }
 
-    private void registerListeners() {
-        // Register Chat Listener
-        ChatHandler chatHandler = new ChatHandler(
-                config,
-                epochHelper,
-                discordBot,
-                (message) -> {
-                    logger.info(Helper.sanitize(message));
-                    Component messageComponent = MiniMessage.miniMessage().deserialize(message);
-                    proxyServer.getAllPlayers().forEach((player) -> player.sendMessage(messageComponent));
-                },
-                (message) -> logger.info(Helper.sanitize(message))
-        );
-        serverListener = new VelocityServerListener(this, chatHandler);
-        this.proxyServer.getEventManager().register(this, serverListener);
-    }
+//    private void registerListeners() {
+//        // Register Chat Listener
+//        ChatHandler chatHandler = new ChatHandler(
+//                config,
+//                epochHelper,
+//                discordBot,
+//                (message) -> {
+//                    logger.info(Helper.sanitize(message));
+//                    Component messageComponent = MiniMessage.miniMessage().deserialize(message);
+//                    proxyServer.getAllPlayers().forEach((player) -> player.sendMessage(messageComponent));
+//                },
+//                (message) -> logger.info(Helper.sanitize(message))
+//        );
+//        serverListener = new VelocityServerListener(this, chatHandler);
+//        this.proxyServer.getEventManager().register(this, serverListener);
+//    }
 
     private void registerCommands() {
         CommandManager commandManager = proxyServer.getCommandManager();
