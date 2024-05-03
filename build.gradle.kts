@@ -219,7 +219,7 @@ hangarPublish {
 tasks.withType<ShadowJar> {
     minimize()
     relocate("org.bstats", "com.beanbeanjuice.simpleproxychat.libs.org.bstats")
-    //relocate("net.dv8tion", "com.beanbeanjuice.simpleproxychat.libs.net.dv8tion")
+    relocate("net.dv8tion", "com.beanbeanjuice.simpleproxychat.libs.net.dv8tion")
     archiveBaseName.set(rootProject.name)
     archiveClassifier.set("")
     archiveVersion.set(version as String)
