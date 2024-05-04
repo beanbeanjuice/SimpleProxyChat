@@ -8,8 +8,6 @@ import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
-import com.velocitypowered.api.plugin.Plugin;
-import net.kyori.adventure.text.Component;
 
 public class VelocityReloadCommand implements SimpleCommand {
 
