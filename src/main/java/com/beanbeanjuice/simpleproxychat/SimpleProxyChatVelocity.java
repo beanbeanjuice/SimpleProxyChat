@@ -11,7 +11,6 @@ import com.beanbeanjuice.simpleproxychat.utility.listeners.velocity.VelocityServ
 import com.beanbeanjuice.simpleproxychat.discord.Bot;
 import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataEntry;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandMeta;
@@ -93,7 +92,7 @@ public class SimpleProxyChatVelocity {
 
             // Send initial server status.
             this.getProxyServer().getScheduler().buildTask(this, () -> {
-                this.config.overwrite(ConfigDataKey.PLUGIN_STARTING, new ConfigDataEntry(false));
+                this.config.overwrite(ConfigDataKey.PLUGIN_STARTING, false);
 
                 ServerStatusManager manager = serverListener.getServerStatusManager();
                 manager.getAllStatusStrings().forEach(this.getLogger()::info);
@@ -159,24 +158,24 @@ public class SimpleProxyChatVelocity {
 
         // Enable vanish support.
         if (pm.getPlugin("PremiumVanish").isPresent() || pm.getPlugin("SuperVanish").isPresent()) {
-            this.config.overwrite(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(true));
+            this.config.overwrite(ConfigDataKey.VANISH_ENABLED, true);
             this.getLogger().info("PremiumVanish/SuperVanish support has been enabled.");
         }
 
         // Registering LuckPerms support.
         if (pm.getPlugin("luckperms").isPresent()) {
-            config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(true));
+            config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, true);
             this.getLogger().info("LuckPerms support has been enabled.");
         }
 
         // Registering LiteBans support.
         if (pm.getPlugin("litebans").isPresent()) {
-            config.overwrite(ConfigDataKey.LITEBANS_ENABLED, new ConfigDataEntry(true));
+            config.overwrite(ConfigDataKey.LITEBANS_ENABLED, true);
             this.getLogger().info("LiteBans support has been enabled.");
         }
 
         if (pm.getPlugin("networkmanager").isPresent()) {
-            config.overwrite(ConfigDataKey.NETWORKMANAGER_ENABLED, new ConfigDataEntry(true));
+            config.overwrite(ConfigDataKey.NETWORKMANAGER_ENABLED, true);
             this.getLogger().info("NetworkManager support has been enabled.");
         }
     }

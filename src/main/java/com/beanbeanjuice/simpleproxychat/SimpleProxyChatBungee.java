@@ -10,7 +10,6 @@ import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
 import com.beanbeanjuice.simpleproxychat.discord.Bot;
 import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataEntry;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import de.myzelyam.api.vanish.BungeeVanishAPI;
@@ -66,7 +65,7 @@ public final class SimpleProxyChatBungee extends Plugin {
 
             // Send Initial Server Status
             this.getProxy().getScheduler().schedule(this, () -> {
-                this.config.overwrite(ConfigDataKey.PLUGIN_STARTING, new ConfigDataEntry(false));
+                this.config.overwrite(ConfigDataKey.PLUGIN_STARTING, false);
 
                 ServerStatusManager manager = serverListener.getServerStatusManager();
                 manager.getAllStatusStrings().forEach((string) -> this.getLogger().info(string));
@@ -129,26 +128,26 @@ public final class SimpleProxyChatBungee extends Plugin {
 
         // Enable vanish support.
         if (pm.getPlugin("PremiumVanish") != null || pm.getPlugin("SuperVanish") != null) {
-            this.config.overwrite(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(true));
+            this.config.overwrite(ConfigDataKey.VANISH_ENABLED, true);
             this.getLogger().log(Level.INFO, "PremiumVanish/SuperVanish support has been enabled.");
             this.getProxy().getPluginManager().registerListener(this, new BungeeVanishListener(serverListener, config));
         }
 
         // Registering LuckPerms support.
         if (pm.getPlugin("LuckPerms") != null) {
-            config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(true));
+            config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, true);
             getLogger().info("LuckPerms support has been enabled.");
         }
 
         // Registering LiteBans support.
         if (pm.getPlugin("LiteBans") != null) {
-            config.overwrite(ConfigDataKey.LITEBANS_ENABLED, new ConfigDataEntry(true));
+            config.overwrite(ConfigDataKey.LITEBANS_ENABLED, true);
             getLogger().info("LiteBans support has been enabled.");
         }
 
         // Registering NetworkManager support.
         if (pm.getPlugin("NetworkManager") != null) {
-            config.overwrite(ConfigDataKey.NETWORKMANAGER_ENABLED, new ConfigDataEntry(true));
+            config.overwrite(ConfigDataKey.NETWORKMANAGER_ENABLED, true);
             getLogger().info("NetworkManager support has been enabled.");
         }
     }
