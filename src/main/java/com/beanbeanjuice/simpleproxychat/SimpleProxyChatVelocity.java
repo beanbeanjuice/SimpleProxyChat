@@ -121,33 +121,7 @@ public class SimpleProxyChatVelocity {
                 .schedule();
 
         // Start Update Checker
-        this.proxyServer.getScheduler()
-                .buildTask(
-                        this,
-                        () -> UpdateChecker.checkUpdate(
-                                (spigotMCVersion) -> this.proxyServer.getPluginManager().getPlugin("simpleproxychat")
-                                        .flatMap(
-                                                pluginContainer -> pluginContainer.getDescription().getVersion()
-                                        ).ifPresent((currentVersion) -> {
-                                                    if (currentVersion.equalsIgnoreCase(spigotMCVersion)) return;
-
-                                                    String message = Helper.replaceKeys(
-                                                            config.getAsString(ConfigDataKey.UPDATE_MESSAGE),
-                                                            Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)),
-                                                            Tuple.of("old", currentVersion),
-                                                            Tuple.of("new", spigotMCVersion),
-                                                            Tuple.of("link", "https://www.spigotmc.org/resources/115305/")
-                                                    );
-
-                                                    this.getLogger().info(Helper.sanitize(message));
-                                                    this.proxyServer.getAllPlayers()
-                                                            .stream()
-                                                            .filter((player) -> player.hasPermission(Permission.READ_UPDATE_NOTIFICATION.getPermissionNode()))
-                                                            .forEach((player) -> player.sendMessage(Helper.stringToComponent(config.getAsString(ConfigDataKey.PLUGIN_PREFIX) + message)));
-                                                }
-                                        )
-                        )
-                ).delay(0, TimeUnit.MINUTES).repeat(12, TimeUnit.HOURS).schedule();
+        startUpdateChecker();
 
         // bStats Stuff
         this.getLogger().info("Starting bStats... (IF ENABLED)");
@@ -156,6 +130,29 @@ public class SimpleProxyChatVelocity {
 
         // Plugin has started.
         this.getLogger().info("The plugin has been started.");
+    }
+
+    private void startUpdateChecker() {
+        String currentVersion = this.proxyServer.getPluginManager().getPlugin("simpleproxychat")
+                .flatMap(pluginContainer -> pluginContainer.getDescription().getVersion())
+                .get();
+
+        UpdateChecker updateChecker = new UpdateChecker(
+                config,
+                currentVersion,
+                (message) -> {
+                    this.getLogger().info(Helper.sanitize(message));
+                    this.proxyServer.getAllPlayers()
+                            .stream()
+                            .filter((player) -> player.hasPermission(Permission.READ_UPDATE_NOTIFICATION.getPermissionNode()))
+                            .forEach((player) -> player.sendMessage(Helper.stringToComponent(config.getAsString(ConfigDataKey.PLUGIN_PREFIX) + message)));
+                }
+        );
+
+        this.proxyServer.getScheduler().buildTask(this, updateChecker::checkUpdate)
+                .delay(0, TimeUnit.MINUTES)
+                .repeat(12, TimeUnit.HOURS)
+                .schedule();
     }
 
     private void hookPlugins() {
