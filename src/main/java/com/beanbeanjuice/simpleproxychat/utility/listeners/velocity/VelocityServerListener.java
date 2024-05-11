@@ -35,11 +35,12 @@ public class VelocityServerListener {
 
     @Subscribe
     public void onPlayerChat(PlayerChatEvent event) {
-        if (!Helper.playerCanChat(plugin.getConfig(), event.getPlayer().getUniqueId())) return;
+        Player player = event.getPlayer();
+        if (!Helper.playerCanChat(plugin.getConfig(), player.getUniqueId(), player.getUsername())) return;
 
         event.getPlayer().getCurrentServer().ifPresent((connection) -> {
             String serverName = connection.getServerInfo().getName();
-            String playerName = event.getPlayer().getUsername();
+            String playerName = player.getUsername();
             String playerMessage = event.getMessage();
 
             chatHandler.runProxyChatMessage(serverName, playerName, event.getPlayer().getUniqueId(), playerMessage,

@@ -3,6 +3,8 @@ package com.beanbeanjuice.simpleproxychat.utility;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import litebans.api.Database;
+import me.leoko.advancedban.manager.PunishmentManager;
+import me.leoko.advancedban.manager.UUIDManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -86,8 +88,12 @@ public class Helper {
         return false;
     }
 
-    public static boolean playerCanChat(Config config, UUID playerUUID) {
+    public static boolean playerCanChat(Config config, UUID playerUUID, String playerName) {
         if (config.getAsBoolean(ConfigDataKey.LITEBANS_ENABLED) && Database.get().isPlayerMuted(playerUUID, null))
+            return false;
+
+        String uuidAsString = UUIDManager.get().getUUID(playerName);
+        if (config.getAsBoolean(ConfigDataKey.ADVANCEDBAN_ENABLED) && PunishmentManager.get().isMuted(uuidAsString))
             return false;
 
         // TODO: Other methods of checking if player can talk.
