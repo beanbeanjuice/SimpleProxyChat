@@ -160,6 +160,7 @@ public class Config {
         config.put(ConfigDataKey.VANISH_ENABLED, false);
         config.put(ConfigDataKey.LUCKPERMS_ENABLED, false);
         config.put(ConfigDataKey.LITEBANS_ENABLED, false);
+        config.put(ConfigDataKey.ADVANCEDBAN_ENABLED, false);
         config.put(ConfigDataKey.NETWORKMANAGER_ENABLED, false);
         config.put(ConfigDataKey.PLUGIN_STARTING, true);
         initialSetup = false;

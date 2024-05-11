@@ -44,6 +44,11 @@ repositories {
         name = "spicord-repo"
         url = uri("https://repo.spicord.org/")
     }
+
+    maven {
+        name = "advanced-ban requirement"
+        url = uri("https://maven.elmakers.com/repository/")
+    }
 }
 
 dependencies {
@@ -84,6 +89,9 @@ dependencies {
 
     // LiteBans Support
     compileOnly("com.gitlab.ruany:LiteBansAPI:0.5.0")
+
+    // AdvancedBan Support
+    compileOnly("com.github.DevLeoko:AdvancedBan:v2.3.0")
 
     // NetworkManager Support
     compileOnly("nl.chimpgamer.networkmanager:api:2.14.10")

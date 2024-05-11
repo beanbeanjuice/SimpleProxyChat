@@ -157,6 +157,13 @@ public class SimpleProxyChatVelocity {
             this.getLogger().info("LiteBans support has been enabled.");
         }
 
+        // Registering AdvancedBan support.
+        if (pm.getPlugin("advancedban").isPresent()) {
+            config.overwrite(ConfigDataKey.ADVANCEDBAN_ENABLED, true);
+            this.getLogger().info("AdvancedBan support has been enabled.");
+        }
+
+        // Registering NetworkManager support.
         if (pm.getPlugin("networkmanager").isPresent()) {
             config.overwrite(ConfigDataKey.NETWORKMANAGER_ENABLED, true);
             this.getLogger().info("NetworkManager support has been enabled.");
