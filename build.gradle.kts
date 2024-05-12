@@ -181,6 +181,10 @@ hangarPublish {
                         required.set(false)
                     }
 
+                    url("AdvancedBan", "https://www.spigotmc.org/resources/advancedban.8695/") {
+                        required.set(false)
+                    }
+
                     url("NetworkManager", "https://www.spigotmc.org/resources/28456/") {
                         required.set(false)
                     }
@@ -212,6 +216,10 @@ hangarPublish {
                     }
 
                     url("LiteBans", "https://www.spigotmc.org/resources/3715/") {
+                        required.set(false)
+                    }
+
+                    url("AdvancedBan", "https://www.spigotmc.org/resources/advancedban.8695/") {
                         required.set(false)
                     }
 
