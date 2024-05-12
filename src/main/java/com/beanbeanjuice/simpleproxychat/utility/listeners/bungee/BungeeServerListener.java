@@ -45,6 +45,7 @@ public class BungeeServerListener implements Listener {
         if (event.isCommand() || event.isProxyCommand()) return;
 
         ProxiedPlayer player = (ProxiedPlayer) event.getSender();
+        if (BungeeVanishAPI.isInvisible(player)) return;
         if (!Helper.playerCanChat(plugin.getConfig(), player.getUniqueId(), player.getName())) return;
 
         Server currentServer = (Server) event.getReceiver();
