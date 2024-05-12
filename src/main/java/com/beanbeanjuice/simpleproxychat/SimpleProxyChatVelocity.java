@@ -145,7 +145,7 @@ public class SimpleProxyChatVelocity {
         PluginManager pm = this.proxyServer.getPluginManager();
 
         // Enable vanish support.
-        if (pm.getPlugin("PremiumVanish").isPresent() || pm.getPlugin("SuperVanish").isPresent()) {
+        if (pm.getPlugin("premiumvanish").isPresent() || pm.getPlugin("supervanish").isPresent()) {
             this.config.overwrite(ConfigDataKey.VANISH_ENABLED, true);
             this.getLogger().info("PremiumVanish/SuperVanish support has been enabled.");
         }
@@ -189,6 +189,7 @@ public class SimpleProxyChatVelocity {
                 (message) -> logger.info(Helper.sanitize(message))
         );
         serverListener = new VelocityServerListener(this, chatHandler);
+        serverListener.initializeVelocityVanishListener();
         this.proxyServer.getEventManager().register(this, serverListener);
     }
 

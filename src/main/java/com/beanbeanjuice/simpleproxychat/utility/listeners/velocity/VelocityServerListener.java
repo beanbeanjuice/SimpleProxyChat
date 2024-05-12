@@ -27,6 +27,7 @@ public class VelocityServerListener {
     @Getter private ServerStatusManager serverStatusManager;
     private final SimpleProxyChatVelocity plugin;
     private final ChatHandler chatHandler;
+    private VelocityVanishListener velocityVanishListener;
 
     public VelocityServerListener(SimpleProxyChatVelocity plugin, ChatHandler chatHandler) {
         this.plugin = plugin;
@@ -34,9 +35,15 @@ public class VelocityServerListener {
         startServerStatusDetection();
     }
 
+    public void initializeVelocityVanishListener() {
+        this.velocityVanishListener = new VelocityVanishListener(plugin, this);
+        this.velocityVanishListener.startVanishListener();
+    }
+
     @Subscribe(order = PostOrder.LAST)
     public void onPlayerChat(PlayerChatEvent event) {
         Player player = event.getPlayer();
+        if (VelocityVanishAPI.isInvisible(player)) return;
         if (!Helper.playerCanChat(plugin.getConfig(), player.getUniqueId(), player.getUsername())) return;
 
         event.getPlayer().getCurrentServer().ifPresent((connection) -> {
@@ -61,7 +68,6 @@ public class VelocityServerListener {
         });
     }
 
-    // TODO: Add Vanish API
     @Subscribe
     public void onDisconnect(DisconnectEvent event) {
         if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && VelocityVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
@@ -69,15 +75,14 @@ public class VelocityServerListener {
         leave(event.getPlayer());
     }
 
-    private void leave(Player player) {
+    protected void leave(Player player) {
         String serverName = "no-server";
         if (player.getCurrentServer().isPresent())
             serverName = player.getCurrentServer().get().getServerInfo().getName();
         chatHandler.runProxyLeaveMessage(player.getUsername(), player.getUniqueId(), serverName, this::sendToAllServers);
     }
 
-    // TODO: Add Vanish API
-    private void join(Player player, String serverName) {
+    protected void join(Player player, String serverName) {
         chatHandler.runProxyJoinMessage(player.getUsername(), player.getUniqueId(), serverName, this::sendToAllServers);
     }
 
@@ -99,6 +104,8 @@ public class VelocityServerListener {
 
     @Subscribe
     public void onServerConnected(ServerConnectedEvent event) {
+        if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && VelocityVanishAPI.isInvisible(event.getPlayer())) return;
+
         // First Join
         if (event.getPreviousServer().isEmpty()) {
             join(event.getPlayer(), event.getServer().getServerInfo().getName());
