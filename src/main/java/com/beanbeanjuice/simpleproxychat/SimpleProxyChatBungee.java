@@ -43,12 +43,12 @@ public final class SimpleProxyChatBungee extends Plugin {
         epochHelper = new EpochHelper(config);
 
         this.getLogger().info("Initializing discord bot.");
-        try { discordBot = new Bot(this.config); }
-        catch (Exception e) { getLogger().warning("There was an error starting the discord bot: " + e.getMessage()); }
-        discordBot.getJDA().ifPresentOrElse((jda) -> { }, () -> getLogger().warning("Discord logging is not enabled."));
+        discordBot = new Bot(this.config);
 
-        // Bot ready.
-        discordBot.start();
+        this.getProxy().getScheduler().runAsync(this, () -> {
+            try { discordBot.start();
+            } catch (Exception e) { getLogger().warning("There was an error starting the discord bot: " + e.getMessage()); }
+        });
 
         registerListeners();
         hookPlugins();
@@ -78,15 +78,17 @@ public final class SimpleProxyChatBungee extends Plugin {
         this.getLogger().log(Level.INFO, "The plugin has been started.");
 
         // Send Initial Server Status
-        this.getProxy().getScheduler().schedule(this, () -> {
-            this.config.overwrite(ConfigDataKey.PLUGIN_STARTING, false);
+        discordBot.addRunnableToQueue(() -> {
+            this.getProxy().getScheduler().schedule(this, () -> {
+                this.config.overwrite(ConfigDataKey.PLUGIN_STARTING, false);
 
-            ServerStatusManager manager = serverListener.getServerStatusManager();
-            manager.getAllStatusStrings().forEach((string) -> this.getLogger().info(string));
+                ServerStatusManager manager = serverListener.getServerStatusManager();
+                manager.getAllStatusStrings().forEach((string) -> this.getLogger().info(string));
 
-            if (!config.getAsBoolean(ConfigDataKey.USE_INITIAL_SERVER_STATUS)) return;
-            this.discordBot.sendMessageEmbed(manager.getAllStatusEmbed());
-        }, config.getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL) * 2L, TimeUnit.SECONDS);
+                if (!config.getAsBoolean(ConfigDataKey.USE_INITIAL_SERVER_STATUS)) return;
+                this.discordBot.sendMessageEmbed(manager.getAllStatusEmbed());
+            }, config.getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL) * 2L, TimeUnit.SECONDS);
+        });
     }
 
     private void startUpdateChecker() {
