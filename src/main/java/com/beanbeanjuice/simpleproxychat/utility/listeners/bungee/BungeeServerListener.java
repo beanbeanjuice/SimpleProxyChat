@@ -54,10 +54,15 @@ public class BungeeServerListener implements Listener {
 
         chatHandler.runProxyChatMessage(serverName, playerName, player.getUniqueId(), playerMessage,
                 (message) -> {
-                    Collection<ProxiedPlayer> blacklistedUUIDs = currentServer.getInfo().getPlayers();
+                    Collection<ProxiedPlayer> blacklistedPlayers = currentServer.getInfo().getPlayers();
 
                     plugin.getProxy().getPlayers().stream()
-                            .filter((streamPlayer) -> !blacklistedUUIDs.contains(streamPlayer))
+                            .filter((streamPlayer) -> !blacklistedPlayers.contains(streamPlayer))
+                            .filter((streamPlayer) -> {
+                                for (ProxiedPlayer blacklistedPlayer : blacklistedPlayers)
+                                    if (blacklistedPlayer.getName().equals(streamPlayer.getName())) return false;
+                                return true;
+                            })
                             .filter((streamPlayer) -> {
                                 if (!plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS)) return true;
                                 return streamPlayer.hasPermission(Permission.READ_CHAT_MESSAGE.getPermissionNode());
