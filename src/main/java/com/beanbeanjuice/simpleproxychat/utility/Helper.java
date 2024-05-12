@@ -92,9 +92,10 @@ public class Helper {
         if (config.getAsBoolean(ConfigDataKey.LITEBANS_ENABLED) && Database.get().isPlayerMuted(playerUUID, null))
             return false;
 
-        String uuidAsString = UUIDManager.get().getUUID(playerName);
-        if (config.getAsBoolean(ConfigDataKey.ADVANCEDBAN_ENABLED) && PunishmentManager.get().isMuted(uuidAsString))
-            return false;
+        if (config.getAsBoolean(ConfigDataKey.ADVANCEDBAN_ENABLED)) {
+            String uuidAsString = UUIDManager.get().getUUID(playerName);
+            if (PunishmentManager.get().isMuted(uuidAsString)) return false;
+        }
 
         // TODO: Other methods of checking if player can talk.
         return true;
