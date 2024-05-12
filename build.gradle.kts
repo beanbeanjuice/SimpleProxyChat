@@ -44,6 +44,11 @@ repositories {
         name = "spicord-repo"
         url = uri("https://repo.spicord.org/")
     }
+
+    maven {
+        name = "advanced-ban requirement"
+        url = uri("https://maven.elmakers.com/repository/")
+    }
 }
 
 dependencies {
@@ -84,6 +89,9 @@ dependencies {
 
     // LiteBans Support
     compileOnly("com.gitlab.ruany:LiteBansAPI:0.5.0")
+
+    // AdvancedBan Support
+    compileOnly("com.github.DevLeoko:AdvancedBan:v2.3.0")
 
     // NetworkManager Support
     compileOnly("nl.chimpgamer.networkmanager:api:2.14.10")
@@ -173,6 +181,10 @@ hangarPublish {
                         required.set(false)
                     }
 
+                    url("AdvancedBan", "https://www.spigotmc.org/resources/advancedban.8695/") {
+                        required.set(false)
+                    }
+
                     url("NetworkManager", "https://www.spigotmc.org/resources/28456/") {
                         required.set(false)
                     }
@@ -204,6 +216,10 @@ hangarPublish {
                     }
 
                     url("LiteBans", "https://www.spigotmc.org/resources/3715/") {
+                        required.set(false)
+                    }
+
+                    url("AdvancedBan", "https://www.spigotmc.org/resources/advancedban.8695/") {
                         required.set(false)
                     }
 
