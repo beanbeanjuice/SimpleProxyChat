@@ -19,6 +19,7 @@ import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import net.md_5.bungee.event.EventPriority;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -38,12 +39,13 @@ public class BungeeServerListener implements Listener {
         startServerStatusDetection();
     }
 
-    @EventHandler
+    @EventHandler (priority = EventPriority.HIGHEST)
     public void onProxyChatEvent(ChatEvent event) {
-        if (event.isCommand() || event.isProxyCommand()) return;  // Ignore if it is a command.
+        if (event.isCancelled()) return;
+        if (event.isCommand() || event.isProxyCommand()) return;
 
         ProxiedPlayer player = (ProxiedPlayer) event.getSender();
-        if (!Helper.playerCanChat(plugin.getConfig(), player.getUniqueId())) return;
+        if (!Helper.playerCanChat(plugin.getConfig(), player.getUniqueId(), player.getName())) return;
 
         Server currentServer = (Server) event.getReceiver();
         String serverName = currentServer.getInfo().getName();

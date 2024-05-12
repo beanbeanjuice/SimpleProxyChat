@@ -6,6 +6,7 @@ import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
@@ -33,13 +34,14 @@ public class VelocityServerListener {
         startServerStatusDetection();
     }
 
-    @Subscribe
+    @Subscribe(order = PostOrder.LAST)
     public void onPlayerChat(PlayerChatEvent event) {
-        if (!Helper.playerCanChat(plugin.getConfig(), event.getPlayer().getUniqueId())) return;
+        Player player = event.getPlayer();
+        if (!Helper.playerCanChat(plugin.getConfig(), player.getUniqueId(), player.getUsername())) return;
 
         event.getPlayer().getCurrentServer().ifPresent((connection) -> {
             String serverName = connection.getServerInfo().getName();
-            String playerName = event.getPlayer().getUsername();
+            String playerName = player.getUsername();
             String playerMessage = event.getMessage();
 
             chatHandler.runProxyChatMessage(serverName, playerName, event.getPlayer().getUniqueId(), playerMessage,

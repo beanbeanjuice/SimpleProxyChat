@@ -131,6 +131,12 @@ public final class SimpleProxyChatBungee extends Plugin {
             getLogger().info("LiteBans support has been enabled.");
         }
 
+        // Registering AdvancedBan support.
+        if (pm.getPlugin("AdvancedBan") != null) {
+            config.overwrite(ConfigDataKey.ADVANCEDBAN_ENABLED, true);
+            getLogger().info("AdvancedBan support has been enabled.");
+        }
+
         // Registering NetworkManager support.
         if (pm.getPlugin("NetworkManager") != null) {
             config.overwrite(ConfigDataKey.NETWORKMANAGER_ENABLED, true);
