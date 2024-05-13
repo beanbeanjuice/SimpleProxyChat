@@ -1,5 +1,6 @@
 package com.beanbeanjuice.simpleproxychat;
 
+import com.beanbeanjuice.simpleproxychat.commands.bungee.BungeeChatToggleCommand;
 import com.beanbeanjuice.simpleproxychat.commands.bungee.BungeeReloadCommand;
 import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
@@ -162,6 +163,7 @@ public final class SimpleProxyChatBungee extends Plugin {
 
     private void registerCommands() {
         this.getProxy().getPluginManager().registerCommand(this, new BungeeReloadCommand(this, config));
+        this.getProxy().getPluginManager().registerCommand(this, new BungeeChatToggleCommand(this, config));
     }
 
     @Override
