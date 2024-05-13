@@ -1,7 +1,8 @@
 package com.beanbeanjuice.simpleproxychat;
 
+import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityChatToggleCommand;
 import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityReloadCommand;
-import com.beanbeanjuice.simpleproxychat.utility.Tuple;
+import com.beanbeanjuice.simpleproxychat.utility.ServerChatLockHelper;
 import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.epoch.EpochHelper;
@@ -12,7 +13,6 @@ import com.beanbeanjuice.simpleproxychat.utility.listeners.velocity.VelocityServ
 import com.beanbeanjuice.simpleproxychat.discord.Bot;
 import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataEntry;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandMeta;
@@ -57,18 +57,22 @@ public class SimpleProxyChatVelocity {
 
         epochHelper = new EpochHelper(config);
 
-        this.getLogger().info("Initializing discord bot.");
-        try { discordBot = new Bot(this.config); }
-        catch (Exception e) { logger.warn("There was an error starting the discord bot: " + e.getMessage()); }
-
         // Plugin enabled.
-        discordBot.getJDA().ifPresentOrElse((jda) -> { }, () -> this.getLogger().error("Discord logging is not enabled."));
-        discordBot.start();
         this.getLogger().info("Plugin has been initialized.");
     }
 
     @Subscribe(order = PostOrder.LAST)
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        // Initialize discord bot.
+        this.getLogger().info("Initializing discord bot.");
+        discordBot = new Bot(this.config);
+
+        // Bot ready.
+        this.proxyServer.getScheduler().buildTask(this, () -> {
+            try { discordBot.start();
+            } catch (Exception e) { this.getLogger().warn("There was an error starting the discord bot: {}", e.getMessage()); }
+        }).schedule();
+
         hookPlugins();
         registerListeners();
         registerCommands();
@@ -90,33 +94,7 @@ public class SimpleProxyChatVelocity {
                 .schedule();
 
         // Start Update Checker
-        this.proxyServer.getScheduler()
-                .buildTask(
-                        this,
-                        () -> UpdateChecker.checkUpdate(
-                                (spigotMCVersion) -> this.proxyServer.getPluginManager().getPlugin("simpleproxychat")
-                                        .flatMap(
-                                                pluginContainer -> pluginContainer.getDescription().getVersion()
-                                        ).ifPresent((currentVersion) -> {
-                                                    if (currentVersion.equalsIgnoreCase(spigotMCVersion)) return;
-
-                                                    String message = Helper.replaceKeys(
-                                                            config.getAsString(ConfigDataKey.UPDATE_MESSAGE),
-                                                            Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)),
-                                                            Tuple.of("old", currentVersion),
-                                                            Tuple.of("new", spigotMCVersion),
-                                                            Tuple.of("link", "https://www.spigotmc.org/resources/115305/")
-                                                    );
-
-                                                    this.getLogger().info(Helper.sanitize(message));
-                                                    this.proxyServer.getAllPlayers()
-                                                            .stream()
-                                                            .filter((player) -> player.hasPermission(Permission.READ_UPDATE_NOTIFICATION.getPermissionNode()))
-                                                            .forEach((player) -> player.sendMessage(Helper.stringToComponent(config.getAsString(ConfigDataKey.PLUGIN_PREFIX) + message)));
-                                                }
-                                        )
-                        )
-                ).delay(0, TimeUnit.MINUTES).repeat(12, TimeUnit.HOURS).schedule();
+        startUpdateChecker();
 
         // bStats Stuff
         this.getLogger().info("Starting bStats... (IF ENABLED)");
@@ -126,47 +104,81 @@ public class SimpleProxyChatVelocity {
         // Plugin has started.
         this.getLogger().info("The plugin has been started.");
 
-        // All Status
-        this.getProxyServer().getScheduler().buildTask(this, () -> {
-            this.config.overwrite(ConfigDataKey.PLUGIN_STARTING, new ConfigDataEntry(false));
+        // Send initial server status.
+        discordBot.addRunnableToQueue(() -> {
+            this.getProxyServer().getScheduler().buildTask(this, () -> {
+                this.config.overwrite(ConfigDataKey.PLUGIN_STARTING, false);
 
-            ServerStatusManager manager = serverListener.getServerStatusManager();
-            manager.getAllStatusStrings().forEach(this.getLogger()::info);
+                ServerStatusManager manager = serverListener.getServerStatusManager();
+                manager.getAllStatusStrings().forEach(this.getLogger()::info);
 
-            if (!config.getAsBoolean(ConfigDataKey.USE_INITIAL_SERVER_STATUS)) return;
-            discordBot.sendMessageEmbed(manager.getAllStatusEmbed());
-        }).delay(config.getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL) * 2L, TimeUnit.SECONDS).schedule();
+                if (!config.getAsBoolean(ConfigDataKey.USE_INITIAL_SERVER_STATUS)) return;
+                discordBot.sendMessageEmbed(manager.getAllStatusEmbed());
+            })
+            .delay(config.getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL) * 2L, TimeUnit.SECONDS)
+            .schedule();
+        });
+    }
+
+    private void startUpdateChecker() {
+        String currentVersion = this.proxyServer.getPluginManager().getPlugin("simpleproxychat")
+                .flatMap(pluginContainer -> pluginContainer.getDescription().getVersion())
+                .get();
+
+        UpdateChecker updateChecker = new UpdateChecker(
+                config,
+                currentVersion,
+                (message) -> {
+                    this.getLogger().info(Helper.sanitize(message));
+                    this.proxyServer.getAllPlayers()
+                            .stream()
+                            .filter((player) -> player.hasPermission(Permission.READ_UPDATE_NOTIFICATION.getPermissionNode()))
+                            .forEach((player) -> player.sendMessage(Helper.stringToComponent(config.getAsString(ConfigDataKey.PLUGIN_PREFIX) + message)));
+                }
+        );
+
+        this.proxyServer.getScheduler().buildTask(this, updateChecker::checkUpdate)
+                .delay(0, TimeUnit.MINUTES)
+                .repeat(12, TimeUnit.HOURS)
+                .schedule();
     }
 
     private void hookPlugins() {
         PluginManager pm = this.proxyServer.getPluginManager();
 
         // Enable vanish support.
-        if (pm.getPlugin("PremiumVanish").isPresent() || pm.getPlugin("SuperVanish").isPresent()) {
-            this.config.overwrite(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(true));
+        if (pm.getPlugin("premiumvanish").isPresent() || pm.getPlugin("supervanish").isPresent()) {
+            this.config.overwrite(ConfigDataKey.VANISH_ENABLED, true);
             this.getLogger().info("PremiumVanish/SuperVanish support has been enabled.");
         }
 
         // Registering LuckPerms support.
         if (pm.getPlugin("luckperms").isPresent()) {
-            config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(true));
+            config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, true);
             this.getLogger().info("LuckPerms support has been enabled.");
         }
 
         // Registering LiteBans support.
         if (pm.getPlugin("litebans").isPresent()) {
-            config.overwrite(ConfigDataKey.LITEBANS_ENABLED, new ConfigDataEntry(true));
+            config.overwrite(ConfigDataKey.LITEBANS_ENABLED, true);
             this.getLogger().info("LiteBans support has been enabled.");
         }
 
+        // Registering AdvancedBan support.
+        if (pm.getPlugin("advancedban").isPresent()) {
+            config.overwrite(ConfigDataKey.ADVANCEDBAN_ENABLED, true);
+            this.getLogger().info("AdvancedBan support has been enabled.");
+        }
+
+        // Registering NetworkManager support.
         if (pm.getPlugin("networkmanager").isPresent()) {
-            config.overwrite(ConfigDataKey.NETWORKMANAGER_ENABLED, new ConfigDataEntry(true));
+            config.overwrite(ConfigDataKey.NETWORKMANAGER_ENABLED, true);
             this.getLogger().info("NetworkManager support has been enabled.");
         }
     }
 
     private void registerListeners() {
-        // Register Chat Listener
+        // Register chat listener.
         ChatHandler chatHandler = new ChatHandler(
                 config,
                 epochHelper,
@@ -179,17 +191,25 @@ public class SimpleProxyChatVelocity {
                 (message) -> logger.info(Helper.sanitize(message))
         );
         serverListener = new VelocityServerListener(this, chatHandler);
+        serverListener.initializeVelocityVanishListener();
         this.proxyServer.getEventManager().register(this, serverListener);
     }
 
     private void registerCommands() {
         CommandManager commandManager = proxyServer.getCommandManager();
-        CommandMeta commandMeta = commandManager.metaBuilder("spc-reload")
+
+        CommandMeta reloadCommand = commandManager.metaBuilder("spc-reload")
                 .aliases("spcreload")
                 .plugin(this)
                 .build();
 
-        commandManager.register(commandMeta, new VelocityReloadCommand(this, config));
+        CommandMeta chatToggleCommand = commandManager.metaBuilder("spc-chat")
+                .aliases("spcchat")
+                .plugin(this)
+                .build();
+
+        commandManager.register(reloadCommand, new VelocityReloadCommand(this, config));
+        commandManager.register(chatToggleCommand, new VelocityChatToggleCommand(this, config));
     }
 
     @Subscribe(order = PostOrder.LAST)

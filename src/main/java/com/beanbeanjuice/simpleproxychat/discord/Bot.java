@@ -14,33 +14,26 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 import java.awt.*;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
 public class Bot {
 
     private final Config config;
-    private final JDA bot;
+    private JDA bot;
 
-    public Bot(Config config) throws InterruptedException {
+    private final Queue<Runnable> runnables;
+
+    public Bot(Config config) {
         this.config = config;
+        runnables = new ConcurrentLinkedQueue<>();
 
         if (!config.getAsBoolean(ConfigDataKey.USE_DISCORD)) {
             bot = null;
             return;
         }
-
-        bot = JDABuilder
-                .createLight(config.getAsString(ConfigDataKey.BOT_TOKEN))
-                .setActivity(Activity.watching("Starting Proxy..."))
-                .enableCache(CacheFlag.ROLE_TAGS)
-                .setMemberCachePolicy(MemberCachePolicy.ALL)
-                .setChunkingFilter(ChunkingFilter.ALL)
-                .enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
-                .build().awaitReady();
     }
 
     public void sendMessage(String message) {
@@ -128,7 +121,20 @@ public class Bot {
         return Optional.ofNullable(bot);
     }
 
-    public void start() {
+    public void addRunnableToQueue(Runnable runnable) {
+        runnables.add(runnable);
+    }
+
+    public void start() throws InterruptedException {
+        bot = JDABuilder
+                .createLight(config.getAsString(ConfigDataKey.BOT_TOKEN))
+                .setActivity(Activity.watching("Starting Proxy..."))
+                .enableCache(CacheFlag.ROLE_TAGS)
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
+                .setChunkingFilter(ChunkingFilter.ALL)
+                .enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
+                .build().awaitReady();
+
         this.sendMessageEmbed(
                 new EmbedBuilder()
                         .setTitle(config.getAsString(ConfigDataKey.DISCORD_PROXY_ENABLED))
@@ -137,6 +143,8 @@ public class Bot {
         );
 
         this.updateActivity();
+
+        runnables.forEach(Runnable::run);
     }
 
     public void updateActivity() {
