@@ -1,6 +1,7 @@
 package com.beanbeanjuice.simpleproxychat.utility.config;
 
 import com.beanbeanjuice.simpleproxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.ServerChatLockHelper;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
@@ -8,6 +9,7 @@ import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
+import lombok.Getter;
 import org.joda.time.DateTimeZone;
 
 import java.awt.*;
@@ -22,13 +24,15 @@ public class Config {
     private YamlDocument yamlConfig;
     private YamlDocument yamlMessages;
     private final File configFolder;
-    private final HashMap<ConfigDataKey, ConfigDataEntry> config;
+    private final HashMap<ConfigDataKey, Object> config;
 
     private boolean initialSetup = true;
+    @Getter private final ServerChatLockHelper serverChatLockHelper;
 
     public Config(File configFolder) {
         this.configFolder = configFolder;
         config = new HashMap<>();
+        serverChatLockHelper = new ServerChatLockHelper();
     }
 
     public void initialize() {
@@ -52,7 +56,7 @@ public class Config {
     }
 
     private Object get(ConfigDataKey key) {
-        return config.get(key).data();
+        return config.get(key);
     }
 
     public String getAsString(ConfigDataKey key) {
@@ -82,25 +86,25 @@ public class Config {
 
     private void readConfig() throws IOException {
         // config.yml
-        config.put(ConfigDataKey.USE_DISCORD, new ConfigDataEntry(Boolean.valueOf(yamlConfig.getString("use-discord"))));
-        config.put(ConfigDataKey.BOT_TOKEN, new ConfigDataEntry(yamlConfig.getString("BOT-TOKEN")));
-        config.put(ConfigDataKey.CHANNEL_ID, new ConfigDataEntry(yamlConfig.getString("CHANNEL-ID")));
-        config.put(ConfigDataKey.BOT_ACTIVITY_TYPE, new ConfigDataEntry(yamlConfig.getString("bot-activity.type")));
-        config.put(ConfigDataKey.BOT_ACTIVITY_TEXT, new ConfigDataEntry(yamlConfig.getString("bot-activity.text")));
-        config.put(ConfigDataKey.SERVER_UPDATE_INTERVAL, new ConfigDataEntry(yamlConfig.getInt("server-update-interval")));
+        config.put(ConfigDataKey.USE_DISCORD, Boolean.valueOf(yamlConfig.getString("use-discord")));
+        config.put(ConfigDataKey.BOT_TOKEN, yamlConfig.getString("BOT-TOKEN"));
+        config.put(ConfigDataKey.CHANNEL_ID, yamlConfig.getString("CHANNEL-ID"));
+        config.put(ConfigDataKey.BOT_ACTIVITY_TYPE, yamlConfig.getString("bot-activity.type"));
+        config.put(ConfigDataKey.BOT_ACTIVITY_TEXT, yamlConfig.getString("bot-activity.text"));
+        config.put(ConfigDataKey.SERVER_UPDATE_INTERVAL, yamlConfig.getInt("server-update-interval"));
         HashMap<String, String> aliases = new HashMap<>();
         Section aliasSection = yamlConfig.getSection("aliases");
         aliasSection.getKeys().stream()
                 .map((key) -> (String) key)
                 .forEach((key) -> aliases.put(key, aliasSection.getString(key)));
-        config.put(ConfigDataKey.ALIASES, new ConfigDataEntry(aliases));
-        config.put(ConfigDataKey.USE_PERMISSIONS, new ConfigDataEntry(yamlConfig.getBoolean("use-permissions")));
-        config.put(ConfigDataKey.PROXY_MESSAGE_PREFIX, new ConfigDataEntry(yamlConfig.getString("proxy-message-prefix")));
-        config.put(ConfigDataKey.USE_INITIAL_SERVER_STATUS, new ConfigDataEntry(yamlConfig.getBoolean("use-initial-server-status")));
-        config.put(ConfigDataKey.USE_FAKE_MESSAGES, new ConfigDataEntry(yamlConfig.getBoolean("use-fake-messages")));
-        config.put(ConfigDataKey.TIMESTAMP_USE_API, new ConfigDataEntry(yamlConfig.getBoolean("timestamp.use-api")));
-        config.put(ConfigDataKey.TIMESTAMP_FORMAT, new ConfigDataEntry(yamlConfig.getString("timestamp.format")));
-        config.put(ConfigDataKey.TIMESTAMP_TIMEZONE, new ConfigDataEntry(yamlConfig.getString("timestamp.timezone")));
+        config.put(ConfigDataKey.ALIASES, aliases);
+        config.put(ConfigDataKey.USE_PERMISSIONS, yamlConfig.getBoolean("use-permissions"));
+        config.put(ConfigDataKey.PROXY_MESSAGE_PREFIX, yamlConfig.getString("proxy-message-prefix"));
+        config.put(ConfigDataKey.USE_INITIAL_SERVER_STATUS, yamlConfig.getBoolean("use-initial-server-status"));
+        config.put(ConfigDataKey.USE_FAKE_MESSAGES, yamlConfig.getBoolean("use-fake-messages"));
+        config.put(ConfigDataKey.TIMESTAMP_USE_API, yamlConfig.getBoolean("timestamp.use-api"));
+        config.put(ConfigDataKey.TIMESTAMP_FORMAT, yamlConfig.getString("timestamp.format"));
+        config.put(ConfigDataKey.TIMESTAMP_TIMEZONE, yamlConfig.getString("timestamp.timezone"));
 
         // Checking timezone.
         try {
@@ -111,58 +115,70 @@ public class Config {
                     getAsString(ConfigDataKey.TIMESTAMP_TIMEZONE),
                     "https://www.joda.org/joda-time/timezones.html"
             );
-            overwrite(ConfigDataKey.TIMESTAMP_TIMEZONE, new ConfigDataEntry("America/Los_Angeles"));
+            overwrite(ConfigDataKey.TIMESTAMP_TIMEZONE, "America/Los_Angeles");
         }
 
         // messages.yml
-        config.put(ConfigDataKey.PLUGIN_PREFIX, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("plugin-prefix"))));
+        putMessage(ConfigDataKey.PLUGIN_PREFIX, "plugin-prefix", false);
 
-        config.put(ConfigDataKey.MINECRAFT_JOIN_USE, new ConfigDataEntry(yamlMessages.getBoolean("minecraft.join.use")));
-        config.put(ConfigDataKey.MINECRAFT_JOIN, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("minecraft.join.message"))));
-        config.put(ConfigDataKey.MINECRAFT_LEAVE_USE, new ConfigDataEntry(yamlMessages.getBoolean("minecraft.leave.use")));
-        config.put(ConfigDataKey.MINECRAFT_LEAVE, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("minecraft.leave.message"))));
-        config.put(ConfigDataKey.MINECRAFT_MESSAGE, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("minecraft.message"))));
-        config.put(ConfigDataKey.MINECRAFT_DISCORD_MESSAGE, new ConfigDataEntry(yamlMessages.getString("minecraft.discord.message")));
-        config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE, new ConfigDataEntry(yamlMessages.getBoolean("minecraft.discord.embed.use")));
-        config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_TITLE, new ConfigDataEntry(yamlMessages.getString("minecraft.discord.embed.title")));
-        config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_MESSAGE, new ConfigDataEntry(yamlMessages.getString("minecraft.discord.embed.message")));
-        config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_COLOR, new ConfigDataEntry(yamlMessages.getString("minecraft.discord.embed.color")));
-        config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE_TIMESTAMP, new ConfigDataEntry(yamlMessages.getBoolean("minecraft.discord.embed.use-timestamp")));
-        config.put(ConfigDataKey.MINECRAFT_SWITCH_USE, new ConfigDataEntry(yamlMessages.getBoolean("minecraft.switch.use")));
-        config.put(ConfigDataKey.MINECRAFT_SWITCH_DEFAULT, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("minecraft.switch.default"))));
-        config.put(ConfigDataKey.MINECRAFT_SWITCH_SHORT, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("minecraft.switch.no-from"))));
-        config.put(ConfigDataKey.MINECRAFT_SUCCESSFUL_RELOAD, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("minecraft.successful-reload"))));
-        config.put(ConfigDataKey.MINECRAFT_NO_PERMISSION, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("minecraft.no-permission"))));
+        config.put(ConfigDataKey.MINECRAFT_JOIN_USE, yamlMessages.getBoolean("minecraft.join.use"));
+        putMessage(ConfigDataKey.MINECRAFT_JOIN, "minecraft.join.message", false);
+        config.put(ConfigDataKey.MINECRAFT_LEAVE_USE, yamlMessages.getBoolean("minecraft.leave.use"));
+        putMessage(ConfigDataKey.MINECRAFT_LEAVE, "minecraft.leave.message", false);
+        putMessage(ConfigDataKey.MINECRAFT_MESSAGE, "minecraft.message", false);
+        putMessage(ConfigDataKey.MINECRAFT_DISCORD_MESSAGE, "minecraft.discord.message", true);
+        config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE, yamlMessages.getBoolean("minecraft.discord.embed.use"));
+        putMessage(ConfigDataKey.MINECRAFT_DISCORD_EMBED_TITLE, "minecraft.discord.embed.title", true);
+        putMessage(ConfigDataKey.MINECRAFT_DISCORD_EMBED_MESSAGE, "minecraft.discord.embed.message", true);
+        putMessage(ConfigDataKey.MINECRAFT_DISCORD_EMBED_COLOR, "minecraft.discord.embed.color", true);
+        config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE_TIMESTAMP, yamlMessages.getBoolean("minecraft.discord.embed.use-timestamp"));
+        config.put(ConfigDataKey.MINECRAFT_SWITCH_USE, yamlMessages.getBoolean("minecraft.switch.use"));
+        putMessage(ConfigDataKey.MINECRAFT_SWITCH_DEFAULT, "minecraft.switch.default", false);
+        putMessage(ConfigDataKey.MINECRAFT_SWITCH_SHORT, "minecraft.switch.no-from", false);
+        putMessage(ConfigDataKey.MINECRAFT_COMMAND_NO_PERMISSION, "minecraft.command.no-permission", false);
+        putMessage(ConfigDataKey.MINECRAFT_COMMAND_UNKNOWN, "minecraft.command.unknown", false);
+        putMessage(ConfigDataKey.MINECRAFT_COMMAND_MUST_BE_PLAYER, "minecraft.command.must-be-player", false);
+        putMessage(ConfigDataKey.MINECRAFT_COMMAND_RELOAD, "minecraft.command.reload", false);
+        putMessage(ConfigDataKey.MINECRAFT_COMMAND_CHAT_LOCK_USAGE, "minecraft.command.chat-lock.usage", false);
+        putMessage(ConfigDataKey.MINECRAFT_COMMAND_CHAT_LOCK_SINGLE_LOCKED, "minecraft.command.chat-lock.single.locked", false);
+        putMessage(ConfigDataKey.MINECRAFT_COMMAND_CHAT_LOCK_SINGLE_UNLOCKED, "minecraft.command.chat-lock.single.unlocked", false);
+        putMessage(ConfigDataKey.MINECRAFT_COMMAND_CHAT_LOCK_ALL_LOCKED, "minecraft.command.chat-lock.all.locked", false);
+        putMessage(ConfigDataKey.MINECRAFT_COMMAND_CHAT_LOCK_ALL_UNLOCKED, "minecraft.command.chat-lock.all.unlocked", false);
 
-        config.put(ConfigDataKey.DISCORD_JOIN_USE, new ConfigDataEntry(yamlMessages.getBoolean("discord.join.use")));
-        config.put(ConfigDataKey.DISCORD_JOIN_MESSAGE, new ConfigDataEntry(yamlMessages.getString("discord.join.message")));
-        config.put(ConfigDataKey.DISCORD_JOIN_USE_TIMESTAMP, new ConfigDataEntry(yamlMessages.getBoolean("discord.join.use-timestamp")));
-        config.put(ConfigDataKey.DISCORD_LEAVE_USE, new ConfigDataEntry(yamlMessages.getBoolean("discord.leave.use")));
-        config.put(ConfigDataKey.DISCORD_LEAVE_MESSAGE, new ConfigDataEntry(yamlMessages.getString("discord.leave.message")));
-        config.put(ConfigDataKey.DISCORD_LEAVE_USE_TIMESTAMP, new ConfigDataEntry(yamlMessages.getBoolean("discord.leave.use-timestamp")));
-        config.put(ConfigDataKey.DISCORD_SWITCH_USE, new ConfigDataEntry(yamlMessages.getBoolean("discord.switch.use")));
-        config.put(ConfigDataKey.DISCORD_SWITCH_MESSAGE, new ConfigDataEntry(yamlMessages.getString("discord.switch.message")));
-        config.put(ConfigDataKey.DISCORD_SWITCH_USE_TIMESTAMP, new ConfigDataEntry(yamlMessages.getBoolean("discord.switch.use-timestamp")));
-        config.put(ConfigDataKey.DISCORD_MINECRAFT_MESSAGE, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("discord.minecraft-message"))));
-        config.put(ConfigDataKey.DISCORD_TOPIC_ONLINE, new ConfigDataEntry(yamlMessages.getString("discord.topic.online")));
-        config.put(ConfigDataKey.DISCORD_TOPIC_OFFLINE, new ConfigDataEntry(yamlMessages.getString("discord.topic.offline")));
-        config.put(ConfigDataKey.DISCORD_PROXY_ENABLED, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.enabled")));
-        config.put(ConfigDataKey.DISCORD_PROXY_DISABLED, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.disabled")));
-        config.put(ConfigDataKey.DISCORD_PROXY_TITLE, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.title")));
-        config.put(ConfigDataKey.DISCORD_PROXY_MESSAGE, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.message")));
-        config.put(ConfigDataKey.DISCORD_PROXY_STATUS_ONLINE, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.online")));
-        config.put(ConfigDataKey.DISCORD_PROXY_STATUS_OFFLINE, new ConfigDataEntry(yamlMessages.getString("discord.proxy-status.offline")));
-        config.put(ConfigDataKey.DISCORD_PROXY_STATUS_USE_TIMESTAMP, new ConfigDataEntry(yamlMessages.getBoolean("discord.proxy-status.use-timestamp")));
-        config.put(ConfigDataKey.UPDATE_MESSAGE, new ConfigDataEntry(Helper.translateLegacyCodes(yamlMessages.getString("update-message"))));
+        config.put(ConfigDataKey.DISCORD_JOIN_USE, yamlMessages.getBoolean("discord.join.use"));
+        putMessage(ConfigDataKey.DISCORD_JOIN_MESSAGE, "discord.join.message", true);
+        config.put(ConfigDataKey.DISCORD_JOIN_USE_TIMESTAMP, yamlMessages.getBoolean("discord.join.use-timestamp"));
+        config.put(ConfigDataKey.DISCORD_LEAVE_USE, yamlMessages.getBoolean("discord.leave.use"));
+        putMessage(ConfigDataKey.DISCORD_LEAVE_MESSAGE, "discord.leave.message", true);
+        config.put(ConfigDataKey.DISCORD_LEAVE_USE_TIMESTAMP, yamlMessages.getBoolean("discord.leave.use-timestamp"));
+        config.put(ConfigDataKey.DISCORD_SWITCH_USE, yamlMessages.getBoolean("discord.switch.use"));
+        putMessage(ConfigDataKey.DISCORD_SWITCH_MESSAGE, "discord.switch.message", true);
+        config.put(ConfigDataKey.DISCORD_SWITCH_USE_TIMESTAMP, yamlMessages.getBoolean("discord.switch.use-timestamp"));
+        putMessage(ConfigDataKey.DISCORD_MINECRAFT_MESSAGE, "discord.minecraft-message", false);
+        putMessage(ConfigDataKey.DISCORD_TOPIC_ONLINE, "discord.topic.online", true);
+        putMessage(ConfigDataKey.DISCORD_TOPIC_OFFLINE, "discord.topic.offline", true);
+        putMessage(ConfigDataKey.DISCORD_PROXY_ENABLED, "discord.proxy-status.enabled", true);
+        putMessage(ConfigDataKey.DISCORD_PROXY_DISABLED, "discord.proxy-status.disabled", true);
+        putMessage(ConfigDataKey.DISCORD_PROXY_TITLE, "discord.proxy-status.title", true);
+        putMessage(ConfigDataKey.DISCORD_PROXY_MESSAGE, "discord.proxy-status.message", true);
+        putMessage(ConfigDataKey.DISCORD_PROXY_STATUS_ONLINE, "discord.proxy-status.online", true);
+        putMessage(ConfigDataKey.DISCORD_PROXY_STATUS_OFFLINE, "discord.proxy-status.offline", true);
+        config.put(ConfigDataKey.DISCORD_PROXY_STATUS_USE_TIMESTAMP, yamlMessages.getBoolean("discord.proxy-status.use-timestamp"));
+        putMessage(ConfigDataKey.UPDATE_MESSAGE, "update-message", false);
 
         // External
         if (!initialSetup) return;
-        config.put(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(false));
-        config.put(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(false));
-        config.put(ConfigDataKey.LITEBANS_ENABLED, new ConfigDataEntry(false));
-        config.put(ConfigDataKey.NETWORKMANAGER_ENABLED, new ConfigDataEntry(false));
-        config.put(ConfigDataKey.PLUGIN_STARTING, new ConfigDataEntry(true));
+        config.put(ConfigDataKey.VANISH_ENABLED, false);
+        config.put(ConfigDataKey.LUCKPERMS_ENABLED, false);
+        config.put(ConfigDataKey.LITEBANS_ENABLED, false);
+        config.put(ConfigDataKey.ADVANCEDBAN_ENABLED, false);
+        config.put(ConfigDataKey.NETWORKMANAGER_ENABLED, false);
+        config.put(ConfigDataKey.PLUGIN_STARTING, true);
         initialSetup = false;
+    }
+
+    private void putMessage(ConfigDataKey type, String path, boolean isDiscord) {
+        config.put(type, (isDiscord) ? yamlMessages.getString(path) : Helper.translateLegacyCodes(yamlMessages.getString(path)));
     }
 
     private YamlDocument loadConfig(String fileName) throws IOException {
@@ -177,7 +193,7 @@ public class Config {
         );
     }
 
-    public void overwrite(ConfigDataKey key, ConfigDataEntry entry) {
+    public void overwrite(ConfigDataKey key, Object entry) {
         config.put(key, entry);
     }
 
