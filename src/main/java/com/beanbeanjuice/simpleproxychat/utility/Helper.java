@@ -84,6 +84,8 @@ public class Helper {
                 )
         ) return true;
 
+        if (config.getServerChatLockHelper().serverIsLocked(serverName)) return true;
+
         // TODO: Other methods of checking if chat is locked.
         return false;
     }

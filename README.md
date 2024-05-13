@@ -97,13 +97,16 @@ aliases:
   smp: smp1
 
 # Whether to use the permission system.
+# Some permissions (denoted with ➕) are always active even if this is false.
 # simpleproxychat.read.chat - Read chat messages.
 # simpleproxychat.read.join - Read join messages.
 # simpleproxychat.read.leave - Read leave messages.
 # simpleproxychat.read.fake - Read the fake join/leave messages. Players must also have the REAL join/leave permission.
 # simpleproxychat.read.switch - Read switch messages.
-# simpleproxychat.read.update - ALWAYS active whether use-permissions is false or not.
-# simpleproxychat.reload - ALWAYS Active whether use-permissions is false or not.
+# simpleproxychat.read.update - Read update messages. ➕
+# simpleproxychat.toggle.chat - Toggle proxy chat for a single server. ➕
+# simpleproxychat.toggle.chat.all - Toggle proxy chat for all servers. ➕
+# simpleproxychat.reload - Reload the config. ➕
 use-permissions: false
 
 # Only messages that start with this character will be sent through the plugin.
@@ -162,8 +165,19 @@ minecraft:
     use: true
     default: "&e%player% &7moved from &c%from% &7to &a%to%&7."
     no-from: "&e%player% &7moved &7to &a%to%&7."
-  successful-reload: "&aThe plugin has been successfully reloaded!"
-  no-permission: "&cSorry, you do not have permission to run this command."
+  command:
+    no-permission: "%plugin-prefix% &cSorry, you do not have permission to run this command."
+    unknown: "%plugin-prefix% &cUnknown command."
+    must-be-player: "%plugin-prefix% &cYou must be a player to run this command."
+    reload: "%plugin-prefix% &aThe plugin has been successfully reloaded!"
+    chat-lock:
+      usage: "%plugin-prefix% &cCorrect usage is &a/spc-chat all lock/unlock &c or &a/spc-chat lock/unlock"
+      single:
+        locked: "%plugin-prefix% &6%server% &cwill no longer send proxy chat messages."
+        unlocked: "%plugin-prefix% &6%server% &awill now send proxy chat messages."
+      all:
+        locked: "%plugin-prefix% &cAll servers will no longer send proxy chat messages."
+        unlocked: "%plugin-prefix% &aAll servers will now send proxy chat messages."
 
 # Discord Stuff
 discord:
@@ -193,14 +207,14 @@ discord:
     use-timestamp: true
 
 # Prefix for the plugin. %plugin-prefix% usable anywhere.
-plugin-prefix: "&8[<bold><rainbow>SimpleProxyChat&r&8] "
+plugin-prefix: "&8[<bold><rainbow>SimpleProxyChat&r&8]"
 
 # The message for any updates that are sent.
 # The plugin-prefix is automatically appended to the beginning of this message.
 update-message: "&7There is an update! You are on &c%old%. New version is &a%new%&7: &6%link%"
 
 # DO NOT TOUCH THIS
-file-version: 5
+file-version: 6
 ```
 
 ---
@@ -210,6 +224,7 @@ file-version: 5
 </p>
 
 * `/spc-reload` - Reloads the config files.
+* `/spc-chat` - Lock/unlock the chat.
 
 ---
 
@@ -223,6 +238,8 @@ file-version: 5
 * `simpleproxychat.read.fake` - Read fake join/leave messages. Must have the real permission too.
 * `simpleproxychat.read.switch` - Read switch messages.
 * `simpleproxychat.read.update` - Read update notifications.
+* `simpleproxychat.toggle.chat` - Toggle proxy chat for a single server.
+* `simpleproxychat.toggle.chat.all` - Toggle proxy chat for all servers.
 * `simpleproxychat.reload` - Reload the config.
 
 ---
