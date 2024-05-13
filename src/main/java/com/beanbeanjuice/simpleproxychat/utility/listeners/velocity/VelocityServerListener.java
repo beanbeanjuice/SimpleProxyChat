@@ -43,7 +43,7 @@ public class VelocityServerListener {
     @Subscribe(order = PostOrder.LAST)
     public void onPlayerChat(PlayerChatEvent event) {
         Player player = event.getPlayer();
-        if (VelocityVanishAPI.isInvisible(player)) return;
+        if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && VelocityVanishAPI.isInvisible(player)) return;
         if (!Helper.playerCanChat(plugin.getConfig(), player.getUniqueId(), player.getUsername())) return;
 
         event.getPlayer().getCurrentServer().ifPresent((connection) -> {
