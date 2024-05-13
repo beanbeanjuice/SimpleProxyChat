@@ -19,6 +19,7 @@ import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import net.md_5.bungee.event.EventPriority;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -38,12 +39,14 @@ public class BungeeServerListener implements Listener {
         startServerStatusDetection();
     }
 
-    @EventHandler
+    @EventHandler (priority = EventPriority.HIGHEST)
     public void onProxyChatEvent(ChatEvent event) {
-        if (event.isCommand() || event.isProxyCommand()) return;  // Ignore if it is a command.
+        if (event.isCancelled()) return;
+        if (event.isCommand() || event.isProxyCommand()) return;
 
         ProxiedPlayer player = (ProxiedPlayer) event.getSender();
-        if (!Helper.playerCanChat(plugin.getConfig(), player.getUniqueId())) return;
+        if (BungeeVanishAPI.isInvisible(player)) return;
+        if (!Helper.playerCanChat(plugin.getConfig(), player.getUniqueId(), player.getName())) return;
 
         Server currentServer = (Server) event.getReceiver();
         String serverName = currentServer.getInfo().getName();
@@ -52,10 +55,15 @@ public class BungeeServerListener implements Listener {
 
         chatHandler.runProxyChatMessage(serverName, playerName, player.getUniqueId(), playerMessage,
                 (message) -> {
-                    Collection<ProxiedPlayer> blacklistedUUIDs = currentServer.getInfo().getPlayers();
+                    Collection<ProxiedPlayer> blacklistedPlayers = currentServer.getInfo().getPlayers();
 
                     plugin.getProxy().getPlayers().stream()
-                            .filter((streamPlayer) -> !blacklistedUUIDs.contains(streamPlayer))
+                            .filter((streamPlayer) -> !blacklistedPlayers.contains(streamPlayer))
+                            .filter((streamPlayer) -> {
+                                for (ProxiedPlayer blacklistedPlayer : blacklistedPlayers)
+                                    if (blacklistedPlayer.getName().equals(streamPlayer.getName())) return false;
+                                return true;
+                            })
                             .filter((streamPlayer) -> {
                                 if (!plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS)) return true;
                                 return streamPlayer.hasPermission(Permission.READ_CHAT_MESSAGE.getPermissionNode());

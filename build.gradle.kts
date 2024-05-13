@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.beanbeanjuice"
-version = "0.3.5"
+version = "0.3.6"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -38,6 +38,16 @@ repositories {
     maven {
         name = "networkmanager-repo"
         url = uri("https://repo.networkmanager.xyz/repository/maven-public/")
+    }
+
+    maven {
+        name = "spicord-repo"
+        url = uri("https://repo.spicord.org/")
+    }
+
+    maven {
+        name = "advanced-ban requirement"
+        url = uri("https://maven.elmakers.com/repository/")
     }
 }
 
@@ -80,8 +90,14 @@ dependencies {
     // LiteBans Support
     compileOnly("com.gitlab.ruany:LiteBansAPI:0.5.0")
 
+    // AdvancedBan Support
+    compileOnly("com.github.DevLeoko:AdvancedBan:v2.3.0")
+
     // NetworkManager Support
     compileOnly("nl.chimpgamer.networkmanager:api:2.14.10")
+
+    // Spicord Support
+    compileOnly("org.spicord:spicord-common:5.4.0")
 
     // Timestamp
     implementation("joda-time:joda-time:2.12.7")
@@ -165,6 +181,10 @@ hangarPublish {
                         required.set(false)
                     }
 
+                    url("AdvancedBan", "https://www.spigotmc.org/resources/advancedban.8695/") {
+                        required.set(false)
+                    }
+
                     url("NetworkManager", "https://www.spigotmc.org/resources/28456/") {
                         required.set(false)
                     }
@@ -199,6 +219,10 @@ hangarPublish {
                         required.set(false)
                     }
 
+                    url("AdvancedBan", "https://www.spigotmc.org/resources/advancedban.8695/") {
+                        required.set(false)
+                    }
+
                     url("NetworkManager", "https://www.spigotmc.org/resources/28456/") {
                         required.set(false)
                     }
@@ -211,6 +235,7 @@ hangarPublish {
 tasks.withType<ShadowJar> {
     minimize()
     relocate("org.bstats", "com.beanbeanjuice.simpleproxychat.libs.org.bstats")
+    relocate("net.dv8tion", "com.beanbeanjuice.simpleproxychat.libs.net.dv8tion")
     archiveBaseName.set(rootProject.name)
     archiveClassifier.set("")
     archiveVersion.set(version as String)
