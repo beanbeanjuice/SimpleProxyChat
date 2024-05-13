@@ -1,6 +1,7 @@
 package com.beanbeanjuice.simpleproxychat.utility.listeners.velocity;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.velocitypowered.api.proxy.Player;
 import de.myzelyam.api.vanish.VelocityVanishAPI;
 
@@ -27,6 +28,8 @@ public class VelocityVanishListener {
     }
 
     private void checkStateChange() {
+        if (!plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED)) return;
+
         plugin.getProxyServer().getAllPlayers().forEach(player -> {
             if (hasStateChange(player)) {
                 if (vanishedPlayers.get(player)) listener.leave(player);
