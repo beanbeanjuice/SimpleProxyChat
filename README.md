@@ -97,13 +97,16 @@ aliases:
   smp: smp1
 
 # Whether to use the permission system.
+# Some permissions (denoted with ➕) are always active even if this is false.
 # simpleproxychat.read.chat - Read chat messages.
 # simpleproxychat.read.join - Read join messages.
 # simpleproxychat.read.leave - Read leave messages.
 # simpleproxychat.read.fake - Read the fake join/leave messages. Players must also have the REAL join/leave permission.
 # simpleproxychat.read.switch - Read switch messages.
-# simpleproxychat.read.update - ALWAYS active whether use-permissions is false or not.
-# simpleproxychat.reload - ALWAYS Active whether use-permissions is false or not.
+# simpleproxychat.read.update - Read update messages. ➕
+# simpleproxychat.toggle.chat - Toggle proxy chat for a single server. ➕
+# simpleproxychat.toggle.chat.all - Toggle proxy chat for all servers. ➕
+# simpleproxychat.reload - Reload the config. ➕
 use-permissions: false
 
 # Only messages that start with this character will be sent through the plugin.
