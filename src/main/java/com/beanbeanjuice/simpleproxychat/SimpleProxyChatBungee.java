@@ -1,8 +1,8 @@
 package com.beanbeanjuice.simpleproxychat;
 
+import com.beanbeanjuice.simpleproxychat.commands.bungee.BungeeChatToggleCommand;
 import com.beanbeanjuice.simpleproxychat.commands.bungee.BungeeReloadCommand;
 import com.beanbeanjuice.simpleproxychat.utility.Helper;
-import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.epoch.EpochHelper;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeServerListener;
@@ -11,7 +11,6 @@ import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
 import com.beanbeanjuice.simpleproxychat.discord.Bot;
 import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataEntry;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import de.myzelyam.api.vanish.BungeeVanishAPI;
@@ -45,11 +44,12 @@ public final class SimpleProxyChatBungee extends Plugin {
         epochHelper = new EpochHelper(config);
 
         this.getLogger().info("Initializing discord bot.");
+        discordBot = new Bot(this.config);
 
-        try { discordBot = new Bot(this.config); }
-        catch (Exception e) { getLogger().warning("There was an error starting the discord bot: " + e.getMessage()); }
-        discordBot.getJDA().ifPresentOrElse((jda) -> { }, () -> getLogger().warning("Discord logging is not enabled."));
-        discordBot.start();
+        this.getProxy().getScheduler().runAsync(this, () -> {
+            try { discordBot.start();
+            } catch (Exception e) { getLogger().warning("There was an error starting the discord bot: " + e.getMessage()); }
+        });
 
         registerListeners();
         hookPlugins();
@@ -68,28 +68,7 @@ public final class SimpleProxyChatBungee extends Plugin {
         }, 5, 5, TimeUnit.MINUTES);
 
         // Update Checker
-        this.getProxy().getScheduler().schedule(this, () -> UpdateChecker.checkUpdate((spigotMCVersion) -> {
-            String currentVersion = this.getDescription().getVersion();
-
-            if (this.getDescription().getVersion().equals(spigotMCVersion)) return;
-
-            String message = config.getAsString(ConfigDataKey.UPDATE_MESSAGE);
-            message = Helper.replaceKeys(
-                    message,
-                    Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)),
-                    Tuple.of("old", currentVersion),
-                    Tuple.of("new", spigotMCVersion),
-                    Tuple.of("link", "https://www.spigotmc.org/resources/115305/")
-            );
-
-            this.getLogger().info(Helper.sanitize(message));
-
-            Component minimessage = MiniMessage.miniMessage().deserialize(config.getAsString(ConfigDataKey.PLUGIN_PREFIX) + message);
-            this.getProxy().getPlayers()
-                    .stream()
-                    .filter((player) -> player.hasPermission(Permission.READ_UPDATE_NOTIFICATION.getPermissionNode()))
-                    .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, BungeeComponentSerializer.get().serialize(minimessage)));
-        }), 0, 12, TimeUnit.HOURS);
+        startUpdateChecker();
 
         // bStats Stuff
         this.getLogger().info("Starting bStats... (IF ENABLED)");
@@ -99,16 +78,38 @@ public final class SimpleProxyChatBungee extends Plugin {
         // Plugin has started.
         this.getLogger().log(Level.INFO, "The plugin has been started.");
 
-        // Send initial status.
-        this.getProxy().getScheduler().schedule(this, () -> {
-            this.config.overwrite(ConfigDataKey.PLUGIN_STARTING, new ConfigDataEntry(false));
+        // Send Initial Server Status
+        discordBot.addRunnableToQueue(() -> {
+            this.getProxy().getScheduler().schedule(this, () -> {
+                this.config.overwrite(ConfigDataKey.PLUGIN_STARTING, false);
 
-            ServerStatusManager manager = serverListener.getServerStatusManager();
-            manager.getAllStatusStrings().forEach((string) -> this.getLogger().info(string));
+                ServerStatusManager manager = serverListener.getServerStatusManager();
+                manager.getAllStatusStrings().forEach((string) -> this.getLogger().info(string));
 
-            if (!config.getAsBoolean(ConfigDataKey.USE_INITIAL_SERVER_STATUS)) return;
-            this.discordBot.sendMessageEmbed(manager.getAllStatusEmbed());
-        }, config.getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL) * 2L, TimeUnit.SECONDS);
+                if (!config.getAsBoolean(ConfigDataKey.USE_INITIAL_SERVER_STATUS)) return;
+                this.discordBot.sendMessageEmbed(manager.getAllStatusEmbed());
+            }, config.getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL) * 2L, TimeUnit.SECONDS);
+        });
+    }
+
+    private void startUpdateChecker() {
+        String currentVersion = this.getDescription().getVersion();
+
+        UpdateChecker updateChecker = new UpdateChecker(
+                config,
+                currentVersion,
+                (message) -> {
+                    this.getLogger().info(Helper.sanitize(message));
+
+                    Component minimessage = MiniMessage.miniMessage().deserialize(config.getAsString(ConfigDataKey.PLUGIN_PREFIX) + message);
+                    this.getProxy().getPlayers()
+                            .stream()
+                            .filter((player) -> player.hasPermission(Permission.READ_UPDATE_NOTIFICATION.getPermissionNode()))
+                            .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, BungeeComponentSerializer.get().serialize(minimessage)));
+                }
+        );
+
+        this.getProxy().getScheduler().schedule(this, updateChecker::checkUpdate, 0, 12, TimeUnit.HOURS);
     }
 
     private void hookPlugins() {
@@ -116,31 +117,38 @@ public final class SimpleProxyChatBungee extends Plugin {
 
         // Enable vanish support.
         if (pm.getPlugin("PremiumVanish") != null || pm.getPlugin("SuperVanish") != null) {
-            this.config.overwrite(ConfigDataKey.VANISH_ENABLED, new ConfigDataEntry(true));
+            this.config.overwrite(ConfigDataKey.VANISH_ENABLED, true);
             this.getLogger().log(Level.INFO, "PremiumVanish/SuperVanish support has been enabled.");
             this.getProxy().getPluginManager().registerListener(this, new BungeeVanishListener(serverListener, config));
         }
 
         // Registering LuckPerms support.
         if (pm.getPlugin("LuckPerms") != null) {
-            config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, new ConfigDataEntry(true));
+            config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, true);
             getLogger().info("LuckPerms support has been enabled.");
         }
 
         // Registering LiteBans support.
         if (pm.getPlugin("LiteBans") != null) {
-            config.overwrite(ConfigDataKey.LITEBANS_ENABLED, new ConfigDataEntry(true));
+            config.overwrite(ConfigDataKey.LITEBANS_ENABLED, true);
             getLogger().info("LiteBans support has been enabled.");
+        }
+
+        // Registering AdvancedBan support.
+        if (pm.getPlugin("AdvancedBan") != null) {
+            config.overwrite(ConfigDataKey.ADVANCEDBAN_ENABLED, true);
+            getLogger().info("AdvancedBan support has been enabled.");
         }
 
         // Registering NetworkManager support.
         if (pm.getPlugin("NetworkManager") != null) {
-            config.overwrite(ConfigDataKey.NETWORKMANAGER_ENABLED, new ConfigDataEntry(true));
+            config.overwrite(ConfigDataKey.NETWORKMANAGER_ENABLED, true);
             getLogger().info("NetworkManager support has been enabled.");
         }
     }
 
     private void registerListeners() {
+        // Register Discord Listener
         ChatHandler chatHandler = new ChatHandler(
                 config,
                 epochHelper,
@@ -155,6 +163,7 @@ public final class SimpleProxyChatBungee extends Plugin {
 
     private void registerCommands() {
         this.getProxy().getPluginManager().registerCommand(this, new BungeeReloadCommand(this, config));
+        this.getProxy().getPluginManager().registerCommand(this, new BungeeChatToggleCommand(this, config));
     }
 
     @Override

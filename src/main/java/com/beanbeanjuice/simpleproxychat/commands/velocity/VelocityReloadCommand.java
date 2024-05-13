@@ -8,8 +8,6 @@ import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
-import com.velocitypowered.api.plugin.Plugin;
-import net.kyori.adventure.text.Component;
 
 public class VelocityReloadCommand implements SimpleCommand {
 
@@ -28,7 +26,7 @@ public class VelocityReloadCommand implements SimpleCommand {
         config.reload();
         plugin.getDiscordBot().updateActivity();
 
-        String message = config.getAsString(ConfigDataKey.MINECRAFT_SUCCESSFUL_RELOAD);
+        String message = config.getAsString(ConfigDataKey.MINECRAFT_COMMAND_RELOAD);
         message = Helper.replaceKeys(
                 message,
                 Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX))
