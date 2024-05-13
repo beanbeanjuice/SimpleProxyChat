@@ -1,6 +1,8 @@
 package com.beanbeanjuice.simpleproxychat;
 
+import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityChatToggleCommand;
 import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityReloadCommand;
+import com.beanbeanjuice.simpleproxychat.utility.ServerChatLockHelper;
 import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.epoch.EpochHelper;
@@ -195,12 +197,19 @@ public class SimpleProxyChatVelocity {
 
     private void registerCommands() {
         CommandManager commandManager = proxyServer.getCommandManager();
-        CommandMeta commandMeta = commandManager.metaBuilder("spc-reload")
+
+        CommandMeta reloadCommand = commandManager.metaBuilder("spc-reload")
                 .aliases("spcreload")
                 .plugin(this)
                 .build();
 
-        commandManager.register(commandMeta, new VelocityReloadCommand(this, config));
+        CommandMeta chatToggleCommand = commandManager.metaBuilder("spc-chat")
+                .aliases("spcchat")
+                .plugin(this)
+                .build();
+
+        commandManager.register(reloadCommand, new VelocityReloadCommand(this, config));
+        commandManager.register(chatToggleCommand, new VelocityChatToggleCommand(this, config));
     }
 
     @Subscribe(order = PostOrder.LAST)
