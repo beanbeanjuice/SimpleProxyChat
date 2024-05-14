@@ -53,54 +53,54 @@ repositories {
 
 dependencies {
     // Velocity
-    compileOnly("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
-    annotationProcessor("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
+    compileOnly("com.velocitypowered", "velocity-api", "3.3.0-SNAPSHOT")
+    annotationProcessor("com.velocitypowered", "velocity-api", "3.3.0-SNAPSHOT")
 
     // Bungee
-    compileOnly("net.md-5:bungeecord-api:1.20-R0.1-SNAPSHOT")
-    implementation("net.kyori:adventure-api:4.16.0")  // Convert Velocity -> Bungee
-    implementation("net.kyori:adventure-text-minimessage:4.16.0")  // Convert Velocity -> Bungee
-    implementation("net.kyori:adventure-text-serializer-plain:4.16.0")  // Convert Velocity -> Bungee
-    implementation("net.kyori:adventure-text-serializer-legacy:4.16.0")  // Convert Velocity -> Bungee
-    implementation("net.kyori:adventure-text-serializer-gson:4.16.0")  // Convert Velocity -> Bungee
-    implementation("net.kyori:adventure-text-serializer-bungeecord:4.3.2")  // Convert Velocity -> Bungee
+    compileOnly("net.md-5", "bungeecord-api", "1.20-R0.2")
+    implementation("net.kyori", "adventure-api", "4.17.0")  // Convert Velocity -> Bungee
+    implementation("net.kyori", "adventure-text-minimessage", "4.17.0")  // Convert Velocity -> Bungee
+    implementation("net.kyori", "adventure-text-serializer-plain", "4.17.0")  // Convert Velocity -> Bungee
+    implementation("net.kyori", "adventure-text-serializer-legacy", "4.17.0")  // Convert Velocity -> Bungee
+    implementation("net.kyori", "adventure-text-serializer-gson", "4.17.0")  // Convert Velocity -> Bungee
+    implementation("net.kyori", "adventure-text-serializer-bungeecord", "4.3.2")  // Convert Velocity -> Bungee
 
     // Discord Support
-    implementation("net.dv8tion:JDA:5.0.0-beta.20") {
+    implementation("net.dv8tion", "JDA", "5.0.0-beta.20") {
         exclude(module = "opus-java")
     }
 
     // PremiumVanish/SuperVanish Support
-    compileOnly("com.github.LeonMangler:PremiumVanishAPI:2.9.0-4")
+    compileOnly("com.github.LeonMangler", "PremiumVanishAPI", "2.9.0-4")
 
     // Better YAML Support
-    implementation("dev.dejvokep:boosted-yaml:1.3.1")
+    implementation("dev.dejvokep", "boosted-yaml", "1.3.5")
 
     // bStats
-    implementation("org.bstats:bstats-velocity:3.0.2")
-    implementation("org.bstats:bstats-bungeecord:3.0.2")
+    implementation("org.bstats", "bstats-velocity", "3.0.2")
+    implementation("org.bstats", "bstats-bungeecord", "3.0.2")
 
     // Lombok
-    compileOnly("org.projectlombok:lombok:1.18.30")
-    annotationProcessor("org.projectlombok:lombok:1.18.30")
+    compileOnly("org.projectlombok", "lombok", "1.18.32")
+    annotationProcessor("org.projectlombok", "lombok", "1.18.32")
 
     // LuckPerms Support
-    compileOnly("net.luckperms:api:5.4")
+    compileOnly("net.luckperms", "api", "5.4")
 
     // LiteBans Support
-    compileOnly("com.gitlab.ruany:LiteBansAPI:0.5.0")
+    compileOnly("com.gitlab.ruany", "LiteBansAPI", "0.5.0")
 
     // AdvancedBan Support
-    compileOnly("com.github.DevLeoko:AdvancedBan:v2.3.0")
+    compileOnly("com.github.DevLeoko", "AdvancedBan", "v2.3.0")
 
     // NetworkManager Support
-    compileOnly("nl.chimpgamer.networkmanager:api:2.14.10")
+    compileOnly("nl.chimpgamer.networkmanager", "api", "2.14.10")
 
     // Spicord Support
-    compileOnly("org.spicord:spicord-common:5.4.0")
+    compileOnly("org.spicord", "spicord-common", "5.4.0")
 
     // Timestamp
-    implementation("joda-time:joda-time:2.12.7")
+    implementation("joda-time", "joda-time", "2.12.7")
 }
 
 configure<ProcessResources>("processResources") {
