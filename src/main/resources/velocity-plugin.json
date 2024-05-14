@@ -25,6 +25,10 @@
       "optional": true
     },
     {
+      "id": "advancedban",
+      "optional": true
+    },
+    {
       "id": "networkmanager",
       "optional": true
     }
