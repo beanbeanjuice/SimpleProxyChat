@@ -103,8 +103,10 @@ public class BungeeServerListener implements Listener {
             plugin.getProxy().getScheduler().schedule(
                     plugin,
                     () -> {
-                        if (isFake) chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), previousServerHandler.get(player.getName()).getName(), this::sendToAllServersVanish);
-                        else chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), previousServerHandler.get(player.getName()).getName(), this::sendToAllServers);
+                        previousServerHandler.get(player.getName()).ifPresent((serverInfo) -> {
+                            if (isFake) chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), serverInfo.getName(), this::sendToAllServersVanish);
+                            else chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), serverInfo.getName(), this::sendToAllServers);
+                        });
                     },
                     50L, TimeUnit.MILLISECONDS);  // 50ms is 1 tick
         } catch (Exception e) {
@@ -128,6 +130,8 @@ public class BungeeServerListener implements Listener {
             plugin.getProxy().getScheduler().schedule(
                     plugin,
                     () -> {
+                        previousServerHandler.put(player.getName(), server.getInfo());
+
                         if (isFake) chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), server.getInfo().getName(), this::sendToAllServersVanish);
                         else chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), server.getInfo().getName(), this::sendToAllServers);
                     },
@@ -145,6 +149,7 @@ public class BungeeServerListener implements Listener {
         if (event.getFrom() == null) return;  // This means the player just joined the network.
 
         ServerInfo from = event.getFrom();
+        previousServerHandler.put(player.getName(), event.getPlayer().getServer().getInfo());
 
         chatHandler.runProxySwitchMessage(
                 event.getFrom().getName(),
