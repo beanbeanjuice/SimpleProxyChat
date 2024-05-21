@@ -126,8 +126,11 @@ public class Bot {
     }
 
     public void start() throws InterruptedException {
+        String token = config.getAsString(ConfigDataKey.BOT_TOKEN);
+        if (token.isEmpty() || token.equalsIgnoreCase("TOKEN_HERE") || token.equalsIgnoreCase("null")) return;
+
         bot = JDABuilder
-                .createLight(config.getAsString(ConfigDataKey.BOT_TOKEN))
+                .createLight(token)
                 .setActivity(Activity.watching("Starting Proxy..."))
                 .enableCache(CacheFlag.ROLE_TAGS)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)

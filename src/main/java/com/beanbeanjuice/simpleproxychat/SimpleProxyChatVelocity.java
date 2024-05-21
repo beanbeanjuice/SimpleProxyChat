@@ -64,7 +64,7 @@ public class SimpleProxyChatVelocity {
     @Subscribe(order = PostOrder.LAST)
     public void onProxyInitialization(ProxyInitializeEvent event) {
         // Initialize discord bot.
-        this.getLogger().info("Initializing discord bot.");
+        this.getLogger().info("Attempting to initialize Discord bot... (if enabled)");
         discordBot = new Bot(this.config);
 
         // Bot ready.

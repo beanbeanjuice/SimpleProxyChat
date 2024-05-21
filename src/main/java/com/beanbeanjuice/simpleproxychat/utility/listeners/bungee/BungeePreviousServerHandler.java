@@ -3,6 +3,7 @@ package com.beanbeanjuice.simpleproxychat.utility.listeners.bungee;
 import net.md_5.bungee.api.config.ServerInfo;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 public class BungeePreviousServerHandler {
 
@@ -13,8 +14,8 @@ public class BungeePreviousServerHandler {
         previousServers.put(playerName, serverInfo);
     }
 
-    public ServerInfo get(final String playerName) {
-        return previousServers.get(playerName);
+    public Optional<ServerInfo> get(final String playerName) {
+        return Optional.ofNullable(previousServers.get(playerName));
     }
 
 }
