@@ -49,7 +49,7 @@ public class ChatHandler {
 
         this.globalLogger = globalLogger;
         this.pluginLogger = pluginLogger;
-        discordBot.getJDA().ifPresent((jda) -> jda.addEventListener(new DiscordChatHandler(config, this::sendFromDiscord)));
+        discordBot.addRunnableToQueue(() -> discordBot.getJDA().ifPresent((jda) -> jda.addEventListener(new DiscordChatHandler(config, this::sendFromDiscord))));
     }
 
     private Optional<String> getValidMessage(String message) {
