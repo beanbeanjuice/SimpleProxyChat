@@ -43,7 +43,7 @@ public final class SimpleProxyChatBungee extends Plugin {
 
         epochHelper = new EpochHelper(config);
 
-        this.getLogger().info("Initializing discord bot.");
+        this.getLogger().info("Attempting to initialize Discord bot... (if enabled)");
         discordBot = new Bot(this.config);
 
         this.getProxy().getScheduler().runAsync(this, () -> {

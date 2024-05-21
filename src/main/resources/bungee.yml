@@ -1,6 +1,6 @@
 name: SimpleProxyChat
 version: '${version}'
 main: com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee
-softdepend: [PlaceholderAPI, PremiumVanish, LuckPerms, LiteBans, NetworkManager]
+softdepend: [PlaceholderAPI, PremiumVanish, LuckPerms, LiteBans, AdvancedBan, NetworkManager]
 author: beanbeanjuice
 description: A simple plugin to send chat messages between servers as well as to Discord.
