@@ -87,6 +87,7 @@ public final class SimpleProxyChatBungee extends Plugin {
                 manager.getAllStatusStrings().forEach((string) -> this.getLogger().info(string));
 
                 if (!config.getAsBoolean(ConfigDataKey.USE_INITIAL_SERVER_STATUS)) return;
+                if (!config.getAsBoolean(ConfigDataKey.DISCORD_PROXY_STATUS_ENABLED)) return;
                 this.discordBot.sendMessageEmbed(manager.getAllStatusEmbed());
             }, config.getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL) * 2L, TimeUnit.SECONDS);
         });

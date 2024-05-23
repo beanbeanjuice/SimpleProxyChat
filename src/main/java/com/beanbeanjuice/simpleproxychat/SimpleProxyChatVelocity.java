@@ -113,6 +113,7 @@ public class SimpleProxyChatVelocity {
                 manager.getAllStatusStrings().forEach(this.getLogger()::info);
 
                 if (!config.getAsBoolean(ConfigDataKey.USE_INITIAL_SERVER_STATUS)) return;
+                if (!config.getAsBoolean(ConfigDataKey.DISCORD_PROXY_STATUS_ENABLED)) return;
                 discordBot.sendMessageEmbed(manager.getAllStatusEmbed());
             })
             .delay(config.getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL) * 2L, TimeUnit.SECONDS)
