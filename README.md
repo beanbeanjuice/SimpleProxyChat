@@ -144,77 +144,93 @@ file-version: 9
 #         Supports Mini-Message/Legacy Color Codes
 # ==========================================================
 
+# Prefix for the plugin. %plugin-prefix% usable anywhere.
+plugin-prefix: "&8[<bold><rainbow>SimpleProxyChat&r&8]"
+
 # Minecraft Stuff
 minecraft:
-  join:
-    use: true
-    message: "&e%player% &ahas joined the network. (%server%)"
-  leave:
-    use: true
-    message: "&e%player% &chas left the network. (%server%)"
-  message: "&8[&3%server%&8] &e%player% &9» &7%message%"
-  discord:
-    message: "**%server%** %player% » %message%"
-    embed:
-      use: false
-      title: "[%server%] %player%"
-      message: "%message%"
-      color: "#FFC0CB"
-      use-timestamp: true
-  switch:
-    use: true
-    default: "&e%player% &7moved from &c%from% &7to &a%to%&7."
-    no-from: "&e%player% &7moved &7to &a%to%&7."
-  command:
-    no-permission: "%plugin-prefix% &cSorry, you do not have permission to run this command."
-    unknown: "%plugin-prefix% &cUnknown command."
-    must-be-player: "%plugin-prefix% &cYou must be a player to run this command."
-    reload: "%plugin-prefix% &aThe plugin has been successfully reloaded!"
-    chat-lock:
-      usage: "%plugin-prefix% &cCorrect usage is &a/spc-chat all lock/unlock &c or &a/spc-chat lock/unlock"
-      single:
-        locked: "%plugin-prefix% &6%server% &cwill no longer send proxy chat messages."
-        unlocked: "%plugin-prefix% &6%server% &awill now send proxy chat messages."
-      all:
-        locked: "%plugin-prefix% &cAll servers will no longer send proxy chat messages."
-        unlocked: "%plugin-prefix% &aAll servers will now send proxy chat messages."
+   join:
+      enabled: true
+      message: "&e%player% &ahas joined the network. (%server%)"
+   leave:
+      enabled: true
+      message: "&e%player% &chas left the network. (%server%)"
+   chat:
+      enabled: true
+      message: "&8[&3%server%&8] &e%player% &9» &7%message%"
+   switch:
+      enabled: true
+      default: "&e%player% &7moved from &c%from% &7to &a%to%&7."
+      no-from: "&e%player% &7moved &7to &a%to%&7."
+   discord:
+      enabled: true
+      message: "**%server%** %player% » %message%"
+      embed:
+         use: false
+         title: "[%server%] %player%"
+         message: "%message%"
+         color: "#FFC0CB"
+         use-timestamp: true
+   command:
+      no-permission: "%plugin-prefix% &cSorry, you do not have permission to run this command."
+      unknown: "%plugin-prefix% &cUnknown command."
+      must-be-player: "%plugin-prefix% &cYou must be a player to run this command."
+      reload: "%plugin-prefix% &aThe plugin has been successfully reloaded!"
+      chat-lock:
+         usage: "%plugin-prefix% &cCorrect usage is &a/spc-chat all lock/unlock &c or &a/spc-chat lock/unlock"
+         single:
+            locked: "%plugin-prefix% &6%server% &cwill no longer send proxy chat messages."
+            unlocked: "%plugin-prefix% &6%server% &awill now send proxy chat messages."
+         all:
+            locked: "%plugin-prefix% &cAll servers will no longer send proxy chat messages."
+            unlocked: "%plugin-prefix% &aAll servers will now send proxy chat messages."
 
 # Discord Stuff
 discord:
-  join:
-    use: true
-    message: "%player% has joined the network. (%server%)"
-    use-timestamp: true
-  leave:
-    use: true
-    message: "%player% has left the network. (%server%)"
-    use-timestamp: true
-  switch:
-    use: true
-    message: "%player% has switched from %from% to %to%."
-    use-timestamp: true
-  minecraft-message: "&8[&bDiscord&8] %role% &f%user% &9» &7%message%"
-  topic:
-    online: "There are %online% players online."
-    offline: "The proxy is offline."
-  proxy-status:
-    enabled: "✅ Proxy enabled!"
-    disabled: "⛔ Proxy disabled."
-    title: "Server Status"
-    message: "Status: "
-    online: "Online ✅"
-    offline: "Offline ⛔"
-    use-timestamp: true
+   join:
+      enabled: true
+      message: "%player% has joined the network. (%server%)"
+      use-timestamp: true
+   leave:
+      enabled: true
+      message: "%player% has left the network. (%server%)"
+      use-timestamp: true
+   switch:
+      enabled: true
+      message: "%player% has switched from %from% to %to%."
+      use-timestamp: true
+   chat:
+      enabled: true
+      minecraft-message: "&8[&bDiscord&8] %role% &f%user% &9» &7%message%"
+   topic:
+      online: "There are %online% players online."
+      offline: "The proxy is offline."
+   proxy-status:
+      enabled: true
+      messages:
+         enabled: "✅ Proxy enabled!"
+         disabled: "⛔ Proxy disabled."
+         title: "Server Status"
+         message: "Status: "
+         online: "Online ✅"
+         offline: "Offline ⛔"
+         use-timestamp: true
 
-# Prefix for the plugin. %plugin-prefix% usable anywhere.
-plugin-prefix: "&8[<bold><rainbow>SimpleProxyChat&r&8]"
+# Console Stuff - Uses Minecraft Messages
+console:
+   chat: true
+   join: true
+   leave: true
+   switch: true
+   discord-chat: true
+   server-status: true
 
 # The message for any updates that are sent.
 # The plugin-prefix is automatically appended to the beginning of this message.
 update-message: "&7There is an update! You are on &c%old%. New version is &a%new%&7: &6%link%"
 
 # DO NOT TOUCH THIS
-file-version: 6
+file-version: 7
 ```
 
 ---

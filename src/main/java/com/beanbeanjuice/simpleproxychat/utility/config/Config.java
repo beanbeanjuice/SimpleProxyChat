@@ -121,20 +121,22 @@ public class Config {
         // messages.yml
         putMessage(ConfigDataKey.PLUGIN_PREFIX, "plugin-prefix", false);
 
-        config.put(ConfigDataKey.MINECRAFT_JOIN_USE, yamlMessages.getBoolean("minecraft.join.use"));
+        config.put(ConfigDataKey.MINECRAFT_JOIN_ENABLED, yamlMessages.getBoolean("minecraft.join.enabled"));
         putMessage(ConfigDataKey.MINECRAFT_JOIN, "minecraft.join.message", false);
-        config.put(ConfigDataKey.MINECRAFT_LEAVE_USE, yamlMessages.getBoolean("minecraft.leave.use"));
+        config.put(ConfigDataKey.MINECRAFT_LEAVE_ENABLED, yamlMessages.getBoolean("minecraft.leave.enabled"));
         putMessage(ConfigDataKey.MINECRAFT_LEAVE, "minecraft.leave.message", false);
-        putMessage(ConfigDataKey.MINECRAFT_MESSAGE, "minecraft.message", false);
+        config.put(ConfigDataKey.MINECRAFT_CHAT_ENABLED, yamlMessages.getBoolean("minecraft.chat.enabled"));
+        putMessage(ConfigDataKey.MINECRAFT_CHAT_MESSAGE, "minecraft.chat.message", false);
+        config.put(ConfigDataKey.MINECRAFT_SWITCH_ENABLED, yamlMessages.getBoolean("minecraft.switch.enabled"));
+        putMessage(ConfigDataKey.MINECRAFT_SWITCH_DEFAULT, "minecraft.switch.default", false);
+        putMessage(ConfigDataKey.MINECRAFT_SWITCH_SHORT, "minecraft.switch.no-from", false);
+        config.put(ConfigDataKey.MINECRAFT_DISCORD_ENABLED, yamlMessages.getBoolean("minecraft.discord.enabled"));
         putMessage(ConfigDataKey.MINECRAFT_DISCORD_MESSAGE, "minecraft.discord.message", true);
         config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE, yamlMessages.getBoolean("minecraft.discord.embed.use"));
         putMessage(ConfigDataKey.MINECRAFT_DISCORD_EMBED_TITLE, "minecraft.discord.embed.title", true);
         putMessage(ConfigDataKey.MINECRAFT_DISCORD_EMBED_MESSAGE, "minecraft.discord.embed.message", true);
         putMessage(ConfigDataKey.MINECRAFT_DISCORD_EMBED_COLOR, "minecraft.discord.embed.color", true);
         config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE_TIMESTAMP, yamlMessages.getBoolean("minecraft.discord.embed.use-timestamp"));
-        config.put(ConfigDataKey.MINECRAFT_SWITCH_USE, yamlMessages.getBoolean("minecraft.switch.use"));
-        putMessage(ConfigDataKey.MINECRAFT_SWITCH_DEFAULT, "minecraft.switch.default", false);
-        putMessage(ConfigDataKey.MINECRAFT_SWITCH_SHORT, "minecraft.switch.no-from", false);
         putMessage(ConfigDataKey.MINECRAFT_COMMAND_NO_PERMISSION, "minecraft.command.no-permission", false);
         putMessage(ConfigDataKey.MINECRAFT_COMMAND_UNKNOWN, "minecraft.command.unknown", false);
         putMessage(ConfigDataKey.MINECRAFT_COMMAND_MUST_BE_PLAYER, "minecraft.command.must-be-player", false);
@@ -145,26 +147,35 @@ public class Config {
         putMessage(ConfigDataKey.MINECRAFT_COMMAND_CHAT_LOCK_ALL_LOCKED, "minecraft.command.chat-lock.all.locked", false);
         putMessage(ConfigDataKey.MINECRAFT_COMMAND_CHAT_LOCK_ALL_UNLOCKED, "minecraft.command.chat-lock.all.unlocked", false);
 
-        config.put(ConfigDataKey.DISCORD_JOIN_USE, yamlMessages.getBoolean("discord.join.use"));
+        config.put(ConfigDataKey.DISCORD_JOIN_ENABLED, yamlMessages.getBoolean("discord.join.enabled"));
         putMessage(ConfigDataKey.DISCORD_JOIN_MESSAGE, "discord.join.message", true);
         config.put(ConfigDataKey.DISCORD_JOIN_USE_TIMESTAMP, yamlMessages.getBoolean("discord.join.use-timestamp"));
-        config.put(ConfigDataKey.DISCORD_LEAVE_USE, yamlMessages.getBoolean("discord.leave.use"));
+        config.put(ConfigDataKey.DISCORD_LEAVE_ENABLED, yamlMessages.getBoolean("discord.leave.enabled"));
         putMessage(ConfigDataKey.DISCORD_LEAVE_MESSAGE, "discord.leave.message", true);
         config.put(ConfigDataKey.DISCORD_LEAVE_USE_TIMESTAMP, yamlMessages.getBoolean("discord.leave.use-timestamp"));
-        config.put(ConfigDataKey.DISCORD_SWITCH_USE, yamlMessages.getBoolean("discord.switch.use"));
+        config.put(ConfigDataKey.DISCORD_SWITCH_ENABLED, yamlMessages.getBoolean("discord.switch.enabled"));
         putMessage(ConfigDataKey.DISCORD_SWITCH_MESSAGE, "discord.switch.message", true);
         config.put(ConfigDataKey.DISCORD_SWITCH_USE_TIMESTAMP, yamlMessages.getBoolean("discord.switch.use-timestamp"));
-        putMessage(ConfigDataKey.DISCORD_MINECRAFT_MESSAGE, "discord.minecraft-message", false);
+        config.put(ConfigDataKey.DISCORD_CHAT_ENABLED, yamlMessages.getBoolean("discord.chat.enabled"));
+        putMessage(ConfigDataKey.DISCORD_CHAT_MINECRAFT_MESSAGE, "discord.chat.minecraft-message", false);
         putMessage(ConfigDataKey.DISCORD_TOPIC_ONLINE, "discord.topic.online", true);
         putMessage(ConfigDataKey.DISCORD_TOPIC_OFFLINE, "discord.topic.offline", true);
-        putMessage(ConfigDataKey.DISCORD_PROXY_ENABLED, "discord.proxy-status.enabled", true);
-        putMessage(ConfigDataKey.DISCORD_PROXY_DISABLED, "discord.proxy-status.disabled", true);
-        putMessage(ConfigDataKey.DISCORD_PROXY_TITLE, "discord.proxy-status.title", true);
-        putMessage(ConfigDataKey.DISCORD_PROXY_MESSAGE, "discord.proxy-status.message", true);
-        putMessage(ConfigDataKey.DISCORD_PROXY_STATUS_ONLINE, "discord.proxy-status.online", true);
-        putMessage(ConfigDataKey.DISCORD_PROXY_STATUS_OFFLINE, "discord.proxy-status.offline", true);
-        config.put(ConfigDataKey.DISCORD_PROXY_STATUS_USE_TIMESTAMP, yamlMessages.getBoolean("discord.proxy-status.use-timestamp"));
+        config.put(ConfigDataKey.DISCORD_PROXY_STATUS_ENABLED, yamlMessages.getBoolean("discord.proxy-status.enabled"));
+        putMessage(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_ENABLED, "discord.proxy-status.messages.enabled", true);
+        putMessage(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_DISABLED, "discord.proxy-status.messages.disabled", true);
+        putMessage(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_TITLE, "discord.proxy-status.messages.title", true);
+        putMessage(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_MESSAGE, "discord.proxy-status.messages.message", true);
+        putMessage(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_ONLINE, "discord.proxy-status.messages.online", true);
+        putMessage(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_OFFLINE, "discord.proxy-status.messages.offline", true);
+        config.put(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_USE_TIMESTAMP, yamlMessages.getBoolean("discord.proxy-status.messages.use-timestamp"));
         putMessage(ConfigDataKey.UPDATE_MESSAGE, "update-message", false);
+
+        config.put(ConfigDataKey.CONSOLE_CHAT, yamlMessages.getBoolean("console.chat"));
+        config.put(ConfigDataKey.CONSOLE_JOIN, yamlMessages.getBoolean("console.join"));
+        config.put(ConfigDataKey.CONSOLE_LEAVE, yamlMessages.getBoolean("console.leave"));
+        config.put(ConfigDataKey.CONSOLE_SWITCH, yamlMessages.getBoolean("console.switch"));
+        config.put(ConfigDataKey.CONSOLE_DISCORD_CHAT, yamlMessages.getBoolean("console.discord-chat"));
+        config.put(ConfigDataKey.CONSOLE_SERVER_STATUS, yamlMessages.getBoolean("console.server-status"));
 
         // External
         if (!initialSetup) return;
@@ -188,8 +199,28 @@ public class Config {
                 GeneralSettings.DEFAULT,
                 LoaderSettings.builder().setAutoUpdate(true).build(),
                 DumperSettings.DEFAULT,
-                UpdaterSettings.builder().setVersioning(new BasicVersioning("file-version"))
-                        .setOptionSorting(UpdaterSettings.OptionSorting.SORT_BY_DEFAULTS).build()
+                UpdaterSettings.builder()
+                        .setVersioning(new BasicVersioning("file-version"))
+                        .setOptionSorting(UpdaterSettings.OptionSorting.SORT_BY_DEFAULTS)
+
+                        .addRelocation("7", "minecraft.join.use", "minecraft.join.enabled", '.')
+                        .addRelocation("7", "minecraft.leave.use", "minecraft.leave.enabled", '.')
+                        .addRelocation("7", "minecraft.message", "minecraft.chat.message", '.')
+                        .addRelocation("7", "minecraft.switch.use", "minecraft.switch.enabled", '.')
+                        .addRelocation("7", "discord.join.use", "discord.join.enabled", '.')
+                        .addRelocation("7", "discord.leave.use", "discord.leave.enabled", '.')
+                        .addRelocation("7", "discord.switch.use", "discord.switch.enabled", '.')
+                        .addRelocation("7", "discord.minecraft-message", "discord.chat.minecraft-message", '.')
+
+                        .addRelocation("7", "discord.proxy-status.enabled", "discord.proxy-status.messages.enabled", '.')
+                        .addRelocation("7", "discord.proxy-status.disabled", "discord.proxy-status.messages.disabled", '.')
+                        .addRelocation("7", "discord.proxy-status.title", "discord.proxy-status.messages.title", '.')
+                        .addRelocation("7", "discord.proxy-status.message", "discord.proxy-status.messages.message", '.')
+                        .addRelocation("7", "discord.proxy-status.online", "discord.proxy-status.messages.online", '.')
+                        .addRelocation("7", "discord.proxy-status.offline", "discord.proxy-status.messages.offline", '.')
+                        .addRelocation("7", "discord.proxy-status.use-timestamp", "discord.proxy-status.messages.use-timestamp", '.')
+
+                        .build()
         );
     }
 

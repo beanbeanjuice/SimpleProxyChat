@@ -71,7 +71,7 @@ public class ChatHandler {
         if (optionalPlayerMessage.isEmpty()) return;
         playerMessage = optionalPlayerMessage.get();
 
-        String minecraftConfigString = config.getAsString(ConfigDataKey.MINECRAFT_MESSAGE);
+        String minecraftConfigString = config.getAsString(ConfigDataKey.MINECRAFT_CHAT_MESSAGE);
         String discordConfigString = config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_MESSAGE);
 
         String aliasedServerName = Helper.convertAlias(config, serverName);
@@ -96,32 +96,34 @@ public class ChatHandler {
         }
 
         // Log to Console
-        pluginLogger.accept(minecraftMessage);
+        if (config.getAsBoolean(ConfigDataKey.CONSOLE_CHAT)) pluginLogger.accept(minecraftMessage);
 
         // Log to Discord
-        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE)) {
-            String title = Helper.replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_TITLE), replacements);
-            String message = Helper.replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_MESSAGE), replacements);
+        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_ENABLED)) {
+            if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE)) {
+                String title = Helper.replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_TITLE), replacements);
+                String message = Helper.replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_MESSAGE), replacements);
 
-            title = replacePrefixSuffix(title, playerUUID, aliasedServerName, serverName);
+                title = replacePrefixSuffix(title, playerUUID, aliasedServerName, serverName);
 
-            Color color = config.getAsColor(ConfigDataKey.MINECRAFT_DISCORD_EMBED_COLOR).orElse(Color.RED);
+                Color color = config.getAsColor(ConfigDataKey.MINECRAFT_DISCORD_EMBED_COLOR).orElse(Color.RED);
 
-            EmbedBuilder embedBuilder = new EmbedBuilder()
-                    .setAuthor(title, null, getPlayerHeadURL(playerUUID))
-                    .setDescription(message)
-                    .setColor(color);
+                EmbedBuilder embedBuilder = new EmbedBuilder()
+                        .setAuthor(title, null, getPlayerHeadURL(playerUUID))
+                        .setDescription(message)
+                        .setColor(color);
 
-            if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE_TIMESTAMP))
-                embedBuilder.setTimestamp(epochHelper.getEpochInstant());
+                if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE_TIMESTAMP))
+                    embedBuilder.setTimestamp(epochHelper.getEpochInstant());
 
-            discordBot.sendMessageEmbed(embedBuilder.build());
-        } else {
-            discordBot.sendMessage(discordMessage);
+                discordBot.sendMessageEmbed(embedBuilder.build());
+            } else {
+                discordBot.sendMessage(discordMessage);
+            }
         }
 
         // Log to Minecraft
-        minecraftLogger.accept(minecraftMessage);
+        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_CHAT_ENABLED)) minecraftLogger.accept(minecraftMessage);
     }
 
     public void runProxyLeaveMessage(String playerName, UUID playerUUID, String serverName,
@@ -150,17 +152,18 @@ public class ChatHandler {
         }
 
         // Log to Console
-        pluginLogger.accept(message);
+        if (config.getAsBoolean(ConfigDataKey.CONSOLE_LEAVE)) pluginLogger.accept(message);
+
+
         // Log to Discord
-        if (config.getAsBoolean(ConfigDataKey.DISCORD_LEAVE_USE)) {
+        if (config.getAsBoolean(ConfigDataKey.DISCORD_LEAVE_ENABLED)) {
             EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.RED);
             if (config.getAsBoolean(ConfigDataKey.DISCORD_LEAVE_USE_TIMESTAMP)) embedBuilder.setTimestamp(epochHelper.getEpochInstant());
             discordBot.sendMessageEmbed(embedBuilder.build());
         }
 
         // Log to Minecraft
-        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_LEAVE_USE))
-            minecraftLogger.accept(message, Permission.READ_LEAVE_MESSAGE);
+        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_LEAVE_ENABLED)) minecraftLogger.accept(message, Permission.READ_LEAVE_MESSAGE);
     }
 
     public void runProxyJoinMessage(String playerName, UUID playerUUID, String serverName,
@@ -191,17 +194,17 @@ public class ChatHandler {
         }
 
         // Log to Console
-        pluginLogger.accept(message);
+        if (config.getAsBoolean(ConfigDataKey.CONSOLE_JOIN)) pluginLogger.accept(message);
 
         // Log to Discord
-        if (config.getAsBoolean(ConfigDataKey.DISCORD_JOIN_USE)) {
+        if (config.getAsBoolean(ConfigDataKey.DISCORD_JOIN_ENABLED)) {
             EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.GREEN);
             if (config.getAsBoolean(ConfigDataKey.DISCORD_JOIN_USE_TIMESTAMP)) embedBuilder.setTimestamp(epochHelper.getEpochInstant());
             discordBot.sendMessageEmbed(embedBuilder.build());
         }
 
         // Log to Minecraft
-        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_JOIN_USE))
+        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_JOIN_ENABLED))
             minecraftLogger.accept(message, Permission.READ_JOIN_MESSAGE);
     }
 
@@ -237,17 +240,17 @@ public class ChatHandler {
         }
 
         // Log to Console
-        pluginLogger.accept(consoleMessage);
+        if (config.getAsBoolean(ConfigDataKey.CONSOLE_SWITCH)) pluginLogger.accept(consoleMessage);
 
         // Log to Discord
-        if (config.getAsBoolean(ConfigDataKey.DISCORD_SWITCH_USE)) {
+        if (config.getAsBoolean(ConfigDataKey.DISCORD_SWITCH_ENABLED)) {
             EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.YELLOW);
             if (config.getAsBoolean(ConfigDataKey.DISCORD_SWITCH_USE_TIMESTAMP)) embedBuilder.setTimestamp(epochHelper.getEpochInstant());
             discordBot.sendMessageEmbed(embedBuilder.build());
         }
 
         // Log to Minecraft
-        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_SWITCH_USE))
+        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_SWITCH_ENABLED))
             minecraftLogger.accept(minecraftMessage);
     }
 
@@ -268,7 +271,7 @@ public class ChatHandler {
     }
 
     public void sendFromDiscord(MessageReceivedEvent event) {
-        String message = config.getAsString(ConfigDataKey.DISCORD_MINECRAFT_MESSAGE);
+        String message = config.getAsString(ConfigDataKey.DISCORD_CHAT_MINECRAFT_MESSAGE);
 
         if (event.getMember() == null) return;
 
@@ -297,7 +300,7 @@ public class ChatHandler {
                 Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX))
         );
 
-        globalLogger.accept(message);
+        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_ENABLED)) globalLogger.accept(message);
     }
 
     private List<String> getPrefixBasedOnServerContext(User user, String... serverKeys) {
