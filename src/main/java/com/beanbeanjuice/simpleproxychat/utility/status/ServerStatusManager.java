@@ -32,11 +32,11 @@ public class ServerStatusManager {
     }
 
     public MessageEmbed getStatusEmbed(String serverName, boolean status) {
-        String statusMessageString = config.getAsString(ConfigDataKey.DISCORD_PROXY_MESSAGE);
-        String statusString = status ? config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_ONLINE) : config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_OFFLINE);
+        String statusMessageString = config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_MESSAGE);
+        String statusString = status ? config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_ONLINE) : config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_OFFLINE);
 
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle(config.getAsString(ConfigDataKey.DISCORD_PROXY_TITLE));
+        embedBuilder.setTitle(config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_TITLE));
         embedBuilder.addField(
                 Helper.convertAlias(config, serverName),
                 String.format("%s%s", statusMessageString, statusString),
@@ -46,10 +46,10 @@ public class ServerStatusManager {
     }
 
     public MessageEmbed getAllStatusEmbed() {
-        String title = config.getAsString(ConfigDataKey.DISCORD_PROXY_TITLE);
-        String message = config.getAsString(ConfigDataKey.DISCORD_PROXY_MESSAGE);
-        String onlineString = config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_ONLINE);
-        String offlineString = config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_OFFLINE);
+        String title = config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_TITLE);
+        String message = config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_MESSAGE);
+        String onlineString = config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_ONLINE);
+        String offlineString = config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_OFFLINE);
 
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle(title);
@@ -70,9 +70,8 @@ public class ServerStatusManager {
 
     public ArrayList<String> getAllStatusStrings() {
         ArrayList<String> statusStrings = new ArrayList<>();
-        servers.forEach((serverName, serverStatus) -> {
-            statusStrings.add(getStatusString(serverName, serverStatus.getStatus()));
-        });
+        if (config.getAsBoolean(ConfigDataKey.CONSOLE_SERVER_STATUS))
+            servers.forEach((serverName, serverStatus) -> statusStrings.add(getStatusString(serverName, serverStatus.getStatus())));
         return statusStrings;
     }
 
@@ -84,8 +83,11 @@ public class ServerStatusManager {
 
         ServerStatus currentStatus = this.getStatus(serverName);
         currentStatus.updateStatus(newStatus).ifPresent((isOnline) -> {
-            discordBot.sendMessageEmbed(this.getStatusEmbed(serverName, isOnline));
-            logger.accept(this.getStatusString(serverName, isOnline));
+            if (config.getAsBoolean(ConfigDataKey.DISCORD_PROXY_STATUS_ENABLED))
+                discordBot.sendMessageEmbed(this.getStatusEmbed(serverName, isOnline));
+
+            if (config.getAsBoolean(ConfigDataKey.CONSOLE_SERVER_STATUS))
+                logger.accept(this.getStatusString(serverName, isOnline));
         });
     }
 }
