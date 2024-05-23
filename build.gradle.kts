@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.beanbeanjuice"
-version = "0.3.8"
+version = "0.3.9"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -234,6 +234,7 @@ hangarPublish {
 
 tasks.withType<ShadowJar> {
     minimize()
+    relocate("dev.dejvokep.boostedyaml", "com.beanbeanjuice.simpleproxychat.libs.dev.dejvokep.boostedyaml")
     relocate("org.bstats", "com.beanbeanjuice.simpleproxychat.libs.org.bstats")
     relocate("net.dv8tion", "com.beanbeanjuice.simpleproxychat.libs.net.dv8tion")
     archiveBaseName.set(rootProject.name)

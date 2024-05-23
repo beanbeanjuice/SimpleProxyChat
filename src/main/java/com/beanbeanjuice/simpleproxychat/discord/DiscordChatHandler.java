@@ -21,6 +21,7 @@ public class DiscordChatHandler extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent event) {
         if (!event.getChannel().getId().equalsIgnoreCase(config.getAsString(ConfigDataKey.CHANNEL_ID))) return;
         if (event.getAuthor().isBot()) return;
+        if (!config.getAsBoolean(ConfigDataKey.DISCORD_CHAT_ENABLED)) return;
 
         sendFromDiscord.accept(event);
     }

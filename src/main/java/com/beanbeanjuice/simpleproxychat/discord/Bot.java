@@ -138,12 +138,7 @@ public class Bot {
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS)
                 .build().awaitReady();
 
-        this.sendMessageEmbed(
-                new EmbedBuilder()
-                        .setTitle(config.getAsString(ConfigDataKey.DISCORD_PROXY_ENABLED))
-                        .setColor(Color.GREEN)
-                        .build()
-        );
+        sendProxyStatus(true);
 
         this.updateActivity();
 
@@ -166,13 +161,28 @@ public class Bot {
         });
     }
 
+    public void sendProxyStatus(boolean isStart) {
+        if (!config.getAsBoolean(ConfigDataKey.DISCORD_PROXY_STATUS_ENABLED)) return;
+
+        if (isStart) {
+            this.sendMessageEmbed(
+                    new EmbedBuilder()
+                            .setTitle(config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_ENABLED))
+                            .setColor(Color.GREEN)
+                            .build()
+            );
+        } else {
+            this.sendMessageEmbed(
+                    new EmbedBuilder()
+                            .setTitle(config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_DISABLED))
+                            .setColor(Color.RED)
+                            .build()
+            );
+        }
+    }
+
     public void stop() {
-        this.sendMessageEmbed(
-                new EmbedBuilder()
-                        .setTitle(config.getAsString(ConfigDataKey.DISCORD_PROXY_DISABLED))
-                        .setColor(Color.RED)
-                        .build()
-        );
+        sendProxyStatus(false);
 
         this.updateChannelTopic(config.getAsString(ConfigDataKey.DISCORD_TOPIC_OFFLINE));
 
