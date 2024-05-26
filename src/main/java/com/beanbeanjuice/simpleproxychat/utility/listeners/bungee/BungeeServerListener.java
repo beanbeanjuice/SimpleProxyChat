@@ -2,17 +2,15 @@ package com.beanbeanjuice.simpleproxychat.utility.listeners.bungee;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
+import com.beanbeanjuice.simpleproxychat.socket.bungee.BungeeChatMessageData;
 import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
+import com.beanbeanjuice.simpleproxychat.utility.listeners.MessageType;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import de.myzelyam.api.vanish.*;
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
@@ -21,14 +19,13 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
-import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 public class BungeeServerListener implements Listener {
 
     @Getter private ServerStatusManager serverStatusManager;
     private final SimpleProxyChatBungee plugin;
-    private final ChatHandler chatHandler;
+    @Getter private final ChatHandler chatHandler;
     @Getter private final BungeePreviousServerHandler previousServerHandler;
 
     public BungeeServerListener(SimpleProxyChatBungee plugin, ChatHandler chatHandler) {
@@ -49,27 +46,10 @@ public class BungeeServerListener implements Listener {
         if (!Helper.playerCanChat(plugin.getConfig(), player.getUniqueId(), player.getName())) return;
 
         Server currentServer = (Server) event.getReceiver();
-        String serverName = currentServer.getInfo().getName();
-        String playerName = player.getName();
         String playerMessage = event.getMessage();
+        BungeeChatMessageData messageData = new BungeeChatMessageData(plugin, MessageType.CHAT, currentServer.getInfo(), player, playerMessage);
 
-        chatHandler.runProxyChatMessage(serverName, playerName, player.getUniqueId(), playerMessage,
-                (message) -> {
-                    Collection<ProxiedPlayer> blacklistedPlayers = currentServer.getInfo().getPlayers();
-
-                    plugin.getProxy().getPlayers().stream()
-                            .filter((streamPlayer) -> !blacklistedPlayers.contains(streamPlayer))
-                            .filter((streamPlayer) -> {
-                                for (ProxiedPlayer blacklistedPlayer : blacklistedPlayers)
-                                    if (blacklistedPlayer.getName().equals(streamPlayer.getName())) return false;
-                                return true;
-                            })
-                            .filter((streamPlayer) -> {
-                                if (!plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS)) return true;
-                                return streamPlayer.hasPermission(Permission.READ_CHAT_MESSAGE.getPermissionNode());
-                            })
-                            .forEach((streamPlayer) -> streamPlayer.sendMessage(ChatMessageType.CHAT, convertToBungee(message)));
-                });
+        chatHandler.runProxyChatMessage(messageData);
     }
 
     /*
@@ -163,7 +143,7 @@ public class BungeeServerListener implements Listener {
                                 return streamPlayer.hasPermission(Permission.READ_SWITCH_MESSAGE.getPermissionNode());
                             return true;
                         })
-                        .forEach((streamPlayer) -> streamPlayer.sendMessage(ChatMessageType.CHAT, convertToBungee(message)))
+                        .forEach((streamPlayer) -> streamPlayer.sendMessage(ChatMessageType.CHAT, Helper.convertToBungee(message)))
         );
     }
 
@@ -179,18 +159,18 @@ public class BungeeServerListener implements Listener {
         }), updateInterval, updateInterval, TimeUnit.SECONDS);
     }
 
-    private void sendToAllServers(String message, Permission permission) {
+    private void sendToAllServers(String parsedMessage, Permission permission) {
         plugin.getProxy().getPlayers().stream()
-                        .filter((player) -> {
-                            if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
-                                return player.hasPermission(permission.getPermissionNode());
-                            return true;
-                        })
-                        .filter((player) -> !Helper.serverHasChatLocked(plugin.getConfig(), player.getServer().getInfo().getName()))
-                        .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, convertToBungee(message)));
+                .filter((player) -> {
+                    if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
+                        return player.hasPermission(permission.getPermissionNode());
+                    return true;
+                })
+                .filter((player) -> !Helper.serverHasChatLocked(plugin.getConfig(), player.getServer().getInfo().getName()))
+                .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, Helper.convertToBungee(parsedMessage)));
     }
 
-    private void sendToAllServersVanish(String message, Permission permission) {
+    private void sendToAllServersVanish(String parsedMessage, Permission permission) {
         plugin.getProxy().getPlayers().stream()
                 .filter((player) -> {
                     if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
@@ -202,12 +182,7 @@ public class BungeeServerListener implements Listener {
                         return player.hasPermission(Permission.READ_FAKE_MESSAGE.getPermissionNode());
                     return true;
                 })
-                .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, convertToBungee(message)));
-    }
-
-    private BaseComponent[] convertToBungee(String message) {
-        Component minimessage = MiniMessage.miniMessage().deserialize(message);
-        return BungeeComponentSerializer.get().serialize(minimessage);
+                .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, Helper.convertToBungee(parsedMessage)));
     }
 
 }

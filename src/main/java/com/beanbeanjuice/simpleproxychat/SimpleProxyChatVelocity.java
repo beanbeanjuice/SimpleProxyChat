@@ -2,7 +2,7 @@ package com.beanbeanjuice.simpleproxychat;
 
 import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityChatToggleCommand;
 import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityReloadCommand;
-import com.beanbeanjuice.simpleproxychat.utility.ServerChatLockHelper;
+import com.beanbeanjuice.simpleproxychat.socket.velocity.VelocityPluginMessagingListener;
 import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.epoch.EpochHelper;
@@ -194,6 +194,9 @@ public class SimpleProxyChatVelocity {
         serverListener = new VelocityServerListener(this, chatHandler);
         serverListener.initializeVelocityVanishListener();
         this.proxyServer.getEventManager().register(this, serverListener);
+
+        this.proxyServer.getEventManager().register(this, new VelocityPluginMessagingListener(this, serverListener));
+        this.proxyServer.getChannelRegistrar().register(VelocityPluginMessagingListener.IDENTIFIER);
     }
 
     private void registerCommands() {
