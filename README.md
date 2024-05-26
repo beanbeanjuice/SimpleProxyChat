@@ -2,7 +2,7 @@
   <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/SimpleProxyChat.png?raw=true" alt="SimpleProxyChat Logo"/>
 </p>
 <center>
-  A simple plugin to allow <b>global</b> <i>cross-server</i> communication and messaging with support for <b>LuckPerms</b>, <b>LiteBans</b>, <b>AdvancedBan</b>, <b>NetworkManager</b>, and <b>Discord</b>.
+  A simple plugin to allow <b>global</b> <i>cross-server</i> communication and messaging with support for <b>PlaceholderAPI</b>, <b>LuckPerms</b>, <b>LiteBans</b>, <b>AdvancedBan</b>, <b>NetworkManager</b>, and <b>Discord</b>.
 </center>
 
 ---
@@ -53,6 +53,7 @@
 * **Velocity/Waterfall/BungeeCord Support**
 * **Colored Chat**
 * **Cross-Server Communication**
+* **PlaceholderAPI Support**
 * **...and more!**
 
 ---
@@ -131,8 +132,11 @@ timestamp:
   format: "hh:mm a"
   timezone: "America/Los_Angeles"
 
+# True if you will be using the helper plugin.
+use-helper: false
+
 # DO NOT TOUCH THIS
-file-version: 9
+file-version: 10
 ```
 
 **messages.yml**
@@ -263,6 +267,8 @@ file-version: 7
 <p align="center">
   <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Placeholders.png?raw=true" alt="placeholders"/>
 </p>
+
+> For **PlaceholderAPI** support, you *must* install [this](https://www.spigotmc.org/resources/116966/) helper plugin. Additionally, **PlaceholderAPI placeholders** can only be used for **Minecraft chat messages**. It will **not work** for join/leave messages.
 
 * `%plugin-prefix%` - The plugin's designated prefix.
 * `%server%` - The current connected server. Uses the alias if one is specified.

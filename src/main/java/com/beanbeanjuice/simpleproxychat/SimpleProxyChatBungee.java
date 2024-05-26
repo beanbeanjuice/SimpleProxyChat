@@ -2,6 +2,7 @@ package com.beanbeanjuice.simpleproxychat;
 
 import com.beanbeanjuice.simpleproxychat.commands.bungee.BungeeChatToggleCommand;
 import com.beanbeanjuice.simpleproxychat.commands.bungee.BungeeReloadCommand;
+import com.beanbeanjuice.simpleproxychat.socket.bungee.BungeeCordPluginMessagingListener;
 import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.epoch.EpochHelper;
@@ -32,7 +33,7 @@ public final class SimpleProxyChatBungee extends Plugin {
     @Getter private EpochHelper epochHelper;
     @Getter private Bot discordBot;
     @Getter private Metrics metrics;
-    private BungeeServerListener serverListener;
+    @Getter private BungeeServerListener serverListener;
 
     @Override
     public void onEnable() {
@@ -74,6 +75,8 @@ public final class SimpleProxyChatBungee extends Plugin {
         this.getLogger().info("Starting bStats... (IF ENABLED)");
         int pluginId = 21146;
         this.metrics = new Metrics(this, pluginId);
+
+        startPluginMessaging();
 
         // Plugin has started.
         this.getLogger().log(Level.INFO, "The plugin has been started.");
@@ -167,9 +170,19 @@ public final class SimpleProxyChatBungee extends Plugin {
         this.getProxy().getPluginManager().registerCommand(this, new BungeeChatToggleCommand(this, config));
     }
 
+    private void startPluginMessaging() {
+        this.getProxy().registerChannel("BungeeCord");
+        this.getProxy().getPluginManager().registerListener(this, new BungeeCordPluginMessagingListener(this, serverListener));
+    }
+
+    private void stopPluginMessaging() {
+        this.getProxy().unregisterChannel("BungeeCord");
+    }
+
     @Override
     public void onDisable() {
         this.getLogger().info("The plugin is shutting down...");
+        stopPluginMessaging();
         discordBot.stop();
     }
 

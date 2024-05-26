@@ -1,11 +1,9 @@
 name: SimpleProxyChatHelper
 version: '${version}'
 main: com.beanbeanjuice.simpleproxychathelper.SimpleProxyChatHelper
-api-version: '1.20'  # TODO: Possibly remove this.
 prefix: SimpleProxyChatHelper
 load: STARTUP
-depend: [Vault]
-softdepend: [PlaceholderAPI]
+depend: [PlaceholderAPI]
 authors: [beanbeanjuice]
 description: A helper plugin for the SimpleProxyChat proxy plugin.
 website: https://www.github.com/beanbeanjuice/SimpleProxyChat

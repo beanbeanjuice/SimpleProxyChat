@@ -1,58 +1,67 @@
 package com.beanbeanjuice.simpleproxychathelper;
 
+import com.beanbeanjuice.simpleproxychathelper.config.Config;
+import com.beanbeanjuice.simpleproxychathelper.config.ConfigKey;
+import com.beanbeanjuice.simpleproxychathelper.utility.UpdateChecker;
 import lombok.Getter;
-import net.milkbowl.vault.chat.Chat;
-import net.milkbowl.vault.permission.Permission;
 
-import org.bukkit.plugin.RegisteredServiceProvider;
+import net.md_5.bungee.api.ChatMessageType;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.concurrent.TimeUnit;
 
 public final class SimpleProxyChatHelper extends JavaPlugin {
 
-    @Getter private static Permission vaultPermissions = null;
-    @Getter private static Chat vaultChat = null;
+    @Getter private Config options;
+    @Getter private static final String subChannel = "SimpleProxyChat";
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
-        this.getLogger().info("Attempting to hook into Vault!");
+        options = new Config();
 
-        if (getServer().getPluginManager().getPlugin("Vault") == null) {
-            this.getLogger().warning("Vault not found! Disabling...");
-            this.getPluginLoader().disablePlugin(this);
-            return;
-        }
+        this.getLogger().info("Casting hooks...");
+        setupPlaceholderAPI();
 
-        if (!setupChat() || !setupPermissions()) {
-            this.getLogger().warning("Failed to hook into Vault! Disabling...");
-            this.getPluginLoader().disablePlugin(this);
-            return;
-        }
+        this.getLogger().info("Setting up plugin-messaging...");
+        setupPluginMessaging();
 
-        this.getLogger().info("Successfully hooked into Vault!");
+        this.getLogger().info("The plugin has been enabled!");
+
+        startUpdateChecker();
     }
 
-    private boolean setupChat() {
-        RegisteredServiceProvider<Chat> rsp = getServer().getServicesManager().getRegistration(Chat.class);
+    private void setupPlaceholderAPI() {
+        if (this.getServer().getPluginManager().getPlugin("PlaceholderAPI") == null) return;
 
-        try { vaultChat = rsp.getProvider(); } catch (NullPointerException e) {
-            this.getLogger().warning("There was an error hooking into Vault chat. Did you forget to install a chat plugin?");
-        }
-        return vaultChat != null;
+        this.getLogger().info("PlaceholderAPI support has been enabled!");
+        options.setOption(ConfigKey.PLACEHOLDER_API_SUPPORT, true);
     }
 
-    private boolean setupPermissions() {
-        RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
+    private void startUpdateChecker() {
+        String currentVersion = this.getDescription().getVersion();
 
-        try { vaultPermissions = rsp.getProvider(); } catch (NullPointerException e) {
-            this.getLogger().warning("There was an error hooking into Vault permissions. Did you forget to install a permissions plugin?");
-        }
+        UpdateChecker updateChecker = new UpdateChecker(
+                currentVersion,
+                (message) -> this.getLogger().info(message)
+        );
 
-        return vaultPermissions != null;
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this, updateChecker::checkUpdate, 0, 20 * 60 * 12);
+    }
+
+    private void setupPluginMessaging() {
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new BungeeCordPluginMessageListener(this));
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "custom:spc");
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, "custom:spc", new BungeeCordPluginMessageListener(this));
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        this.getServer().getMessenger().unregisterIncomingPluginChannel(this, "BungeeCord");
+        this.getServer().getMessenger().unregisterOutgoingPluginChannel(this, "BungeeCord");
+        this.getServer().getMessenger().unregisterIncomingPluginChannel(this, "custom:spc");
+        this.getServer().getMessenger().unregisterOutgoingPluginChannel(this, "custom:spc");
     }
+
 }

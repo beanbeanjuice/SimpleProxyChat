@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.beanbeanjuice"
-version = "0.3.9"
+version = "0.4.0"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
