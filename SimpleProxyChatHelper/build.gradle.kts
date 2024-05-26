@@ -6,11 +6,11 @@ plugins {
 }
 
 group = "com.beanbeanjuice"
-version = "0.0.0"
+version = "0.0.1"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 repositories {
@@ -27,6 +27,11 @@ repositories {
     }
 
     maven {
+        name = "placeholder-api-repo"
+        url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+    }
+
+    maven {
         name = "jitpack"
         url = uri("https://jitpack.io/")
     }
@@ -36,10 +41,8 @@ dependencies {
     // Spigot. Duh.
     compileOnly("org.spigotmc", "spigot-api", "1.20.6-R0.1-SNAPSHOT")
 
-    // Vault
-    compileOnly("com.github.MilkBowl", "VaultAPI", "1.7")
-
-    // TODO: bstats
+    // PlaceholderAPI
+    compileOnly("me.clip", "placeholderapi", "2.11.6")
 
     // Lombok
     compileOnly("org.projectlombok", "lombok", "1.18.32")
