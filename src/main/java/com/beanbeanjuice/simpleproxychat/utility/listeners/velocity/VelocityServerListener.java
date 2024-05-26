@@ -2,8 +2,10 @@ package com.beanbeanjuice.simpleproxychat.utility.listeners.velocity;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
+import com.beanbeanjuice.simpleproxychat.socket.velocity.VelocityChatMessageData;
 import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
+import com.beanbeanjuice.simpleproxychat.utility.listeners.MessageType;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.velocitypowered.api.event.PostOrder;
@@ -18,7 +20,6 @@ import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
-import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -26,7 +27,7 @@ public class VelocityServerListener {
 
     @Getter private ServerStatusManager serverStatusManager;
     private final SimpleProxyChatVelocity plugin;
-    private final ChatHandler chatHandler;
+    @Getter private final ChatHandler chatHandler;
     private VelocityVanishListener velocityVanishListener;
 
     public VelocityServerListener(SimpleProxyChatVelocity plugin, ChatHandler chatHandler) {
@@ -47,24 +48,10 @@ public class VelocityServerListener {
         if (!Helper.playerCanChat(plugin.getConfig(), player.getUniqueId(), player.getUsername())) return;
 
         event.getPlayer().getCurrentServer().ifPresent((connection) -> {
-            String serverName = connection.getServerInfo().getName();
-            String playerName = player.getUsername();
             String playerMessage = event.getMessage();
 
-            chatHandler.runProxyChatMessage(serverName, playerName, event.getPlayer().getUniqueId(), playerMessage,
-                    (message) -> {
-                        Collection<Player> blacklistedUUIDs = connection.getServer().getPlayersConnected();
-
-                        Component component = MiniMessage.miniMessage().deserialize(message);
-
-                        plugin.getProxyServer().getAllPlayers().stream()
-                                .filter((streamPlayer) -> !blacklistedUUIDs.contains(streamPlayer))
-                                .filter((streamPlayer) -> {
-                                    if (!plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS)) return true;
-                                    return streamPlayer.hasPermission(Permission.READ_CHAT_MESSAGE.getPermissionNode());
-                                })
-                                .forEach((streamPlayer) -> streamPlayer.sendMessage(component));
-                    });
+            VelocityChatMessageData messageData = new VelocityChatMessageData(plugin, MessageType.CHAT, connection.getServer(), player, playerMessage);
+            chatHandler.runProxyChatMessage(messageData);
         });
     }
 

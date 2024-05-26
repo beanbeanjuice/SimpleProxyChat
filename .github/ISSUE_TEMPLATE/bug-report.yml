@@ -22,12 +22,16 @@ body:
       required: true
   - type: dropdown
     attributes:
-      label: What proxy software are you seeing this issue on?
+      label: What proxy/server software are you seeing this issue on?
       multiple: true
       options:
         - BungeeCord
         - Waterfall
         - Velocity
+        - Paper
+        - Folia
+        - Spigot
+        - Purpur
     validations:
       required: true
   - type: textarea
