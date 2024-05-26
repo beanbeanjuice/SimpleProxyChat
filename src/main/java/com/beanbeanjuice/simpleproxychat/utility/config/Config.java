@@ -86,6 +86,7 @@ public class Config {
 
     private void readConfig() throws IOException {
         // config.yml
+        config.put(ConfigDataKey.USE_HELPER, Boolean.valueOf(yamlConfig.getString("use-helper")));
         config.put(ConfigDataKey.USE_DISCORD, Boolean.valueOf(yamlConfig.getString("use-discord")));
         config.put(ConfigDataKey.BOT_TOKEN, yamlConfig.getString("BOT-TOKEN"));
         config.put(ConfigDataKey.CHANNEL_ID, yamlConfig.getString("CHANNEL-ID"));
