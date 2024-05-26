@@ -2,6 +2,7 @@ package com.beanbeanjuice.simpleproxychat.chat;
 
 import com.beanbeanjuice.simpleproxychat.discord.Bot;
 import com.beanbeanjuice.simpleproxychat.discord.DiscordChatHandler;
+import com.beanbeanjuice.simpleproxychat.socket.ChatMessageData;
 import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
@@ -63,9 +64,42 @@ public class ChatHandler {
         return Optional.of(message);
     }
 
-    public void runProxyChatMessage(String serverName, String playerName, UUID playerUUID,
-                                    String playerMessage, Consumer<String> minecraftLogger) {
-        if (Helper.serverHasChatLocked(config, serverName)) return;
+    public void chat(ChatMessageData chatMessageData, String minecraftMessage, String discordMessage, String discordEmbedTitle, String discordEmbedMessage) {
+        // Log to Console
+        if (config.getAsBoolean(ConfigDataKey.CONSOLE_CHAT)) pluginLogger.accept(minecraftMessage);
+
+        // Log to Discord
+        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_ENABLED)) {
+            if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE)) {
+
+                Color color = config.getAsColor(ConfigDataKey.MINECRAFT_DISCORD_EMBED_COLOR).orElse(Color.RED);
+
+                EmbedBuilder embedBuilder = new EmbedBuilder()
+                        .setAuthor(discordEmbedTitle, null, getPlayerHeadURL(chatMessageData.getPlayerUUID()))
+                        .setDescription(discordEmbedMessage)
+                        .setColor(color);
+
+                if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE_TIMESTAMP))
+                    embedBuilder.setTimestamp(epochHelper.getEpochInstant());
+
+                discordBot.sendMessageEmbed(embedBuilder.build());
+            } else {
+                discordBot.sendMessage(discordMessage);
+            }
+        }
+
+        // Log to Minecraft
+        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_CHAT_ENABLED)) chatMessageData.chatSendToAllOtherPlayers(minecraftMessage);
+
+    }
+
+    public void runProxyChatMessage(ChatMessageData chatMessageData) {
+        if (Helper.serverHasChatLocked(config, chatMessageData.getServername())) return;
+
+        String playerMessage = chatMessageData.getMessage();
+        String serverName = chatMessageData.getServername();
+        String playerName = chatMessageData.getPlayerName();
+        UUID playerUUID = chatMessageData.getPlayerUUID();
 
         Optional<String> optionalPlayerMessage = getValidMessage(playerMessage);
         if (optionalPlayerMessage.isEmpty()) return;
@@ -89,43 +123,26 @@ public class ChatHandler {
 
         String minecraftMessage = Helper.replaceKeys(minecraftConfigString, replacements);
         String discordMessage = Helper.replaceKeys(discordConfigString, replacements);
+        String discordEmbedTitle = Helper.replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_TITLE), replacements);
+        String discordEmbedMessage = Helper.replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_MESSAGE), replacements);
 
         if (config.getAsBoolean(ConfigDataKey.LUCKPERMS_ENABLED)) {
             minecraftMessage = replacePrefixSuffix(minecraftMessage, playerUUID, aliasedServerName, serverName);
             discordMessage = replacePrefixSuffix(discordMessage, playerUUID, aliasedServerName, serverName);
+            discordEmbedTitle = replacePrefixSuffix(discordEmbedTitle, chatMessageData.getPlayerUUID(), aliasedServerName, chatMessageData.getServername());
         }
 
-        // Log to Console
-        if (config.getAsBoolean(ConfigDataKey.CONSOLE_CHAT)) pluginLogger.accept(minecraftMessage);
-
-        // Log to Discord
-        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_ENABLED)) {
-            if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE)) {
-                String title = Helper.replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_TITLE), replacements);
-                String message = Helper.replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_MESSAGE), replacements);
-
-                title = replacePrefixSuffix(title, playerUUID, aliasedServerName, serverName);
-
-                Color color = config.getAsColor(ConfigDataKey.MINECRAFT_DISCORD_EMBED_COLOR).orElse(Color.RED);
-
-                EmbedBuilder embedBuilder = new EmbedBuilder()
-                        .setAuthor(title, null, getPlayerHeadURL(playerUUID))
-                        .setDescription(message)
-                        .setColor(color);
-
-                if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE_TIMESTAMP))
-                    embedBuilder.setTimestamp(epochHelper.getEpochInstant());
-
-                discordBot.sendMessageEmbed(embedBuilder.build());
-            } else {
-                discordBot.sendMessage(discordMessage);
-            }
+        if (config.getAsBoolean(ConfigDataKey.USE_HELPER)) {
+            chatMessageData.setMinecraftMessage(minecraftMessage);
+            chatMessageData.setDiscordMessage(discordMessage);
+            chatMessageData.setDiscordEmbedTitle(discordEmbedTitle);
+            chatMessageData.setDiscordEmbedMessage(discordEmbedMessage);
+            chatMessageData.startPluginMessage();
+            return;
         }
 
-        // Log to Minecraft
-        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_CHAT_ENABLED)) minecraftLogger.accept(minecraftMessage);
+        chat(chatMessageData, minecraftMessage, discordMessage, discordEmbedTitle, discordEmbedMessage);
     }
-
     public void runProxyLeaveMessage(String playerName, UUID playerUUID, String serverName,
                                      BiConsumer<String, Permission> minecraftLogger) {
         String configString = config.getAsString(ConfigDataKey.MINECRAFT_LEAVE);

@@ -17,4 +17,8 @@ public class Tuple<KeyType, ValueType> {
         return new Tuple<>(key, value);
     }
 
+    public static Tuple<String, Integer> of(String key, int value) {
+        return new Tuple<>(key, value);
+    }
+
 }
