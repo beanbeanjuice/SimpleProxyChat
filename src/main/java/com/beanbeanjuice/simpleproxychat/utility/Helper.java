@@ -23,6 +23,7 @@ public class Helper {
      */
     public static String translateLegacyCodes(String string) {
         return string
+                .replace('§', '&')
                 .replace("&0", convertToTag(NamedTextColor.BLACK.asHexString()))
                 .replace("&1", convertToTag(NamedTextColor.DARK_BLUE.asHexString()))
                 .replace("&2", convertToTag(NamedTextColor.DARK_GREEN.asHexString()))
