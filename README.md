@@ -11,6 +11,15 @@
   <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Installation.png?raw=true" alt="installation"/>
 </p>
 
+### With PlaceholderAPI
+1) You **must** use the *helper plugin* which you can download [here](https://www.spigotmc.org/resources/116966/).
+1) Drag the helper plugin to each **Spigot/Paper/Bukkit** server that you want PlaceholderAPI support on.
+    * You do not need any additional configuration on the Spigot/Paper/Bukkit server as long as you have PlaceholderAPI installed.
+1) Set `use-helper` to `true` in the `config.yml` for the proxy configuration. This will be in your **BungeeCord/Velocity** server.
+1) Restart or reload the plugin! `/spc-reload`
+
+> For **PlaceholderAPI** support, the helper plugin is required. Additionally, **PlaceholderAPI placeholders** can only be used for **Minecraft chat messages**. It will **not work** for join/leave messages.
+
 ### Without Discord
 1) Simply place the plugin in your `plugins` folder on **BungeeCord/Waterfall/Velocity** and restart your proxy!
 
@@ -267,8 +276,6 @@ file-version: 7
 <p align="center">
   <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Placeholders.png?raw=true" alt="placeholders"/>
 </p>
-
-> For **PlaceholderAPI** support, you *must* install [this](https://www.spigotmc.org/resources/116966/) helper plugin. Additionally, **PlaceholderAPI placeholders** can only be used for **Minecraft chat messages**. It will **not work** for join/leave messages.
 
 * `%plugin-prefix%` - The plugin's designated prefix.
 * `%server%` - The current connected server. Uses the alias if one is specified.
