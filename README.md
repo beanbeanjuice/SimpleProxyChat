@@ -286,6 +286,7 @@ file-version: 7
 * `%original_from%` - Same as `%from%`, but does not use the alias.
 * `%player%` - The player's Minecraft username.
 * `%user%` - The player's Discord username.
+* `%nick%` - The player's Discord nickname.
 * `%role%` - The player's Discord role.
 * `%prefix%` - The player's prefix. **LuckPerms Only**
 * `%suffix%` - The player's suffix. **LuckPerms Only**
