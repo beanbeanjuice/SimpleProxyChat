@@ -5,14 +5,13 @@ import com.beanbeanjuice.simpleproxychathelper.config.ConfigKey;
 import com.beanbeanjuice.simpleproxychathelper.utility.UpdateChecker;
 import lombok.Getter;
 
-import net.md_5.bungee.api.ChatMessageType;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.concurrent.TimeUnit;
-
 public final class SimpleProxyChatHelper extends JavaPlugin {
 
+    private Metrics metrics;
     @Getter private Config options;
     @Getter private static final String subChannel = "SimpleProxyChat";
 
@@ -28,6 +27,7 @@ public final class SimpleProxyChatHelper extends JavaPlugin {
 
         this.getLogger().info("The plugin has been enabled!");
 
+        metrics = new Metrics(this, 22052);
         startUpdateChecker();
     }
 
@@ -46,7 +46,7 @@ public final class SimpleProxyChatHelper extends JavaPlugin {
                 (message) -> this.getLogger().info(message)
         );
 
-        Bukkit.getScheduler().runTaskTimerAsynchronously(this, updateChecker::checkUpdate, 0, 20 * 60 * 12);
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this, updateChecker::checkUpdate, 0, 864000);  // 864000 ticks = 12 hours
     }
 
     private void setupPluginMessaging() {
