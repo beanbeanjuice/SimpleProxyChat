@@ -292,7 +292,10 @@ public class ChatHandler {
 
         if (event.getMember() == null) return;
 
-        String username = event.getMember().getEffectiveName();
+        String username = event.getMember().getUser().getName();
+        String nickname = event.getMember().getNickname();
+
+        if (nickname == null) nickname = username;
 
         String roleName = "[no-role]";
         Color roleColor = Color.GRAY;
@@ -311,6 +314,7 @@ public class ChatHandler {
                 message,
                 Tuple.of("role", String.format("<%s>%s</%s>", hex, roleName, hex)),
                 Tuple.of("user", username),
+                Tuple.of("nick", nickname),
                 Tuple.of("message", discordMessage),
                 Tuple.of("epoch", String.valueOf(epochHelper.getEpochSecond())),
                 Tuple.of("time", getTimeString()),
