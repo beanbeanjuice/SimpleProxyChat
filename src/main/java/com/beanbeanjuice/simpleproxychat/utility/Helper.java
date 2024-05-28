@@ -15,6 +15,8 @@ import nl.chimpgamer.networkmanager.api.NetworkManagerProvider;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Helper {
 
@@ -22,6 +24,7 @@ public class Helper {
      * @see <a href="https://docs.advntr.dev/minimessage/format.html">Mini-Message Decorations</a>
      */
     public static String translateLegacyCodes(String string) {
+        string = replaceEssentialsColorCodes(string);
         return string
                 .replace('§', '&')
                 .replace("&0", convertToTag(NamedTextColor.BLACK.asHexString()))
@@ -49,6 +52,24 @@ public class Helper {
                 .replace("\\n", convertToTag("newline"))
 
                 .replaceAll("&#([A-Fa-f0-9]{6})", "<#$1>");  // "&#FFC0CBHello! -> <#FFC0CB>Hello!
+    }
+
+    public static String replaceEssentialsColorCodes(String string) {
+        Pattern pattern = Pattern.compile("§x(§[0-9a-fA-F]){6}");  // "§x§f§b§6§3§f§5Hello!" -> "&#fb63f5Hello!"
+        Matcher matcher = pattern.matcher(string);
+
+        StringBuilder result = new StringBuilder();
+
+        while (matcher.find()) {
+            String hexColor = matcher.group(0)
+                    .replace("§x", "")
+                    .replace("§", "");
+            matcher.appendReplacement(result, "&#" + hexColor);
+        }
+
+        matcher.appendTail(result);
+
+        return result.toString();
     }
 
     public static String convertAlias(Config config, String serverName) {
