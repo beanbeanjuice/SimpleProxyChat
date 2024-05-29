@@ -73,8 +73,7 @@ public final class SimpleProxyChatBungee extends Plugin {
 
         // bStats Stuff
         this.getLogger().info("Starting bStats... (IF ENABLED)");
-        int pluginId = 21146;
-        this.metrics = new Metrics(this, pluginId);
+        this.metrics = new Metrics(this, 21146);
 
         startPluginMessaging();
 

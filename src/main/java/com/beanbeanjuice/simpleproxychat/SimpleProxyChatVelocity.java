@@ -98,8 +98,7 @@ public class SimpleProxyChatVelocity {
 
         // bStats Stuff
         this.getLogger().info("Starting bStats... (IF ENABLED)");
-        int pluginId = 21147;
-        this.metrics = metricsFactory.make(this, pluginId);
+        this.metrics = metricsFactory.make(this, 21147);
 
         // Plugin has started.
         this.getLogger().info("The plugin has been started.");
