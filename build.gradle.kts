@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "com.beanbeanjuice"
-version = "0.4.2"
+version = "0.5.0"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -101,6 +101,9 @@ dependencies {
 
     // Timestamp
     implementation("joda-time", "joda-time", "2.12.7")
+
+    // Artifact Version Comparison
+    implementation("org.apache.maven", "maven-artifact", "3.9.7")
 }
 
 configure<ProcessResources>("processResources") {
@@ -233,10 +236,13 @@ hangarPublish {
 }
 
 tasks.withType<ShadowJar> {
-    minimize()
-    relocate("dev.dejvokep.boostedyaml", "com.beanbeanjuice.simpleproxychat.libs.dev.dejvokep.boostedyaml")
-    relocate("org.bstats", "com.beanbeanjuice.simpleproxychat.libs.org.bstats")
+    relocate("net.kyori", "com.beanbeanjuice.simpleproxychat.libs.net.kyori")
     relocate("net.dv8tion", "com.beanbeanjuice.simpleproxychat.libs.net.dv8tion")
+    relocate("dev.dejvokep", "com.beanbeanjuice.simpleproxychat.libs.dev.dejvokep")
+    relocate("org.bstats", "com.beanbeanjuice.simpleproxychat.libs.org.bstats")
+    relocate("joda-time", "com.beanbeanjuice.simpleproxychat.libs.joda-time")
+    relocate("org.apache.maven", "com.beanbeanjuice.simpleproxychat.libs.org.apache.maven")
+    minimize()
     archiveBaseName.set(rootProject.name)
     archiveClassifier.set("")
     archiveVersion.set(version as String)
