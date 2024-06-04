@@ -90,9 +90,9 @@ BOT-TOKEN: "TOKEN_HERE"
 CHANNEL-ID: "GLOBAL_CHANNEL_ID"
 
 bot-activity:
-  # Valid Types: PLAYING, STREAMING, LISTENING, WATCHING, COMPETING
-  type: "COMPETING"
-  text: "SimpleProxyChat by beanbeanjuice"
+   # Valid Types: PLAYING, STREAMING, LISTENING, WATCHING, COMPETING
+   type: "COMPETING"
+   text: "SimpleProxyChat by beanbeanjuice"
 
 # The amount of seconds to check if a server is online/offline.
 # Smaller numbers can cause errors. Beware.
@@ -102,9 +102,9 @@ server-update-interval: 3
 # It MUST be the same name you have in your bungee/velocity config.
 # Simply set it to disabled: disabled to disable it.
 aliases:
-  ServerInConfigExample: ServerAliasExample
-  hub: Hub1
-  smp: smp1
+   ServerInConfigExample: ServerAliasExample
+   hub: Hub1
+   smp: smp1
 
 # Whether to use the permission system.
 # Some permissions (denoted with ➕) are always active even if this is false.
@@ -134,18 +134,20 @@ use-fake-messages: true
 # Format: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
 # Timezone: https://www.joda.org/joda-time/timezones.html
 timestamp:
-  # If your server is prone to getting off-sync on the time you can use an API.
-  # WARNING: Using the API will make messages somewhat longer to send.
-  # Additionally, the maximum accuracy will only be up to 1 minute, rather than seconds.
-  use-api: false
-  format: "hh:mm a"
-  timezone: "America/Los_Angeles"
+   # If your server is prone to getting off-sync on the time you can use an API.
+   # WARNING: Using the API will make messages somewhat longer to send.
+   # Additionally, the maximum accuracy will only be up to 1 minute, rather than seconds.
+   use-api: false
+   format: "hh:mm a"
+   timezone: "America/Los_Angeles"
 
 # True if you will be using the helper plugin.
 use-helper: false
 
+update-notifications: true
+
 # DO NOT TOUCH THIS
-file-version: 10
+file-version: 11
 ```
 
 **messages.yml**

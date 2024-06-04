@@ -2,7 +2,6 @@ package com.beanbeanjuice.simpleproxychat.utility.config;
 
 public enum ConfigDataKey {
     // CONFIG
-    USE_HELPER,
     USE_DISCORD,
     BOT_TOKEN,
     CHANNEL_ID,
@@ -17,6 +16,8 @@ public enum ConfigDataKey {
     TIMESTAMP_USE_API,
     TIMESTAMP_FORMAT,
     TIMESTAMP_TIMEZONE,
+    USE_HELPER,
+    UPDATE_NOTIFICATIONS,
 
     // MESSAGES
     PLUGIN_PREFIX,
