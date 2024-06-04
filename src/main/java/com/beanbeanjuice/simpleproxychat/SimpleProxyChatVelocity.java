@@ -129,6 +129,7 @@ public class SimpleProxyChatVelocity {
                 config,
                 currentVersion,
                 (message) -> {
+                    if (!config.getAsBoolean(ConfigDataKey.UPDATE_NOTIFICATIONS)) return;
                     this.getLogger().info(Helper.sanitize(message));
                     this.proxyServer.getAllPlayers()
                             .stream()

@@ -69,5 +69,7 @@ timestamp:
 # True if you will be using the helper plugin.
 use-helper: false
 
+update-notifications: true
+
 # DO NOT TOUCH THIS
-file-version: 10
+file-version: 11

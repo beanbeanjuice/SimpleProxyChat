@@ -102,6 +102,8 @@ public final class SimpleProxyChatBungee extends Plugin {
                 config,
                 currentVersion,
                 (message) -> {
+                    if (!config.getAsBoolean(ConfigDataKey.UPDATE_NOTIFICATIONS)) return;
+
                     this.getLogger().info(Helper.sanitize(message));
 
                     Component minimessage = MiniMessage.miniMessage().deserialize(config.getAsString(ConfigDataKey.PLUGIN_PREFIX) + message);
