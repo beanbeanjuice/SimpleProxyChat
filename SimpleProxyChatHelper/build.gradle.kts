@@ -50,6 +50,9 @@ dependencies {
 
     // bStats
     implementation("org.bstats", "bstats-bukkit", "3.0.2")
+
+    // Artifact Version Comparison
+    implementation("org.apache.maven", "maven-artifact", "3.9.7")
 }
 
 configure<ProcessResources>("processResources") {
@@ -64,7 +67,8 @@ inline fun <reified C> Project.configure(name: String, configuration: C.() -> Un
 
 tasks.withType<ShadowJar> {
     minimize()
-    relocate("org.bstats", "com.beanbeanjuice.simpleproxychat.libs.org.bstats")
+    relocate("org.bstats", "com.beanbeanjuice.simpleproxychathelper.libs.org.bstats")
+    relocate("org.apache.maven", "com.beanbeanjuice.simpleproxychathelper.libs.org.apache.maven")
     archiveBaseName.set(rootProject.name)
     archiveClassifier.set("")
     archiveVersion.set(version as String)
