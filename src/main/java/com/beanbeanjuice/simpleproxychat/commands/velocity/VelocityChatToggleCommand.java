@@ -10,7 +10,6 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
