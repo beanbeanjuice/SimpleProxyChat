@@ -2,8 +2,11 @@ package com.beanbeanjuice.simpleproxychat;
 
 import com.beanbeanjuice.simpleproxychat.commands.bungee.BungeeChatToggleCommand;
 import com.beanbeanjuice.simpleproxychat.commands.bungee.BungeeReloadCommand;
+import com.beanbeanjuice.simpleproxychat.commands.bungee.BungeeReplyCommand;
+import com.beanbeanjuice.simpleproxychat.commands.bungee.BungeeWhisperCommand;
 import com.beanbeanjuice.simpleproxychat.socket.bungee.BungeeCordPluginMessagingListener;
 import com.beanbeanjuice.simpleproxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.WhisperHandler;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.epoch.EpochHelper;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeServerListener;
@@ -34,6 +37,7 @@ public final class SimpleProxyChatBungee extends Plugin {
     @Getter private Bot discordBot;
     @Getter private Metrics metrics;
     @Getter private BungeeServerListener serverListener;
+    @Getter private WhisperHandler whisperHandler;
 
     @Override
     public void onEnable() {
@@ -164,11 +168,15 @@ public final class SimpleProxyChatBungee extends Plugin {
 
         serverListener = new BungeeServerListener(this, chatHandler);
         this.getProxy().getPluginManager().registerListener(this, serverListener);
+
+        whisperHandler = new WhisperHandler();
     }
 
     private void registerCommands() {
         this.getProxy().getPluginManager().registerCommand(this, new BungeeReloadCommand(this, config));
         this.getProxy().getPluginManager().registerCommand(this, new BungeeChatToggleCommand(this, config));
+        this.getProxy().getPluginManager().registerCommand(this, new BungeeWhisperCommand(this, config, config.getAsArrayList(ConfigDataKey.WHISPER_ALIASES).toArray(new String[0])));
+        this.getProxy().getPluginManager().registerCommand(this, new BungeeReplyCommand(this, config, config.getAsArrayList(ConfigDataKey.REPLY_ALIASES).toArray(new String[0])));
     }
 
     private void startPluginMessaging() {

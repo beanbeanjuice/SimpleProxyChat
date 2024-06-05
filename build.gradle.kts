@@ -237,13 +237,9 @@ hangarPublish {
 
 tasks.withType<ShadowJar> {
     minimize()
-    relocate("net.kyori", "com.beanbeanjuice.simpleproxychat.libs.net.kyori")
     relocate("net.dv8tion", "com.beanbeanjuice.simpleproxychat.libs.net.dv8tion")
     relocate("dev.dejvokep", "com.beanbeanjuice.simpleproxychat.libs.dev.dejvokep")
     relocate("org.bstats", "com.beanbeanjuice.simpleproxychat.libs.org.bstats")
-    relocate("joda-time", "com.beanbeanjuice.simpleproxychat.libs.joda-time")
-    relocate("org.apache.maven", "com.beanbeanjuice.simpleproxychat.libs.org.apache.maven")
-    relocate("kotlin", "com.beanbeanjuice.simpleproxychat.kotlin.libs")
     archiveBaseName.set(rootProject.name)
     archiveClassifier.set("")
     archiveVersion.set(version as String)
