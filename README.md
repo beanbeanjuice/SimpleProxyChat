@@ -266,6 +266,8 @@ file-version: 8
 
 * `/spc-reload` - Reloads the config files.
 * `/spc-chat` - Lock/unlock the chat.
+* `/spc-whipser` - Send a private message to someone.
+* `/spc-reply` - Reply to a private message without specifying a user.
 
 ---
 
@@ -282,6 +284,7 @@ file-version: 8
 * `simpleproxychat.toggle.chat` - Toggle proxy chat for a single server.
 * `simpleproxychat.toggle.chat.all` - Toggle proxy chat for all servers.
 * `simpleproxychat.reload` - Reload the config.
+* `simpleproxychat.whisper` - Private messaging permissions.
 
 ---
 
@@ -297,6 +300,8 @@ file-version: 8
 * `%from%` - The server the player just disconnected from. Uses the alias if one is specified.
 * `%original_from%` - Same as `%from%`, but does not use the alias.
 * `%player%` - The player's Minecraft username.
+* `%sender%` - (PRIVATE MESSAGING ONLY) The person sending the private message.
+* `%receiver%` - (PRIVATE MESSAGING ONLY) The person receiving the private message.
 * `%user%` - The player's Discord username.
 * `%nick%` - The player's Discord nickname.
 * `%role%` - The player's Discord role.
