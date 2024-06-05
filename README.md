@@ -146,8 +146,14 @@ use-helper: false
 
 update-notifications: true
 
+commands:
+   whisper-aliases:
+      - "spc-msg"
+   reply-aliases:
+      - "spc-r"
+
 # DO NOT TOUCH THIS
-file-version: 11
+file-version: 12
 ```
 
 **messages.yml**
@@ -177,6 +183,10 @@ minecraft:
       enabled: true
       default: "&e%player% &7moved from &c%from% &7to &a%to%&7."
       no-from: "&e%player% &7moved &7to &a%to%&7."
+   whisper:
+      send: "&8[&dyou&8] &f⇒ &8[&d%receiver%&8] &9» &e%message%"
+      receive: "&8[&d%sender%&8] &f⇒ &8[&dyou&8] &9» &e%message%"
+      error: "&c/spc-whisper (user) (message)"
    discord:
       enabled: true
       message: "**%server%** %player% » %message%"
@@ -245,7 +255,7 @@ console:
 update-message: "&7There is an update! You are on &c%old%. New version is &a%new%&7: &6%link%"
 
 # DO NOT TOUCH THIS
-file-version: 7
+file-version: 8
 ```
 
 ---
@@ -256,6 +266,8 @@ file-version: 7
 
 * `/spc-reload` - Reloads the config files.
 * `/spc-chat` - Lock/unlock the chat.
+* `/spc-whipser` - Send a private message to someone.
+* `/spc-reply` - Reply to a private message without specifying a user.
 
 ---
 
@@ -272,6 +284,7 @@ file-version: 7
 * `simpleproxychat.toggle.chat` - Toggle proxy chat for a single server.
 * `simpleproxychat.toggle.chat.all` - Toggle proxy chat for all servers.
 * `simpleproxychat.reload` - Reload the config.
+* `simpleproxychat.whisper` - Private messaging permissions.
 
 ---
 
@@ -287,6 +300,8 @@ file-version: 7
 * `%from%` - The server the player just disconnected from. Uses the alias if one is specified.
 * `%original_from%` - Same as `%from%`, but does not use the alias.
 * `%player%` - The player's Minecraft username.
+* `%sender%` - (PRIVATE MESSAGING ONLY) The person sending the private message.
+* `%receiver%` - (PRIVATE MESSAGING ONLY) The person receiving the private message.
 * `%user%` - The player's Discord username.
 * `%nick%` - The player's Discord nickname.
 * `%role%` - The player's Discord role.

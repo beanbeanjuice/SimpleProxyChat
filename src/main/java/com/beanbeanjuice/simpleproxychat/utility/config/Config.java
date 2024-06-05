@@ -15,6 +15,7 @@ import org.joda.time.DateTimeZone;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
@@ -84,6 +85,11 @@ public class Config {
         return (HashMap<String, String>) get(key);
     }
 
+    @SuppressWarnings("unchecked")
+    public ArrayList<String> getAsArrayList(ConfigDataKey key) {
+        return (ArrayList<String>) get(key);
+    }
+
     private void readConfig() throws IOException {
         // config.yml
         config.put(ConfigDataKey.USE_DISCORD, Boolean.valueOf(yamlConfig.getString("use-discord")));
@@ -107,6 +113,11 @@ public class Config {
         config.put(ConfigDataKey.TIMESTAMP_TIMEZONE, yamlConfig.getString("timestamp.timezone"));
         config.put(ConfigDataKey.USE_HELPER, Boolean.valueOf(yamlConfig.getString("use-helper")));
         config.put(ConfigDataKey.UPDATE_NOTIFICATIONS, Boolean.valueOf(yamlConfig.getString("update-notifications")));
+
+        ArrayList<String> whisperAliases = (ArrayList<String>) yamlConfig.getStringList("commands.whisper-aliases");
+        config.put(ConfigDataKey.WHISPER_ALIASES, whisperAliases);
+        ArrayList<String> replyAliases = (ArrayList<String>) yamlConfig.getStringList("commands.reply-aliases");
+        config.put(ConfigDataKey.REPLY_ALIASES, replyAliases);
 
         // Checking timezone.
         try {
@@ -132,6 +143,9 @@ public class Config {
         config.put(ConfigDataKey.MINECRAFT_SWITCH_ENABLED, yamlMessages.getBoolean("minecraft.switch.enabled"));
         putMessage(ConfigDataKey.MINECRAFT_SWITCH_DEFAULT, "minecraft.switch.default", false);
         putMessage(ConfigDataKey.MINECRAFT_SWITCH_SHORT, "minecraft.switch.no-from", false);
+        putMessage(ConfigDataKey.MINECRAFT_WHISPER_SEND, "minecraft.whisper.send", false);
+        putMessage(ConfigDataKey.MINECRAFT_WHISPER_RECEIVE, "minecraft.whisper.receive", false);
+        putMessage(ConfigDataKey.MINECRAFT_WHISPER_ERROR, "minecraft.whisper.error", false);
         config.put(ConfigDataKey.MINECRAFT_DISCORD_ENABLED, yamlMessages.getBoolean("minecraft.discord.enabled"));
         putMessage(ConfigDataKey.MINECRAFT_DISCORD_MESSAGE, "minecraft.discord.message", true);
         config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE, yamlMessages.getBoolean("minecraft.discord.embed.use"));

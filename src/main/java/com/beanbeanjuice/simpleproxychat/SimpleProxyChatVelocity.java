@@ -2,8 +2,11 @@ package com.beanbeanjuice.simpleproxychat;
 
 import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityChatToggleCommand;
 import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityReloadCommand;
+import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityReplyCommand;
+import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityWhisperCommand;
 import com.beanbeanjuice.simpleproxychat.socket.velocity.VelocityPluginMessagingListener;
 import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;
+import com.beanbeanjuice.simpleproxychat.utility.WhisperHandler;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.epoch.EpochHelper;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
@@ -42,6 +45,7 @@ public class SimpleProxyChatVelocity {
     @Getter private final Config config;
     @Getter private final EpochHelper epochHelper;
     @Getter private Bot discordBot;
+    @Getter private WhisperHandler whisperHandler;
     private Metrics metrics;
     private VelocityServerListener serverListener;
 
@@ -197,6 +201,8 @@ public class SimpleProxyChatVelocity {
 
         this.proxyServer.getEventManager().register(this, new VelocityPluginMessagingListener(this, serverListener));
         this.proxyServer.getChannelRegistrar().register(VelocityPluginMessagingListener.IDENTIFIER);
+
+        whisperHandler = new WhisperHandler();
     }
 
     private void registerCommands() {
@@ -212,8 +218,20 @@ public class SimpleProxyChatVelocity {
                 .plugin(this)
                 .build();
 
+        CommandMeta whisperCommand = commandManager.metaBuilder("spc-whisper")
+                .aliases(config.getAsArrayList(ConfigDataKey.WHISPER_ALIASES).toArray(new String[0]))
+                .plugin(this)
+                .build();
+
+        CommandMeta replyCommand = commandManager.metaBuilder("spc-reply")
+                .aliases(config.getAsArrayList(ConfigDataKey.REPLY_ALIASES).toArray(new String[0]))
+                .plugin(this)
+                .build();
+
         commandManager.register(reloadCommand, new VelocityReloadCommand(this, config));
         commandManager.register(chatToggleCommand, new VelocityChatToggleCommand(this, config));
+        commandManager.register(whisperCommand, new VelocityWhisperCommand(this, config));
+        commandManager.register(replyCommand, new VelocityReplyCommand(this, config));
     }
 
     @Subscribe(order = PostOrder.LAST)

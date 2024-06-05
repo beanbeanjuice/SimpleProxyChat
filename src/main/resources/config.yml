@@ -71,5 +71,12 @@ use-helper: false
 
 update-notifications: true
 
+# These require a restart in order to take place.
+commands:
+  whisper-aliases:
+    - "spc-msg"
+  reply-aliases:
+    - "spc-r"
+
 # DO NOT TOUCH THIS
-file-version: 11
+file-version: 12
