@@ -71,6 +71,7 @@ use-helper: false
 
 update-notifications: true
 
+# These require a restart in order to take place.
 commands:
   whisper-aliases:
     - "spc-msg"
