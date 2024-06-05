@@ -146,8 +146,14 @@ use-helper: false
 
 update-notifications: true
 
+commands:
+   whisper-aliases:
+      - "spc-msg"
+   reply-aliases:
+      - "spc-r"
+
 # DO NOT TOUCH THIS
-file-version: 11
+file-version: 12
 ```
 
 **messages.yml**
@@ -177,6 +183,10 @@ minecraft:
       enabled: true
       default: "&e%player% &7moved from &c%from% &7to &a%to%&7."
       no-from: "&e%player% &7moved &7to &a%to%&7."
+   whisper:
+      send: "&8[&dyou&8] &f⇒ &8[&d%receiver%&8] &9» &e%message%"
+      receive: "&8[&d%sender%&8] &f⇒ &8[&dyou&8] &9» &e%message%"
+      error: "&c/spc-whisper (user) (message)"
    discord:
       enabled: true
       message: "**%server%** %player% » %message%"
@@ -245,7 +255,7 @@ console:
 update-message: "&7There is an update! You are on &c%old%. New version is &a%new%&7: &6%link%"
 
 # DO NOT TOUCH THIS
-file-version: 7
+file-version: 8
 ```
 
 ---
