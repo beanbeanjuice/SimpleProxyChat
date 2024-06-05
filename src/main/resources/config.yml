@@ -71,5 +71,11 @@ use-helper: false
 
 update-notifications: true
 
+commands:
+  whisper-aliases:
+    - "spc-msg"
+  reply-aliases:
+    - "spc-r"
+
 # DO NOT TOUCH THIS
-file-version: 11
+file-version: 12
