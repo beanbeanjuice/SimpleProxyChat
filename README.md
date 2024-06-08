@@ -151,7 +151,6 @@ use-helper: false
 
 update-notifications: true
 
-# These require a restart in order to take place.
 # It is HIGHLY recommended to use a more robust proxy-wide banning system such as LiteBans or AdvancedBan.
 # However, if you would rather a light-weight, simple, banning system. You can enable it here.
 # A FULL PROXY RESTART IS REQUIRED TO USE THIS.
@@ -191,6 +190,7 @@ minecraft:
    chat:
       enabled: true
       message: "&8[&3%server%&8] &e%player% &9» &7%message%"
+      vanished: "&cYou cannot send proxy messages while vanished. Your message must end with a '&e/&c' to speak."
    switch:
       enabled: true
       default: "&e%player% &7moved from &c%from% &7to &a%to%&7."
@@ -301,6 +301,8 @@ file-version: 8
 * `simpleproxychat.toggle.chat` - Toggle proxy chat for a single server.
 * `simpleproxychat.toggle.chat.all` - Toggle proxy chat for all servers.
 * `simpleproxychat.reload` - Reload the config.
+* `simpleproxychat.ban` - Ban someone.
+* `simpleproxychat.unban` - Unban someone.
 * `simpleproxychat.whisper` - Private messaging permissions.
 
 ---
