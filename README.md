@@ -119,6 +119,9 @@ aliases:
 # simpleproxychat.toggle.chat - Toggle proxy chat for a single server. ➕
 # simpleproxychat.toggle.chat.all - Toggle proxy chat for all servers. ➕
 # simpleproxychat.reload - Reload the config. ➕
+# simpleproxychat.ban - Ban a player from the proxy. ➕
+# simpleproxychat.unban - Unban a player from the proxy. ➕
+# simpleproxychat.whisper - Whisper to another player on the proxy. ➕
 use-permissions: false
 
 # Only messages that start with this character will be sent through the plugin.
@@ -147,6 +150,11 @@ timestamp:
 use-helper: false
 
 update-notifications: true
+
+# It is HIGHLY recommended to use a more robust proxy-wide banning system such as LiteBans or AdvancedBan.
+# However, if you would rather a light-weight, simple, banning system. You can enable it here.
+# A FULL PROXY RESTART IS REQUIRED TO USE THIS.
+use-simple-proxy-chat-banning-system: false
 
 # These require a restart in order to take place.
 commands:
@@ -213,6 +221,11 @@ minecraft:
          all:
             locked: "%plugin-prefix% &cAll servers will no longer send proxy chat messages."
             unlocked: "%plugin-prefix% &aAll servers will now send proxy chat messages."
+      proxy-ban:
+         usage: "%plugin-prefix% &c/(un)ban (player)"
+         banned: "%plugin-prefix% &c%player% &7has been banned."
+         unbanned: "%plugin-prefix% &c%player% &7has been unbanned."
+         login-message: "&cYou have been banned from the proxy."
 
 # Discord Stuff
 discord:
@@ -288,6 +301,8 @@ file-version: 8
 * `simpleproxychat.toggle.chat` - Toggle proxy chat for a single server.
 * `simpleproxychat.toggle.chat.all` - Toggle proxy chat for all servers.
 * `simpleproxychat.reload` - Reload the config.
+* `simpleproxychat.ban` - Ban someone.
+* `simpleproxychat.unban` - Unban someone.
 * `simpleproxychat.whisper` - Private messaging permissions.
 
 ---
