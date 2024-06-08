@@ -1,11 +1,11 @@
 package com.beanbeanjuice.simpleproxychat.commands.bungee.ban;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
-import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
+import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;

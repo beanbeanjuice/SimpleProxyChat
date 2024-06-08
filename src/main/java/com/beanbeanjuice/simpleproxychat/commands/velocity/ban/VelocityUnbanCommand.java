@@ -1,13 +1,12 @@
 package com.beanbeanjuice.simpleproxychat.commands.velocity.ban;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity;
-import com.beanbeanjuice.simpleproxychat.utility.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
+import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.velocitypowered.api.command.SimpleCommand;
-import com.velocitypowered.api.proxy.Player;
 
 import java.util.List;
 
