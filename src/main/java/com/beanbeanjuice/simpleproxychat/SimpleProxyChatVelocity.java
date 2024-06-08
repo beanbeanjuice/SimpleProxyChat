@@ -6,10 +6,11 @@ import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityReplyCommand;
 import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityWhisperCommand;
 import com.beanbeanjuice.simpleproxychat.commands.velocity.ban.VelocityBanCommand;
 import com.beanbeanjuice.simpleproxychat.commands.velocity.ban.VelocityUnbanCommand;
+import com.beanbeanjuice.simpleproxychat.commands.velocity.*;
 import com.beanbeanjuice.simpleproxychat.socket.velocity.VelocityPluginMessagingListener;
 import com.beanbeanjuice.simpleproxychat.utility.BanHelper;
 import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;
-import com.beanbeanjuice.simpleproxychat.utility.WhisperHandler;
+import com.beanbeanjuice.simpleproxychat.utility.helper.WhisperHandler;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.epoch.EpochHelper;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
@@ -17,7 +18,7 @@ import com.google.inject.Inject;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.velocity.VelocityServerListener;
 import com.beanbeanjuice.simpleproxychat.discord.Bot;
-import com.beanbeanjuice.simpleproxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.velocitypowered.api.command.CommandManager;
@@ -189,6 +190,7 @@ public class SimpleProxyChatVelocity {
             this.getLogger().info("NetworkManager support has been enabled.");
         }
 
+        // Registering the Simple Banning System
         if (!config.getAsBoolean(ConfigDataKey.LITEBANS_ENABLED) && !config.getAsBoolean(ConfigDataKey.ADVANCEDBAN_ENABLED) && config.getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) {
             getLogger().info("LiteBans and AdvancedBan not found. Using the built-in banning system for SimpleProxyChat...");
             banHelper = new BanHelper(dataDirectory);
@@ -254,11 +256,12 @@ public class SimpleProxyChatVelocity {
                 .plugin(this)
                 .build();
 
-        commandManager.register(reloadCommand, new VelocityReloadCommand(this, config));
-        commandManager.register(chatToggleCommand, new VelocityChatToggleCommand(this, config));
-        commandManager.register(whisperCommand, new VelocityWhisperCommand(this, config));
-        commandManager.register(replyCommand, new VelocityReplyCommand(this, config));
+        commandManager.register(reloadCommand, new VelocityReloadCommand(this));
+        commandManager.register(chatToggleCommand, new VelocityChatToggleCommand(this));
+        commandManager.register(whisperCommand, new VelocityWhisperCommand(this));
+        commandManager.register(replyCommand, new VelocityReplyCommand(this));
 
+        // Only enable if the Simple Banning System is enabled.
         if (config.getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) {
             commandManager.register(banCommand, new VelocityBanCommand(this));
             commandManager.register(unbanCommand, new VelocityUnbanCommand(this));

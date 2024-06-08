@@ -4,9 +4,9 @@ import com.beanbeanjuice.simpleproxychat.commands.bungee.*;
 import com.beanbeanjuice.simpleproxychat.commands.bungee.ban.BungeeBanCommand;
 import com.beanbeanjuice.simpleproxychat.commands.bungee.ban.BungeeUnbanCommand;
 import com.beanbeanjuice.simpleproxychat.socket.bungee.BungeeCordPluginMessagingListener;
+import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.helper.WhisperHandler;
 import com.beanbeanjuice.simpleproxychat.utility.BanHelper;
-import com.beanbeanjuice.simpleproxychat.utility.Helper;
-import com.beanbeanjuice.simpleproxychat.utility.WhisperHandler;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.epoch.EpochHelper;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeServerListener;
@@ -156,6 +156,7 @@ public final class SimpleProxyChatBungee extends Plugin {
             getLogger().info("NetworkManager support has been enabled.");
         }
 
+        // Registering the Simple Ban System
         if (!config.getAsBoolean(ConfigDataKey.LITEBANS_ENABLED) && !config.getAsBoolean(ConfigDataKey.ADVANCEDBAN_ENABLED) && config.getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) {
             getLogger().info("LiteBans and AdvancedBan not found. Using the built-in banning system for SimpleProxyChat...");
             banHelper = new BanHelper(this.getDataFolder());
@@ -187,6 +188,7 @@ public final class SimpleProxyChatBungee extends Plugin {
         this.getProxy().getPluginManager().registerCommand(this, new BungeeWhisperCommand(this, config, config.getAsArrayList(ConfigDataKey.WHISPER_ALIASES).toArray(new String[0])));
         this.getProxy().getPluginManager().registerCommand(this, new BungeeReplyCommand(this, config, config.getAsArrayList(ConfigDataKey.REPLY_ALIASES).toArray(new String[0])));
 
+        // Only enable when needed.
         if (config.getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) {
             this.getProxy().getPluginManager().registerCommand(this, new BungeeBanCommand(this));
             this.getProxy().getPluginManager().registerCommand(this, new BungeeUnbanCommand(this));
