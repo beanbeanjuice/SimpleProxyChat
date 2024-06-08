@@ -90,6 +90,8 @@ BOT-TOKEN: "TOKEN_HERE"
 CHANNEL-ID: "GLOBAL_CHANNEL_ID"
 
 bot-activity:
+   # Valid Types: ONLINE, DO_NOT_DISTURB, IDLE, INVISIBLE
+   status: ONLINE
    # Valid Types: PLAYING, STREAMING, LISTENING, WATCHING, COMPETING
    type: "COMPETING"
    text: "SimpleProxyChat by beanbeanjuice"
@@ -146,6 +148,7 @@ use-helper: false
 
 update-notifications: true
 
+# These require a restart in order to take place.
 commands:
    whisper-aliases:
       - "spc-msg"
