@@ -1,7 +1,7 @@
 package com.beanbeanjuice.simpleproxychat.utility.config;
 
-import com.beanbeanjuice.simpleproxychat.utility.Helper;
-import com.beanbeanjuice.simpleproxychat.utility.ServerChatLockHelper;
+import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.helper.ServerChatLockHelper;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
@@ -140,6 +140,7 @@ public class Config {
         putMessage(ConfigDataKey.MINECRAFT_LEAVE, "minecraft.leave.message", false);
         config.put(ConfigDataKey.MINECRAFT_CHAT_ENABLED, yamlMessages.getBoolean("minecraft.chat.enabled"));
         putMessage(ConfigDataKey.MINECRAFT_CHAT_MESSAGE, "minecraft.chat.message", false);
+        putMessage(ConfigDataKey.MINECRAFT_CHAT_VANISHED_MESSAGE, "minecraft.chat.vanished", false);
         config.put(ConfigDataKey.MINECRAFT_SWITCH_ENABLED, yamlMessages.getBoolean("minecraft.switch.enabled"));
         putMessage(ConfigDataKey.MINECRAFT_SWITCH_DEFAULT, "minecraft.switch.default", false);
         putMessage(ConfigDataKey.MINECRAFT_SWITCH_SHORT, "minecraft.switch.no-from", false);

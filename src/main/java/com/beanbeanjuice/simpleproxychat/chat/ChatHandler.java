@@ -3,7 +3,7 @@ package com.beanbeanjuice.simpleproxychat.chat;
 import com.beanbeanjuice.simpleproxychat.discord.Bot;
 import com.beanbeanjuice.simpleproxychat.discord.DiscordChatHandler;
 import com.beanbeanjuice.simpleproxychat.socket.ChatMessageData;
-import com.beanbeanjuice.simpleproxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;

@@ -19,6 +19,7 @@ minecraft:
   chat:
     enabled: true
     message: "&8[&3%server%&8] &e%player% &9» &7%message%"
+    vanished: "&cYou cannot send proxy messages while vanished. Your message must end with a '&e/&c' to speak."
   switch:
     enabled: true
     default: "&e%player% &7moved from &c%from% &7to &a%to%&7."
