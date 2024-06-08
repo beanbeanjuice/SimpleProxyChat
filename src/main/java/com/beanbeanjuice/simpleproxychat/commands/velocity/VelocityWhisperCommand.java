@@ -69,6 +69,6 @@ public class VelocityWhisperCommand implements SimpleCommand {
 
     @Override
     public boolean hasPermission(Invocation invocation) {
-        return invocation.source().hasPermission(Permission.USE_WHISPER.getPermissionNode());
+        return invocation.source().hasPermission(Permission.COMMAND_WHISPER.getPermissionNode());
     }
 }

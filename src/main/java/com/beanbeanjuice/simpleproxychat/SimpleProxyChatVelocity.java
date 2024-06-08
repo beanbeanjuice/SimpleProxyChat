@@ -4,7 +4,10 @@ import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityChatToggleCom
 import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityReloadCommand;
 import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityReplyCommand;
 import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityWhisperCommand;
+import com.beanbeanjuice.simpleproxychat.commands.velocity.ban.VelocityBanCommand;
+import com.beanbeanjuice.simpleproxychat.commands.velocity.ban.VelocityUnbanCommand;
 import com.beanbeanjuice.simpleproxychat.socket.velocity.VelocityPluginMessagingListener;
+import com.beanbeanjuice.simpleproxychat.utility.BanHelper;
 import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;
 import com.beanbeanjuice.simpleproxychat.utility.WhisperHandler;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
@@ -33,6 +36,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
@@ -46,8 +50,11 @@ public class SimpleProxyChatVelocity {
     @Getter private final EpochHelper epochHelper;
     @Getter private Bot discordBot;
     @Getter private WhisperHandler whisperHandler;
+    @Getter private BanHelper banHelper;
     private Metrics metrics;
     private VelocityServerListener serverListener;
+
+    private final File dataDirectory;
 
     @Inject
     public SimpleProxyChatVelocity(ProxyServer proxyServer, Logger logger, @DataDirectory Path dataDirectory, Metrics.Factory metricsFactory) {
@@ -56,6 +63,7 @@ public class SimpleProxyChatVelocity {
         this.metricsFactory = metricsFactory;
 
         this.getLogger().info("The plugin is starting.");
+        this.dataDirectory = dataDirectory.toFile();
         this.config = new Config(dataDirectory.toFile());
         this.config.initialize();
 
@@ -180,6 +188,14 @@ public class SimpleProxyChatVelocity {
             config.overwrite(ConfigDataKey.NETWORKMANAGER_ENABLED, true);
             this.getLogger().info("NetworkManager support has been enabled.");
         }
+
+        if (!config.getAsBoolean(ConfigDataKey.LITEBANS_ENABLED) && !config.getAsBoolean(ConfigDataKey.ADVANCEDBAN_ENABLED) && config.getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) {
+            getLogger().info("LiteBans and AdvancedBan not found. Using the built-in banning system for SimpleProxyChat...");
+            banHelper = new BanHelper(dataDirectory);
+            banHelper.initialize();
+        } else {
+            config.overwrite(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM, false);
+        }
     }
 
     private void registerListeners() {
@@ -228,10 +244,25 @@ public class SimpleProxyChatVelocity {
                 .plugin(this)
                 .build();
 
+        CommandMeta banCommand = commandManager.metaBuilder("spc-ban")
+                .aliases("spcban")
+                .plugin(this)
+                .build();
+
+        CommandMeta unbanCommand = commandManager.metaBuilder("spc-unban")
+                .aliases("spcunban")
+                .plugin(this)
+                .build();
+
         commandManager.register(reloadCommand, new VelocityReloadCommand(this, config));
         commandManager.register(chatToggleCommand, new VelocityChatToggleCommand(this, config));
         commandManager.register(whisperCommand, new VelocityWhisperCommand(this, config));
         commandManager.register(replyCommand, new VelocityReplyCommand(this, config));
+
+        if (config.getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) {
+            commandManager.register(banCommand, new VelocityBanCommand(this));
+            commandManager.register(unbanCommand, new VelocityUnbanCommand(this));
+        }
     }
 
     @Subscribe(order = PostOrder.LAST)
