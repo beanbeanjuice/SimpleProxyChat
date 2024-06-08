@@ -11,8 +11,10 @@ import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
+import com.velocitypowered.api.event.connection.PreLoginEvent;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
+import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import de.myzelyam.api.vanish.VelocityVanishAPI;
@@ -87,6 +89,16 @@ public class VelocityServerListener {
                 return null;
             });
         })).delay(updateInterval, TimeUnit.SECONDS).repeat(updateInterval, TimeUnit.SECONDS).schedule();
+    }
+
+    @Subscribe
+    public void onPreLoginEvent(PreLoginEvent event) {
+        String playerName = event.getUsername();
+
+        if (!plugin.getConfig().getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) return;
+        if (!plugin.getBanHelper().isBanned(playerName)) return;
+
+        event.setResult(PreLoginEvent.PreLoginComponentResult.denied(Helper.stringToComponent("&cYou are banned from the proxy.")));
     }
 
     @Subscribe

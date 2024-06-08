@@ -92,7 +92,7 @@ public class Config {
 
     private void readConfig() throws IOException {
         // config.yml
-        config.put(ConfigDataKey.USE_DISCORD, Boolean.valueOf(yamlConfig.getString("use-discord")));
+        config.put(ConfigDataKey.USE_DISCORD, yamlConfig.getBoolean("use-discord"));
         config.put(ConfigDataKey.BOT_TOKEN, yamlConfig.getString("BOT-TOKEN"));
         config.put(ConfigDataKey.CHANNEL_ID, yamlConfig.getString("CHANNEL-ID"));
         config.put(ConfigDataKey.BOT_ACTIVITY_TYPE, yamlConfig.getString("bot-activity.type"));
@@ -111,8 +111,9 @@ public class Config {
         config.put(ConfigDataKey.TIMESTAMP_USE_API, yamlConfig.getBoolean("timestamp.use-api"));
         config.put(ConfigDataKey.TIMESTAMP_FORMAT, yamlConfig.getString("timestamp.format"));
         config.put(ConfigDataKey.TIMESTAMP_TIMEZONE, yamlConfig.getString("timestamp.timezone"));
-        config.put(ConfigDataKey.USE_HELPER, Boolean.valueOf(yamlConfig.getString("use-helper")));
-        config.put(ConfigDataKey.UPDATE_NOTIFICATIONS, Boolean.valueOf(yamlConfig.getString("update-notifications")));
+        config.put(ConfigDataKey.USE_HELPER, yamlConfig.getBoolean("use-helper"));
+        config.put(ConfigDataKey.UPDATE_NOTIFICATIONS, yamlConfig.getBoolean("update-notifications"));
+        config.put(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM, yamlConfig.getBoolean("use-simple-proxy-chat-banning-system"));
 
         ArrayList<String> whisperAliases = (ArrayList<String>) yamlConfig.getStringList("commands.whisper-aliases");
         config.put(ConfigDataKey.WHISPER_ALIASES, whisperAliases);
@@ -162,6 +163,10 @@ public class Config {
         putMessage(ConfigDataKey.MINECRAFT_COMMAND_CHAT_LOCK_SINGLE_UNLOCKED, "minecraft.command.chat-lock.single.unlocked", false);
         putMessage(ConfigDataKey.MINECRAFT_COMMAND_CHAT_LOCK_ALL_LOCKED, "minecraft.command.chat-lock.all.locked", false);
         putMessage(ConfigDataKey.MINECRAFT_COMMAND_CHAT_LOCK_ALL_UNLOCKED, "minecraft.command.chat-lock.all.unlocked", false);
+        putMessage(ConfigDataKey.MINECRAFT_COMMAND_PROXY_BAN_USAGE, "minecraft.command.proxy-ban.usage", false);
+        putMessage(ConfigDataKey.MINECRAFT_COMMAND_PROXY_BAN_BANNED, "minecraft.command.proxy-ban.banned", false);
+        putMessage(ConfigDataKey.MINECRAFT_COMMAND_PROXY_BAN_UNBANNED, "minecraft.command.proxy-ban.unbanned", false);
+        putMessage(ConfigDataKey.MINECRAFT_COMMAND_PROXY_BAN_LOGIN_MESSAGE, "minecraft.command.proxy-ban.login-message", false);
 
         config.put(ConfigDataKey.DISCORD_JOIN_ENABLED, yamlMessages.getBoolean("discord.join.enabled"));
         putMessage(ConfigDataKey.DISCORD_JOIN_MESSAGE, "discord.join.message", true);
