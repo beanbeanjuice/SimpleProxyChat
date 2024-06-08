@@ -1,7 +1,7 @@
 package com.beanbeanjuice.simpleproxychat.utility.status;
 
 import com.beanbeanjuice.simpleproxychat.discord.Bot;
-import com.beanbeanjuice.simpleproxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import net.dv8tion.jda.api.EmbedBuilder;

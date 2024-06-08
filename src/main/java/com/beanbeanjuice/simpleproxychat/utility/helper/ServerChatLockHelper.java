@@ -1,4 +1,4 @@
-package com.beanbeanjuice.simpleproxychat.utility;
+package com.beanbeanjuice.simpleproxychat.utility.helper;
 
 import java.util.HashSet;
 

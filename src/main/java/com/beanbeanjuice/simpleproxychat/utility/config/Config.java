@@ -1,7 +1,7 @@
 package com.beanbeanjuice.simpleproxychat.utility.config;
 
-import com.beanbeanjuice.simpleproxychat.utility.Helper;
-import com.beanbeanjuice.simpleproxychat.utility.ServerChatLockHelper;
+import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.helper.ServerChatLockHelper;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
@@ -95,6 +95,7 @@ public class Config {
         config.put(ConfigDataKey.USE_DISCORD, yamlConfig.getBoolean("use-discord"));
         config.put(ConfigDataKey.BOT_TOKEN, yamlConfig.getString("BOT-TOKEN"));
         config.put(ConfigDataKey.CHANNEL_ID, yamlConfig.getString("CHANNEL-ID"));
+        config.put(ConfigDataKey.BOT_ACTIVITY_STATUS, yamlConfig.getString("bot-activity.status"));
         config.put(ConfigDataKey.BOT_ACTIVITY_TYPE, yamlConfig.getString("bot-activity.type"));
         config.put(ConfigDataKey.BOT_ACTIVITY_TEXT, yamlConfig.getString("bot-activity.text"));
         config.put(ConfigDataKey.SERVER_UPDATE_INTERVAL, yamlConfig.getInt("server-update-interval"));
@@ -141,6 +142,7 @@ public class Config {
         putMessage(ConfigDataKey.MINECRAFT_LEAVE, "minecraft.leave.message", false);
         config.put(ConfigDataKey.MINECRAFT_CHAT_ENABLED, yamlMessages.getBoolean("minecraft.chat.enabled"));
         putMessage(ConfigDataKey.MINECRAFT_CHAT_MESSAGE, "minecraft.chat.message", false);
+        putMessage(ConfigDataKey.MINECRAFT_CHAT_VANISHED_MESSAGE, "minecraft.chat.vanished", false);
         config.put(ConfigDataKey.MINECRAFT_SWITCH_ENABLED, yamlMessages.getBoolean("minecraft.switch.enabled"));
         putMessage(ConfigDataKey.MINECRAFT_SWITCH_DEFAULT, "minecraft.switch.default", false);
         putMessage(ConfigDataKey.MINECRAFT_SWITCH_SHORT, "minecraft.switch.no-from", false);
