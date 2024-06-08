@@ -6,6 +6,7 @@ import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
@@ -141,6 +142,7 @@ public class Bot {
         sendProxyStatus(true);
 
         this.updateActivity();
+        this.updateStatus();
 
         runnables.forEach(Runnable::run);
     }
@@ -158,6 +160,19 @@ public class Bot {
                 text = "CONFIG ERROR";
             }
             jda.getPresence().setActivity(Activity.of(type, text));
+        });
+    }
+
+    public void updateStatus() {
+        this.getJDA().ifPresent((jda) -> {
+            OnlineStatus status;
+
+            try {
+                status = OnlineStatus.valueOf(config.getAsString(ConfigDataKey.BOT_ACTIVITY_STATUS));
+            } catch (Exception e) {
+                status = OnlineStatus.IDLE;
+            }
+            jda.getPresence().setStatus(status);
         });
     }
 

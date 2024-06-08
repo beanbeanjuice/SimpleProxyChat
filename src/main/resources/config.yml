@@ -15,6 +15,8 @@ BOT-TOKEN: "TOKEN_HERE"
 CHANNEL-ID: "GLOBAL_CHANNEL_ID"
 
 bot-activity:
+  # Valid Types: ONLINE, DO_NOT_DISTURB, IDLE, INVISIBLE
+  status: ONLINE
   # Valid Types: PLAYING, STREAMING, LISTENING, WATCHING, COMPETING
   type: "COMPETING"
   text: "SimpleProxyChat by beanbeanjuice"

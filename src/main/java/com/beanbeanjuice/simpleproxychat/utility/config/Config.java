@@ -95,6 +95,7 @@ public class Config {
         config.put(ConfigDataKey.USE_DISCORD, Boolean.valueOf(yamlConfig.getString("use-discord")));
         config.put(ConfigDataKey.BOT_TOKEN, yamlConfig.getString("BOT-TOKEN"));
         config.put(ConfigDataKey.CHANNEL_ID, yamlConfig.getString("CHANNEL-ID"));
+        config.put(ConfigDataKey.BOT_ACTIVITY_STATUS, yamlConfig.getString("bot-activity.status"));
         config.put(ConfigDataKey.BOT_ACTIVITY_TYPE, yamlConfig.getString("bot-activity.type"));
         config.put(ConfigDataKey.BOT_ACTIVITY_TEXT, yamlConfig.getString("bot-activity.text"));
         config.put(ConfigDataKey.SERVER_UPDATE_INTERVAL, yamlConfig.getInt("server-update-interval"));
