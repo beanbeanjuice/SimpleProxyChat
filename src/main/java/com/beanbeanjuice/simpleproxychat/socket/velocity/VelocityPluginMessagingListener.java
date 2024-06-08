@@ -1,7 +1,7 @@
 package com.beanbeanjuice.simpleproxychat.socket.velocity;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity;
-import com.beanbeanjuice.simpleproxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.MessageType;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.velocity.VelocityServerListener;
 import com.google.common.io.ByteArrayDataInput;

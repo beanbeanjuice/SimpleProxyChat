@@ -1,7 +1,7 @@
 package com.beanbeanjuice.simpleproxychat.commands.velocity;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity;
-import com.beanbeanjuice.simpleproxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
@@ -18,9 +18,9 @@ public class VelocityChatToggleCommand implements SimpleCommand {
     private final SimpleProxyChatVelocity plugin;
     private final Config config;
 
-    public VelocityChatToggleCommand(SimpleProxyChatVelocity plugin, Config config) {
+    public VelocityChatToggleCommand(final SimpleProxyChatVelocity plugin) {
         this.plugin = plugin;
-        this.config = config;
+        this.config = plugin.getConfig();
     }
 
     @Override

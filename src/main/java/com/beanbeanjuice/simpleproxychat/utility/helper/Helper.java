@@ -1,7 +1,10 @@
-package com.beanbeanjuice.simpleproxychat.utility;
+package com.beanbeanjuice.simpleproxychat.utility.helper;
 
+import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import de.myzelyam.api.vanish.BungeeVanishAPI;
+import de.myzelyam.api.vanish.VelocityVanishAPI;
 import litebans.api.Database;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
