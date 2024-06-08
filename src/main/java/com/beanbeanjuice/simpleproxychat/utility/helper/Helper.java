@@ -93,11 +93,13 @@ public class Helper {
     }
 
     public static BaseComponent[] convertToBungee(String message) {
+        message = translateLegacyCodes(message);
         Component minimessage = MiniMessage.miniMessage().deserialize(message);
         return BungeeComponentSerializer.get().serialize(minimessage);
     }
 
     public static Component stringToComponent(String string) {
+        string = translateLegacyCodes(string);
         return MiniMessage.miniMessage().deserialize(string);
     }
 
