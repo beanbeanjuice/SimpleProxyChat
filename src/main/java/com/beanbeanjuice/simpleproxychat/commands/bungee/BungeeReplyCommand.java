@@ -1,7 +1,7 @@
 package com.beanbeanjuice.simpleproxychat.commands.bungee;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
-import com.beanbeanjuice.simpleproxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;

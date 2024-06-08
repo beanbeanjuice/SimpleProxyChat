@@ -1,12 +1,9 @@
 package com.beanbeanjuice.simpleproxychat;
 
-import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityChatToggleCommand;
-import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityReloadCommand;
-import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityReplyCommand;
-import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityWhisperCommand;
+import com.beanbeanjuice.simpleproxychat.commands.velocity.*;
 import com.beanbeanjuice.simpleproxychat.socket.velocity.VelocityPluginMessagingListener;
 import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;
-import com.beanbeanjuice.simpleproxychat.utility.WhisperHandler;
+import com.beanbeanjuice.simpleproxychat.utility.helper.WhisperHandler;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.epoch.EpochHelper;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
@@ -14,7 +11,7 @@ import com.google.inject.Inject;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.velocity.VelocityServerListener;
 import com.beanbeanjuice.simpleproxychat.discord.Bot;
-import com.beanbeanjuice.simpleproxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.velocitypowered.api.command.CommandManager;
@@ -228,10 +225,10 @@ public class SimpleProxyChatVelocity {
                 .plugin(this)
                 .build();
 
-        commandManager.register(reloadCommand, new VelocityReloadCommand(this, config));
-        commandManager.register(chatToggleCommand, new VelocityChatToggleCommand(this, config));
-        commandManager.register(whisperCommand, new VelocityWhisperCommand(this, config));
-        commandManager.register(replyCommand, new VelocityReplyCommand(this, config));
+        commandManager.register(reloadCommand, new VelocityReloadCommand(this));
+        commandManager.register(chatToggleCommand, new VelocityChatToggleCommand(this));
+        commandManager.register(whisperCommand, new VelocityWhisperCommand(this));
+        commandManager.register(replyCommand, new VelocityReplyCommand(this));
     }
 
     @Subscribe(order = PostOrder.LAST)
