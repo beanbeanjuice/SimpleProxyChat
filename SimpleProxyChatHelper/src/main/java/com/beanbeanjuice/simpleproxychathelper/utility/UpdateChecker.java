@@ -1,5 +1,7 @@
 package com.beanbeanjuice.simpleproxychathelper.utility;
 
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -27,15 +29,22 @@ public class UpdateChecker {
 
     public void checkUpdate() {
         getUpdate().ifPresent((spigotVersion) -> {
-            if (currentVersion.equalsIgnoreCase(spigotVersion)) return;
+            if (compare(currentVersion, spigotVersion) >= 0) return;
 
-            String message = String.format("[SimpleProxyChat] There is an update! You are on %s. The new one is %s! %s",
+            String message = String.format("There is an update! You are on %s. The new one is %s! %s",
                     currentVersion,
                     spigotVersion,
                     "https://www.spigotmc.org/resources/116966/");
 
             notifyFunction.accept(message);
         });
+    }
+
+    public static int compare(final String version1, final String version2) {
+        DefaultArtifactVersion v1 = new DefaultArtifactVersion(version1);
+        DefaultArtifactVersion v2 = new DefaultArtifactVersion(version2);
+
+        return v1.compareTo(v2);
     }
 
 }
