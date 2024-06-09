@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.beanbeanjuice"
-version = "0.0.1"
+version = "0.0.2"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -47,6 +47,12 @@ dependencies {
     // Lombok
     compileOnly("org.projectlombok", "lombok", "1.18.32")
     annotationProcessor("org.projectlombok", "lombok", "1.18.32")
+
+    // bStats
+    implementation("org.bstats", "bstats-bukkit", "3.0.2")
+
+    // Artifact Version Comparison
+    implementation("org.apache.maven", "maven-artifact", "3.9.7")
 }
 
 configure<ProcessResources>("processResources") {
@@ -61,6 +67,8 @@ inline fun <reified C> Project.configure(name: String, configuration: C.() -> Un
 
 tasks.withType<ShadowJar> {
     minimize()
+    relocate("org.bstats", "com.beanbeanjuice.simpleproxychathelper.libs.org.bstats")
+    relocate("org.apache.maven", "com.beanbeanjuice.simpleproxychathelper.libs.org.apache.maven")
     archiveBaseName.set(rootProject.name)
     archiveClassifier.set("")
     archiveVersion.set(version as String)

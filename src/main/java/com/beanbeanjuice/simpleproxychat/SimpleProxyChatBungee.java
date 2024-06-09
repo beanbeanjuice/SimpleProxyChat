@@ -1,9 +1,12 @@
 package com.beanbeanjuice.simpleproxychat;
 
-import com.beanbeanjuice.simpleproxychat.commands.bungee.BungeeChatToggleCommand;
-import com.beanbeanjuice.simpleproxychat.commands.bungee.BungeeReloadCommand;
+import com.beanbeanjuice.simpleproxychat.commands.bungee.*;
+import com.beanbeanjuice.simpleproxychat.commands.bungee.ban.BungeeBanCommand;
+import com.beanbeanjuice.simpleproxychat.commands.bungee.ban.BungeeUnbanCommand;
 import com.beanbeanjuice.simpleproxychat.socket.bungee.BungeeCordPluginMessagingListener;
-import com.beanbeanjuice.simpleproxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.helper.WhisperHandler;
+import com.beanbeanjuice.simpleproxychat.utility.BanHelper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.epoch.EpochHelper;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeServerListener;
@@ -34,6 +37,8 @@ public final class SimpleProxyChatBungee extends Plugin {
     @Getter private Bot discordBot;
     @Getter private Metrics metrics;
     @Getter private BungeeServerListener serverListener;
+    @Getter private WhisperHandler whisperHandler;
+    @Getter private BanHelper banHelper;
 
     @Override
     public void onEnable() {
@@ -73,8 +78,7 @@ public final class SimpleProxyChatBungee extends Plugin {
 
         // bStats Stuff
         this.getLogger().info("Starting bStats... (IF ENABLED)");
-        int pluginId = 21146;
-        this.metrics = new Metrics(this, pluginId);
+        this.metrics = new Metrics(this, 21146);
 
         startPluginMessaging();
 
@@ -103,6 +107,8 @@ public final class SimpleProxyChatBungee extends Plugin {
                 config,
                 currentVersion,
                 (message) -> {
+                    if (!config.getAsBoolean(ConfigDataKey.UPDATE_NOTIFICATIONS)) return;
+
                     this.getLogger().info(Helper.sanitize(message));
 
                     Component minimessage = MiniMessage.miniMessage().deserialize(config.getAsString(ConfigDataKey.PLUGIN_PREFIX) + message);
@@ -149,6 +155,15 @@ public final class SimpleProxyChatBungee extends Plugin {
             config.overwrite(ConfigDataKey.NETWORKMANAGER_ENABLED, true);
             getLogger().info("NetworkManager support has been enabled.");
         }
+
+        // Registering the Simple Ban System
+        if (!config.getAsBoolean(ConfigDataKey.LITEBANS_ENABLED) && !config.getAsBoolean(ConfigDataKey.ADVANCEDBAN_ENABLED) && config.getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) {
+            getLogger().info("LiteBans and AdvancedBan not found. Using the built-in banning system for SimpleProxyChat...");
+            banHelper = new BanHelper(this.getDataFolder());
+            banHelper.initialize();
+        } else {
+            config.overwrite(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM, false);
+        }
     }
 
     private void registerListeners() {
@@ -163,11 +178,21 @@ public final class SimpleProxyChatBungee extends Plugin {
 
         serverListener = new BungeeServerListener(this, chatHandler);
         this.getProxy().getPluginManager().registerListener(this, serverListener);
+
+        whisperHandler = new WhisperHandler();
     }
 
     private void registerCommands() {
         this.getProxy().getPluginManager().registerCommand(this, new BungeeReloadCommand(this, config));
         this.getProxy().getPluginManager().registerCommand(this, new BungeeChatToggleCommand(this, config));
+        this.getProxy().getPluginManager().registerCommand(this, new BungeeWhisperCommand(this, config, config.getAsArrayList(ConfigDataKey.WHISPER_ALIASES).toArray(new String[0])));
+        this.getProxy().getPluginManager().registerCommand(this, new BungeeReplyCommand(this, config, config.getAsArrayList(ConfigDataKey.REPLY_ALIASES).toArray(new String[0])));
+
+        // Only enable when needed.
+        if (config.getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) {
+            this.getProxy().getPluginManager().registerCommand(this, new BungeeBanCommand(this));
+            this.getProxy().getPluginManager().registerCommand(this, new BungeeUnbanCommand(this));
+        }
     }
 
     private void startPluginMessaging() {

@@ -2,8 +2,15 @@ package com.beanbeanjuice.simpleproxychat;
 
 import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityChatToggleCommand;
 import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityReloadCommand;
+import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityReplyCommand;
+import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityWhisperCommand;
+import com.beanbeanjuice.simpleproxychat.commands.velocity.ban.VelocityBanCommand;
+import com.beanbeanjuice.simpleproxychat.commands.velocity.ban.VelocityUnbanCommand;
+import com.beanbeanjuice.simpleproxychat.commands.velocity.*;
 import com.beanbeanjuice.simpleproxychat.socket.velocity.VelocityPluginMessagingListener;
+import com.beanbeanjuice.simpleproxychat.utility.BanHelper;
 import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;
+import com.beanbeanjuice.simpleproxychat.utility.helper.WhisperHandler;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.epoch.EpochHelper;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
@@ -11,7 +18,7 @@ import com.google.inject.Inject;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.velocity.VelocityServerListener;
 import com.beanbeanjuice.simpleproxychat.discord.Bot;
-import com.beanbeanjuice.simpleproxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.velocitypowered.api.command.CommandManager;
@@ -30,6 +37,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
@@ -42,8 +50,12 @@ public class SimpleProxyChatVelocity {
     @Getter private final Config config;
     @Getter private final EpochHelper epochHelper;
     @Getter private Bot discordBot;
+    @Getter private WhisperHandler whisperHandler;
+    @Getter private BanHelper banHelper;
     private Metrics metrics;
     private VelocityServerListener serverListener;
+
+    private final File dataDirectory;
 
     @Inject
     public SimpleProxyChatVelocity(ProxyServer proxyServer, Logger logger, @DataDirectory Path dataDirectory, Metrics.Factory metricsFactory) {
@@ -52,6 +64,7 @@ public class SimpleProxyChatVelocity {
         this.metricsFactory = metricsFactory;
 
         this.getLogger().info("The plugin is starting.");
+        this.dataDirectory = dataDirectory.toFile();
         this.config = new Config(dataDirectory.toFile());
         this.config.initialize();
 
@@ -98,8 +111,7 @@ public class SimpleProxyChatVelocity {
 
         // bStats Stuff
         this.getLogger().info("Starting bStats... (IF ENABLED)");
-        int pluginId = 21147;
-        this.metrics = metricsFactory.make(this, pluginId);
+        this.metrics = metricsFactory.make(this, 21147);
 
         // Plugin has started.
         this.getLogger().info("The plugin has been started.");
@@ -130,6 +142,7 @@ public class SimpleProxyChatVelocity {
                 config,
                 currentVersion,
                 (message) -> {
+                    if (!config.getAsBoolean(ConfigDataKey.UPDATE_NOTIFICATIONS)) return;
                     this.getLogger().info(Helper.sanitize(message));
                     this.proxyServer.getAllPlayers()
                             .stream()
@@ -176,6 +189,15 @@ public class SimpleProxyChatVelocity {
             config.overwrite(ConfigDataKey.NETWORKMANAGER_ENABLED, true);
             this.getLogger().info("NetworkManager support has been enabled.");
         }
+
+        // Registering the Simple Banning System
+        if (!config.getAsBoolean(ConfigDataKey.LITEBANS_ENABLED) && !config.getAsBoolean(ConfigDataKey.ADVANCEDBAN_ENABLED) && config.getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) {
+            getLogger().info("LiteBans and AdvancedBan not found. Using the built-in banning system for SimpleProxyChat...");
+            banHelper = new BanHelper(dataDirectory);
+            banHelper.initialize();
+        } else {
+            config.overwrite(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM, false);
+        }
     }
 
     private void registerListeners() {
@@ -197,6 +219,8 @@ public class SimpleProxyChatVelocity {
 
         this.proxyServer.getEventManager().register(this, new VelocityPluginMessagingListener(this, serverListener));
         this.proxyServer.getChannelRegistrar().register(VelocityPluginMessagingListener.IDENTIFIER);
+
+        whisperHandler = new WhisperHandler();
     }
 
     private void registerCommands() {
@@ -212,8 +236,36 @@ public class SimpleProxyChatVelocity {
                 .plugin(this)
                 .build();
 
-        commandManager.register(reloadCommand, new VelocityReloadCommand(this, config));
-        commandManager.register(chatToggleCommand, new VelocityChatToggleCommand(this, config));
+        CommandMeta whisperCommand = commandManager.metaBuilder("spc-whisper")
+                .aliases(config.getAsArrayList(ConfigDataKey.WHISPER_ALIASES).toArray(new String[0]))
+                .plugin(this)
+                .build();
+
+        CommandMeta replyCommand = commandManager.metaBuilder("spc-reply")
+                .aliases(config.getAsArrayList(ConfigDataKey.REPLY_ALIASES).toArray(new String[0]))
+                .plugin(this)
+                .build();
+
+        CommandMeta banCommand = commandManager.metaBuilder("spc-ban")
+                .aliases("spcban")
+                .plugin(this)
+                .build();
+
+        CommandMeta unbanCommand = commandManager.metaBuilder("spc-unban")
+                .aliases("spcunban")
+                .plugin(this)
+                .build();
+
+        commandManager.register(reloadCommand, new VelocityReloadCommand(this));
+        commandManager.register(chatToggleCommand, new VelocityChatToggleCommand(this));
+        commandManager.register(whisperCommand, new VelocityWhisperCommand(this));
+        commandManager.register(replyCommand, new VelocityReplyCommand(this));
+
+        // Only enable if the Simple Banning System is enabled.
+        if (config.getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) {
+            commandManager.register(banCommand, new VelocityBanCommand(this));
+            commandManager.register(unbanCommand, new VelocityUnbanCommand(this));
+        }
     }
 
     @Subscribe(order = PostOrder.LAST)

@@ -2,6 +2,8 @@ package com.beanbeanjuice.simpleproxychat.utility;
 
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +34,7 @@ public class UpdateChecker {
 
     public void checkUpdate() {
         getUpdate().ifPresent((spigotVersion) -> {
-            if (currentVersion.equalsIgnoreCase(spigotVersion)) return;
+            if (compare(currentVersion, spigotVersion) >= 0) return;
 
             String message = Helper.replaceKeys(
                     config.getAsString(ConfigDataKey.UPDATE_MESSAGE),
@@ -44,6 +46,13 @@ public class UpdateChecker {
 
             notifyFunction.accept(message);
         });
+    }
+
+    public static int compare(final String version1, final String version2) {
+        DefaultArtifactVersion v1 = new DefaultArtifactVersion(version1);
+        DefaultArtifactVersion v2 = new DefaultArtifactVersion(version2);
+
+        return v1.compareTo(v2);
     }
 
 }
