@@ -18,6 +18,7 @@ import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.TimeUnit;
 
@@ -75,11 +76,15 @@ public class BungeeServerListener implements Listener {
     */
     @EventHandler
     public void onPlayerKick(ServerKickEvent event) {
+        if (event.getState() == ServerKickEvent.State.CONNECTING) return;
+        if (!event.getPlayer().getGroups().contains("successful-connection")) return;
         previousServerHandler.put(event.getPlayer().getName(), event.getKickedFrom());
     }
 
     @EventHandler
     public void onPlayerLeaveProxy(PlayerDisconnectEvent event) {
+        if (!event.getPlayer().getGroups().contains("successful-connection")) return;
+        if (!event.getPlayer().getGroups().contains("not-first-join")) return;
         if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
 
         leave(event.getPlayer(), false);
@@ -114,8 +119,14 @@ public class BungeeServerListener implements Listener {
     }
 
     @EventHandler
+    public void onPostLogin(PostLoginEvent event) {
+        event.getPlayer().addGroups("successful-connection");
+    }
+
+    @EventHandler
     public void onPlayerJoinProxy(ServerConnectedEvent event) {
         if (event.getPlayer().getGroups().contains("not-first-join")) return;  // If not first join, don't do anything.
+        if (!event.getPlayer().getGroups().contains("successful-connection")) return;
         event.getPlayer().addGroups("not-first-join");
 
         if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
@@ -123,7 +134,7 @@ public class BungeeServerListener implements Listener {
         join(event.getPlayer(), event.getServer(), false);
     }
 
-    public void join(ProxiedPlayer player, Server server, boolean isFake) {
+    public void join(ProxiedPlayer player, @Nullable Server server, boolean isFake) {
         // Bungee is "dumb" and needs to be delayed...
         try {
             plugin.getProxy().getScheduler().schedule(
