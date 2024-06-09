@@ -12,9 +12,9 @@ import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.PreLoginEvent;
+import com.velocitypowered.api.event.player.KickedFromServerEvent;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
-import com.velocitypowered.api.event.player.ServerPreConnectEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import de.myzelyam.api.vanish.VelocityVanishAPI;
@@ -72,10 +72,23 @@ public class VelocityServerListener {
         leave(event.getPlayer());
     }
 
+    @Subscribe
+    public void kickedFromServerEvent(KickedFromServerEvent event) {
+        KickedFromServerEvent.ServerKickResult result = event.getResult();
+        if (result.toString().contains("velocity.error.cant-connect")) return;
+        if (event.getServerKickReason().isEmpty()) return;
+        if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && VelocityVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
+
+        leave(event.getPlayer(), event.getServer().getServerInfo().getName());
+    }
+
     protected void leave(Player player) {
-        String serverName = "no-server";
-        if (player.getCurrentServer().isPresent())
-            serverName = player.getCurrentServer().get().getServerInfo().getName();
+        if (player.getCurrentServer().isEmpty()) return;
+
+        leave(player, player.getCurrentServer().get().getServerInfo().getName());
+    }
+
+    protected void leave(Player player, String serverName) {
         chatHandler.runProxyLeaveMessage(player.getUsername(), player.getUniqueId(), serverName, this::sendToAllServers);
     }
 
