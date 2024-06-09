@@ -1,7 +1,7 @@
 package com.beanbeanjuice.simpleproxychat.utility.config;
 
-import com.beanbeanjuice.simpleproxychat.utility.Helper;
-import com.beanbeanjuice.simpleproxychat.utility.ServerChatLockHelper;
+import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.helper.ServerChatLockHelper;
 import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
@@ -15,6 +15,7 @@ import org.joda.time.DateTimeZone;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
@@ -84,12 +85,17 @@ public class Config {
         return (HashMap<String, String>) get(key);
     }
 
+    @SuppressWarnings("unchecked")
+    public ArrayList<String> getAsArrayList(ConfigDataKey key) {
+        return (ArrayList<String>) get(key);
+    }
+
     private void readConfig() throws IOException {
         // config.yml
-        config.put(ConfigDataKey.USE_HELPER, Boolean.valueOf(yamlConfig.getString("use-helper")));
-        config.put(ConfigDataKey.USE_DISCORD, Boolean.valueOf(yamlConfig.getString("use-discord")));
+        config.put(ConfigDataKey.USE_DISCORD, yamlConfig.getBoolean("use-discord"));
         config.put(ConfigDataKey.BOT_TOKEN, yamlConfig.getString("BOT-TOKEN"));
         config.put(ConfigDataKey.CHANNEL_ID, yamlConfig.getString("CHANNEL-ID"));
+        config.put(ConfigDataKey.BOT_ACTIVITY_STATUS, yamlConfig.getString("bot-activity.status"));
         config.put(ConfigDataKey.BOT_ACTIVITY_TYPE, yamlConfig.getString("bot-activity.type"));
         config.put(ConfigDataKey.BOT_ACTIVITY_TEXT, yamlConfig.getString("bot-activity.text"));
         config.put(ConfigDataKey.SERVER_UPDATE_INTERVAL, yamlConfig.getInt("server-update-interval"));
@@ -106,6 +112,14 @@ public class Config {
         config.put(ConfigDataKey.TIMESTAMP_USE_API, yamlConfig.getBoolean("timestamp.use-api"));
         config.put(ConfigDataKey.TIMESTAMP_FORMAT, yamlConfig.getString("timestamp.format"));
         config.put(ConfigDataKey.TIMESTAMP_TIMEZONE, yamlConfig.getString("timestamp.timezone"));
+        config.put(ConfigDataKey.USE_HELPER, yamlConfig.getBoolean("use-helper"));
+        config.put(ConfigDataKey.UPDATE_NOTIFICATIONS, yamlConfig.getBoolean("update-notifications"));
+        config.put(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM, yamlConfig.getBoolean("use-simple-proxy-chat-banning-system"));
+
+        ArrayList<String> whisperAliases = (ArrayList<String>) yamlConfig.getStringList("commands.whisper-aliases");
+        config.put(ConfigDataKey.WHISPER_ALIASES, whisperAliases);
+        ArrayList<String> replyAliases = (ArrayList<String>) yamlConfig.getStringList("commands.reply-aliases");
+        config.put(ConfigDataKey.REPLY_ALIASES, replyAliases);
 
         // Checking timezone.
         try {
@@ -128,9 +142,13 @@ public class Config {
         putMessage(ConfigDataKey.MINECRAFT_LEAVE, "minecraft.leave.message", false);
         config.put(ConfigDataKey.MINECRAFT_CHAT_ENABLED, yamlMessages.getBoolean("minecraft.chat.enabled"));
         putMessage(ConfigDataKey.MINECRAFT_CHAT_MESSAGE, "minecraft.chat.message", false);
+        putMessage(ConfigDataKey.MINECRAFT_CHAT_VANISHED_MESSAGE, "minecraft.chat.vanished", false);
         config.put(ConfigDataKey.MINECRAFT_SWITCH_ENABLED, yamlMessages.getBoolean("minecraft.switch.enabled"));
         putMessage(ConfigDataKey.MINECRAFT_SWITCH_DEFAULT, "minecraft.switch.default", false);
         putMessage(ConfigDataKey.MINECRAFT_SWITCH_SHORT, "minecraft.switch.no-from", false);
+        putMessage(ConfigDataKey.MINECRAFT_WHISPER_SEND, "minecraft.whisper.send", false);
+        putMessage(ConfigDataKey.MINECRAFT_WHISPER_RECEIVE, "minecraft.whisper.receive", false);
+        putMessage(ConfigDataKey.MINECRAFT_WHISPER_ERROR, "minecraft.whisper.error", false);
         config.put(ConfigDataKey.MINECRAFT_DISCORD_ENABLED, yamlMessages.getBoolean("minecraft.discord.enabled"));
         putMessage(ConfigDataKey.MINECRAFT_DISCORD_MESSAGE, "minecraft.discord.message", true);
         config.put(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE, yamlMessages.getBoolean("minecraft.discord.embed.use"));
@@ -147,6 +165,10 @@ public class Config {
         putMessage(ConfigDataKey.MINECRAFT_COMMAND_CHAT_LOCK_SINGLE_UNLOCKED, "minecraft.command.chat-lock.single.unlocked", false);
         putMessage(ConfigDataKey.MINECRAFT_COMMAND_CHAT_LOCK_ALL_LOCKED, "minecraft.command.chat-lock.all.locked", false);
         putMessage(ConfigDataKey.MINECRAFT_COMMAND_CHAT_LOCK_ALL_UNLOCKED, "minecraft.command.chat-lock.all.unlocked", false);
+        putMessage(ConfigDataKey.MINECRAFT_COMMAND_PROXY_BAN_USAGE, "minecraft.command.proxy-ban.usage", false);
+        putMessage(ConfigDataKey.MINECRAFT_COMMAND_PROXY_BAN_BANNED, "minecraft.command.proxy-ban.banned", false);
+        putMessage(ConfigDataKey.MINECRAFT_COMMAND_PROXY_BAN_UNBANNED, "minecraft.command.proxy-ban.unbanned", false);
+        putMessage(ConfigDataKey.MINECRAFT_COMMAND_PROXY_BAN_LOGIN_MESSAGE, "minecraft.command.proxy-ban.login-message", false);
 
         config.put(ConfigDataKey.DISCORD_JOIN_ENABLED, yamlMessages.getBoolean("discord.join.enabled"));
         putMessage(ConfigDataKey.DISCORD_JOIN_MESSAGE, "discord.join.message", true);

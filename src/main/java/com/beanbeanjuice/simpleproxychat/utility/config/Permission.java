@@ -12,7 +12,10 @@ public enum Permission {
     READ_UPDATE_NOTIFICATION("simpleproxychat.read.update"),
     COMMAND_TOGGLE_CHAT("simpleproxychat.toggle.chat"),
     COMMAND_TOGGLE_CHAT_ALL("simpleproxychat.toggle.chat.all"),
-    COMMAND_RELOAD("simpleproxychat.reload");
+    COMMAND_RELOAD("simpleproxychat.reload"),
+    COMMAND_BAN("simpleproxychat.ban"),
+    COMMAND_UNBAN("simpleproxychat.unban"),
+    COMMAND_WHISPER("simpleproxychat.whisper");
 
     @Getter private final String permissionNode;
 
