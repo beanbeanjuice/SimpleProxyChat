@@ -12,7 +12,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.Collection;
 
-import static com.beanbeanjuice.simpleproxychat.utility.Helper.convertToBungee;
+import static com.beanbeanjuice.simpleproxychat.utility.helper.Helper.convertToBungee;
 
 public class BungeeChatMessageData extends ChatMessageData {
 

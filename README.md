@@ -2,7 +2,7 @@
   <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/SimpleProxyChat.png?raw=true" alt="SimpleProxyChat Logo"/>
 </p>
 <center>
-  A simple plugin to allow <b>global</b> <i>cross-server</i> communication and messaging with support for <b>PlaceholderAPI</b>, <b>LuckPerms</b>, <b>LiteBans</b>, <b>AdvancedBan</b>, <b>NetworkManager</b>, and <b>Discord</b>.
+  This is a Bungeecord Chat Sync, Velocity Chat Sync, and Proxy Chat Sync plugin. It is a simple plugin to allow <b>global</b> <i>cross-server</i> communication and messaging with support for <b>PlaceholderAPI</b>, <b>LuckPerms</b>, <b>LiteBans</b>, <b>AdvancedBan</b>, <b>NetworkManager</b>, and <b>Discord</b>.
 </center>
 
 ---
@@ -90,9 +90,11 @@ BOT-TOKEN: "TOKEN_HERE"
 CHANNEL-ID: "GLOBAL_CHANNEL_ID"
 
 bot-activity:
-  # Valid Types: PLAYING, STREAMING, LISTENING, WATCHING, COMPETING
-  type: "COMPETING"
-  text: "SimpleProxyChat by beanbeanjuice"
+   # Valid Types: ONLINE, DO_NOT_DISTURB, IDLE, INVISIBLE
+   status: ONLINE
+   # Valid Types: PLAYING, STREAMING, LISTENING, WATCHING, COMPETING
+   type: "COMPETING"
+   text: "SimpleProxyChat by beanbeanjuice"
 
 # The amount of seconds to check if a server is online/offline.
 # Smaller numbers can cause errors. Beware.
@@ -102,9 +104,9 @@ server-update-interval: 3
 # It MUST be the same name you have in your bungee/velocity config.
 # Simply set it to disabled: disabled to disable it.
 aliases:
-  ServerInConfigExample: ServerAliasExample
-  hub: Hub1
-  smp: smp1
+   ServerInConfigExample: ServerAliasExample
+   hub: Hub1
+   smp: smp1
 
 # Whether to use the permission system.
 # Some permissions (denoted with ➕) are always active even if this is false.
@@ -117,6 +119,9 @@ aliases:
 # simpleproxychat.toggle.chat - Toggle proxy chat for a single server. ➕
 # simpleproxychat.toggle.chat.all - Toggle proxy chat for all servers. ➕
 # simpleproxychat.reload - Reload the config. ➕
+# simpleproxychat.ban - Ban a player from the proxy. ➕
+# simpleproxychat.unban - Unban a player from the proxy. ➕
+# simpleproxychat.whisper - Whisper to another player on the proxy. ➕
 use-permissions: false
 
 # Only messages that start with this character will be sent through the plugin.
@@ -134,18 +139,32 @@ use-fake-messages: true
 # Format: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
 # Timezone: https://www.joda.org/joda-time/timezones.html
 timestamp:
-  # If your server is prone to getting off-sync on the time you can use an API.
-  # WARNING: Using the API will make messages somewhat longer to send.
-  # Additionally, the maximum accuracy will only be up to 1 minute, rather than seconds.
-  use-api: false
-  format: "hh:mm a"
-  timezone: "America/Los_Angeles"
+   # If your server is prone to getting off-sync on the time you can use an API.
+   # WARNING: Using the API will make messages somewhat longer to send.
+   # Additionally, the maximum accuracy will only be up to 1 minute, rather than seconds.
+   use-api: false
+   format: "hh:mm a"
+   timezone: "America/Los_Angeles"
 
 # True if you will be using the helper plugin.
 use-helper: false
 
+update-notifications: true
+
+# It is HIGHLY recommended to use a more robust proxy-wide banning system such as LiteBans or AdvancedBan.
+# However, if you would rather a light-weight, simple, banning system. You can enable it here.
+# A FULL PROXY RESTART IS REQUIRED TO USE THIS.
+use-simple-proxy-chat-banning-system: false
+
+# These require a restart in order to take place.
+commands:
+   whisper-aliases:
+      - "spc-msg"
+   reply-aliases:
+      - "spc-r"
+
 # DO NOT TOUCH THIS
-file-version: 10
+file-version: 12
 ```
 
 **messages.yml**
@@ -171,10 +190,15 @@ minecraft:
    chat:
       enabled: true
       message: "&8[&3%server%&8] &e%player% &9» &7%message%"
+      vanished: "&cYou cannot send proxy messages while vanished. Your message must end with a '&e/&c' to speak."
    switch:
       enabled: true
       default: "&e%player% &7moved from &c%from% &7to &a%to%&7."
       no-from: "&e%player% &7moved &7to &a%to%&7."
+   whisper:
+      send: "&8[&dyou&8] &f⇒ &8[&d%receiver%&8] &9» &e%message%"
+      receive: "&8[&d%sender%&8] &f⇒ &8[&dyou&8] &9» &e%message%"
+      error: "&c/spc-whisper (user) (message)"
    discord:
       enabled: true
       message: "**%server%** %player% » %message%"
@@ -197,6 +221,11 @@ minecraft:
          all:
             locked: "%plugin-prefix% &cAll servers will no longer send proxy chat messages."
             unlocked: "%plugin-prefix% &aAll servers will now send proxy chat messages."
+      proxy-ban:
+         usage: "%plugin-prefix% &c/(un)ban (player)"
+         banned: "%plugin-prefix% &c%player% &7has been banned."
+         unbanned: "%plugin-prefix% &c%player% &7has been unbanned."
+         login-message: "&cYou have been banned from the proxy."
 
 # Discord Stuff
 discord:
@@ -243,7 +272,7 @@ console:
 update-message: "&7There is an update! You are on &c%old%. New version is &a%new%&7: &6%link%"
 
 # DO NOT TOUCH THIS
-file-version: 7
+file-version: 8
 ```
 
 ---
@@ -254,6 +283,8 @@ file-version: 7
 
 * `/spc-reload` - Reloads the config files.
 * `/spc-chat` - Lock/unlock the chat.
+* `/spc-whipser` - Send a private message to someone.
+* `/spc-reply` - Reply to a private message without specifying a user.
 
 ---
 
@@ -270,6 +301,9 @@ file-version: 7
 * `simpleproxychat.toggle.chat` - Toggle proxy chat for a single server.
 * `simpleproxychat.toggle.chat.all` - Toggle proxy chat for all servers.
 * `simpleproxychat.reload` - Reload the config.
+* `simpleproxychat.ban` - Ban someone.
+* `simpleproxychat.unban` - Unban someone.
+* `simpleproxychat.whisper` - Private messaging permissions.
 
 ---
 
@@ -285,6 +319,8 @@ file-version: 7
 * `%from%` - The server the player just disconnected from. Uses the alias if one is specified.
 * `%original_from%` - Same as `%from%`, but does not use the alias.
 * `%player%` - The player's Minecraft username.
+* `%sender%` - (PRIVATE MESSAGING ONLY) The person sending the private message.
+* `%receiver%` - (PRIVATE MESSAGING ONLY) The person receiving the private message.
 * `%user%` - The player's Discord username.
 * `%nick%` - The player's Discord nickname.
 * `%role%` - The player's Discord role.

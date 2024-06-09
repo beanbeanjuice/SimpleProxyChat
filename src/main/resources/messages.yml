@@ -19,10 +19,15 @@ minecraft:
   chat:
     enabled: true
     message: "&8[&3%server%&8] &e%player% &9» &7%message%"
+    vanished: "&cYou cannot send proxy messages while vanished. Your message must end with a '&e/&c' to speak."
   switch:
     enabled: true
     default: "&e%player% &7moved from &c%from% &7to &a%to%&7."
     no-from: "&e%player% &7moved &7to &a%to%&7."
+  whisper:
+    send: "&8[&dyou&8] &f⇒ &8[&d%receiver%&8] &9» &e%message%"
+    receive: "&8[&d%sender%&8] &f⇒ &8[&dyou&8] &9» &e%message%"
+    error: "&c/spc-whisper (user) (message)"
   discord:
     enabled: true
     message: "**%server%** %player% » %message%"
@@ -45,6 +50,11 @@ minecraft:
       all:
         locked: "%plugin-prefix% &cAll servers will no longer send proxy chat messages."
         unlocked: "%plugin-prefix% &aAll servers will now send proxy chat messages."
+    proxy-ban:
+      usage: "%plugin-prefix% &c/(un)ban (player)"
+      banned: "%plugin-prefix% &c%player% &7has been banned."
+      unbanned: "%plugin-prefix% &c%player% &7has been unbanned."
+      login-message: "&cYou have been banned from the proxy."
 
 # Discord Stuff
 discord:
@@ -91,4 +101,4 @@ console:
 update-message: "&7There is an update! You are on &c%old%. New version is &a%new%&7: &6%link%"
 
 # DO NOT TOUCH THIS
-file-version: 7
+file-version: 8

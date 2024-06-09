@@ -1,7 +1,7 @@
 package com.beanbeanjuice.simpleproxychat.socket.bungee;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
-import com.beanbeanjuice.simpleproxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.MessageType;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeServerListener;
 import com.google.common.io.ByteArrayDataInput;

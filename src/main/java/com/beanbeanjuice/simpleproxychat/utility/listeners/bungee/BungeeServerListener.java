@@ -3,7 +3,7 @@ package com.beanbeanjuice.simpleproxychat.utility.listeners.bungee;
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
 import com.beanbeanjuice.simpleproxychat.socket.bungee.BungeeChatMessageData;
-import com.beanbeanjuice.simpleproxychat.utility.Helper;
+import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.MessageType;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
@@ -42,7 +42,15 @@ public class BungeeServerListener implements Listener {
         if (event.isCommand() || event.isProxyCommand()) return;
 
         ProxiedPlayer player = (ProxiedPlayer) event.getSender();
-        if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(player)) return;
+        if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(player)) {
+            // TODO: If is allowed to speak in vanisht hen continue.
+            if (!event.getMessage().endsWith("/")) {
+                String errorMessage = plugin.getConfig().getAsString(ConfigDataKey.MINECRAFT_CHAT_VANISHED_MESSAGE);
+                player.sendMessage(ChatMessageType.SYSTEM, Helper.convertToBungee(errorMessage));
+                return;
+            }
+            event.setMessage(event.getMessage().substring(0, event.getMessage().length() - 1));
+        }
         if (!Helper.playerCanChat(plugin.getConfig(), player.getUniqueId(), player.getName())) return;
 
         Server currentServer = (Server) event.getReceiver();
@@ -95,6 +103,17 @@ public class BungeeServerListener implements Listener {
     }
 
     @EventHandler
+    public void onPreLogin(PreLoginEvent event) {
+        String playerName = event.getConnection().getName();
+
+        if (!plugin.getConfig().getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) return;
+        if (!plugin.getBanHelper().isBanned(playerName)) return;
+
+        event.setCancelled(true);
+        event.setReason(Helper.convertToBungee("You are banned from the proxy.")[0]);
+    }
+
+    @EventHandler
     public void onPlayerJoinProxy(ServerConnectedEvent event) {
         if (event.getPlayer().getGroups().contains("not-first-join")) return;  // If not first join, don't do anything.
         event.getPlayer().addGroups("not-first-join");
@@ -110,12 +129,14 @@ public class BungeeServerListener implements Listener {
             plugin.getProxy().getScheduler().schedule(
                     plugin,
                     () -> {
+                        if (server == null || server.getInfo() == null) return;
+
                         previousServerHandler.put(player.getName(), server.getInfo());
 
                         if (isFake) chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), server.getInfo().getName(), this::sendToAllServersVanish);
                         else chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), server.getInfo().getName(), this::sendToAllServers);
                     },
-                    50L, TimeUnit.MILLISECONDS);  // 50ms is 1 tick
+                    50L * 2, TimeUnit.MILLISECONDS);  // 50ms is 1 tick
         } catch (Exception e) {
             plugin.getLogger().warning("BungeeCord error. This is a bungeecord issue and cannot be fixed: " + e.getMessage());
         }
@@ -166,7 +187,10 @@ public class BungeeServerListener implements Listener {
                         return player.hasPermission(permission.getPermissionNode());
                     return true;
                 })
-                .filter((player) -> !Helper.serverHasChatLocked(plugin.getConfig(), player.getServer().getInfo().getName()))
+                .filter((player) -> {
+                    if (player.getServer() == null || player.getServer().getInfo() == null) return false;
+                    return !Helper.serverHasChatLocked(plugin.getConfig(), player.getServer().getInfo().getName());
+                })
                 .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, Helper.convertToBungee(parsedMessage)));
     }
 
