@@ -102,8 +102,8 @@ public class SimpleProxyChatVelocity {
 
                     discordBot.channelUpdaterFunction(numPlayers);
                 })
-                .delay(5, TimeUnit.MINUTES)
-                .repeat(5, TimeUnit.MINUTES)
+                .delay(10, TimeUnit.MINUTES)
+                .repeat(10, TimeUnit.MINUTES)
                 .schedule();
 
         // Start Update Checker
