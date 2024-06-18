@@ -288,6 +288,8 @@ file-version: 9
 * `/spc-chat` - Lock/unlock the chat.
 * `/spc-whipser` - Send a private message to someone.
 * `/spc-reply` - Reply to a private message without specifying a user.
+* `/spc-ban` - Ban a player from the proxy.
+* `/spc-unban` - Unban a player from the proxy.
 * `/spc-broadcast` - Broadcast a message to every player on the network.
 
 ---
