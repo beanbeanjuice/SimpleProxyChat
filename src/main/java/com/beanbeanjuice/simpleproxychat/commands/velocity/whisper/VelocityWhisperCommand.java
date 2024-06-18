@@ -1,4 +1,4 @@
-package com.beanbeanjuice.simpleproxychat.commands.velocity;
+package com.beanbeanjuice.simpleproxychat.commands.velocity.whisper;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;

@@ -226,6 +226,9 @@ minecraft:
          banned: "%plugin-prefix% &c%player% &7has been banned."
          unbanned: "%plugin-prefix% &c%player% &7has been unbanned."
          login-message: "&cYou have been banned from the proxy."
+      broadcast:
+         usage: "%plugin-prefix% &c/spc-broadcast (message)"
+         message: "%plugin-prefix% &8[&a&lBROADCAST&r&8] &6%message%"
 
 # Discord Stuff
 discord:
@@ -272,7 +275,7 @@ console:
 update-message: "&7There is an update! You are on &c%old%. New version is &a%new%&7: &6%link%"
 
 # DO NOT TOUCH THIS
-file-version: 8
+file-version: 9
 ```
 
 ---
@@ -287,6 +290,7 @@ file-version: 8
 * `/spc-reply` - Reply to a private message without specifying a user.
 * `/spc-ban` - Ban a player from the proxy.
 * `/spc-unban` - Unban a player from the proxy.
+* `/spc-broadcast` - Broadcast a message to every player on the network.
 
 ---
 
@@ -306,6 +310,7 @@ file-version: 8
 * `simpleproxychat.ban` - Ban someone.
 * `simpleproxychat.unban` - Unban someone.
 * `simpleproxychat.whisper` - Private messaging permissions.
+* `simpleproxychat.broadcast` - Broadcast a message to everyone on the server.
 
 ---
 
