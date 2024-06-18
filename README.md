@@ -285,6 +285,7 @@ file-version: 8
 * `/spc-chat` - Lock/unlock the chat.
 * `/spc-whipser` - Send a private message to someone.
 * `/spc-reply` - Reply to a private message without specifying a user.
+* `/spc-broadcast` - Broadcast a message to every player on the network.
 
 ---
 
@@ -304,6 +305,7 @@ file-version: 8
 * `simpleproxychat.ban` - Ban someone.
 * `simpleproxychat.unban` - Unban someone.
 * `simpleproxychat.whisper` - Private messaging permissions.
+* `simpleproxychat.broadcast` - Broadcast a message to everyone on the server.
 
 ---
 

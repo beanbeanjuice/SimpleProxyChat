@@ -47,6 +47,7 @@ aliases:
 # simpleproxychat.ban - Ban a player from the proxy. ➕
 # simpleproxychat.unban - Unban a player from the proxy. ➕
 # simpleproxychat.whisper - Whisper to another player on the proxy. ➕
+# simpleproxychat.broadcast - Broadcast a message to everyone on the server. ➕
 use-permissions: false
 
 # Only messages that start with this character will be sent through the plugin.

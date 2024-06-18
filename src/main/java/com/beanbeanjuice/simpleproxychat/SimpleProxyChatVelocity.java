@@ -1,12 +1,12 @@
 package com.beanbeanjuice.simpleproxychat;
 
+import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityBroadcastCommand;
 import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityChatToggleCommand;
 import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityReloadCommand;
-import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityReplyCommand;
-import com.beanbeanjuice.simpleproxychat.commands.velocity.VelocityWhisperCommand;
+import com.beanbeanjuice.simpleproxychat.commands.velocity.whisper.VelocityReplyCommand;
+import com.beanbeanjuice.simpleproxychat.commands.velocity.whisper.VelocityWhisperCommand;
 import com.beanbeanjuice.simpleproxychat.commands.velocity.ban.VelocityBanCommand;
 import com.beanbeanjuice.simpleproxychat.commands.velocity.ban.VelocityUnbanCommand;
-import com.beanbeanjuice.simpleproxychat.commands.velocity.*;
 import com.beanbeanjuice.simpleproxychat.socket.velocity.VelocityPluginMessagingListener;
 import com.beanbeanjuice.simpleproxychat.utility.BanHelper;
 import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;
@@ -256,10 +256,16 @@ public class SimpleProxyChatVelocity {
                 .plugin(this)
                 .build();
 
+        CommandMeta broadcastCommand = commandManager.metaBuilder("spc-broadcast")
+                .aliases("spcbroadcast", "spc-bc", "spcbc")
+                .plugin(this)
+                .build();
+
         commandManager.register(reloadCommand, new VelocityReloadCommand(this));
         commandManager.register(chatToggleCommand, new VelocityChatToggleCommand(this));
         commandManager.register(whisperCommand, new VelocityWhisperCommand(this));
         commandManager.register(replyCommand, new VelocityReplyCommand(this));
+        commandManager.register(broadcastCommand, new VelocityBroadcastCommand(this));
 
         // Only enable if the Simple Banning System is enabled.
         if (config.getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) {
