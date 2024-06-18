@@ -185,10 +185,10 @@ public final class SimpleProxyChatBungee extends Plugin {
     }
 
     private void registerCommands() {
-        this.getProxy().getPluginManager().registerCommand(this, new BungeeReloadCommand(this, config));
-        this.getProxy().getPluginManager().registerCommand(this, new BungeeChatToggleCommand(this, config));
-        this.getProxy().getPluginManager().registerCommand(this, new BungeeWhisperCommand(this, config, config.getAsArrayList(ConfigDataKey.WHISPER_ALIASES).toArray(new String[0])));
-        this.getProxy().getPluginManager().registerCommand(this, new BungeeReplyCommand(this, config, config.getAsArrayList(ConfigDataKey.REPLY_ALIASES).toArray(new String[0])));
+        this.getProxy().getPluginManager().registerCommand(this, new BungeeReloadCommand(this));
+        this.getProxy().getPluginManager().registerCommand(this, new BungeeChatToggleCommand(this));
+        this.getProxy().getPluginManager().registerCommand(this, new BungeeWhisperCommand(this, config.getAsArrayList(ConfigDataKey.WHISPER_ALIASES).toArray(new String[0])));
+        this.getProxy().getPluginManager().registerCommand(this, new BungeeReplyCommand(this, config.getAsArrayList(ConfigDataKey.REPLY_ALIASES).toArray(new String[0])));
         this.getProxy().getPluginManager().registerCommand(this, new BungeeBroadcastCommand(this));
 
         // Only enable when needed.
