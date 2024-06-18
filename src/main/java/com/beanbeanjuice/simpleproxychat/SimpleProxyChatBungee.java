@@ -71,7 +71,7 @@ public final class SimpleProxyChatBungee extends Plugin {
                         .count();
 
             discordBot.channelUpdaterFunction(numPlayers);
-        }, 5, 5, TimeUnit.MINUTES);
+        }, 10, 10, TimeUnit.MINUTES);
 
         // Update Checker
         startUpdateChecker();
