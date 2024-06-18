@@ -21,10 +21,10 @@ public class BungeeWhisperCommand extends Command implements TabExecutor {
     private final SimpleProxyChatBungee plugin;
     private final Config config;
 
-    public BungeeWhisperCommand(SimpleProxyChatBungee plugin, Config config, String... aliases) {
+    public BungeeWhisperCommand(final SimpleProxyChatBungee plugin, String... aliases) {
         super("Spc-whisper", Permission.COMMAND_WHISPER.getPermissionNode(), aliases);
         this.plugin = plugin;
-        this.config = config;
+        this.config = plugin.getConfig();
     }
 
     @Override

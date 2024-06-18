@@ -21,10 +21,10 @@ public class BungeeChatToggleCommand extends Command implements TabExecutor {
     private final SimpleProxyChatBungee plugin;
     private final Config config;
 
-    public BungeeChatToggleCommand(SimpleProxyChatBungee plugin, Config config) {
+    public BungeeChatToggleCommand(final SimpleProxyChatBungee plugin) {
         super("Spc-chat");
         this.plugin = plugin;
-        this.config = config;
+        this.config = plugin.getConfig();
     }
 
     @Override
