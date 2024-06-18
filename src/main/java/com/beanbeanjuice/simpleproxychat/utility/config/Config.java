@@ -169,6 +169,8 @@ public class Config {
         putMessage(ConfigDataKey.MINECRAFT_COMMAND_PROXY_BAN_BANNED, "minecraft.command.proxy-ban.banned", false);
         putMessage(ConfigDataKey.MINECRAFT_COMMAND_PROXY_BAN_UNBANNED, "minecraft.command.proxy-ban.unbanned", false);
         putMessage(ConfigDataKey.MINECRAFT_COMMAND_PROXY_BAN_LOGIN_MESSAGE, "minecraft.command.proxy-ban.login-message", false);
+        putMessage(ConfigDataKey.MINECRAFT_COMMAND_BROADCAST_USAGE, "minecraft.command.broadcast.usage", false);
+        putMessage(ConfigDataKey.MINECRAFT_COMMAND_BROADCAST_MESSAGE, "minecraft.command.broadcast.message", false);
 
         config.put(ConfigDataKey.DISCORD_JOIN_ENABLED, yamlMessages.getBoolean("discord.join.enabled"));
         putMessage(ConfigDataKey.DISCORD_JOIN_MESSAGE, "discord.join.message", true);

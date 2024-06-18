@@ -3,6 +3,8 @@ package com.beanbeanjuice.simpleproxychat;
 import com.beanbeanjuice.simpleproxychat.commands.bungee.*;
 import com.beanbeanjuice.simpleproxychat.commands.bungee.ban.BungeeBanCommand;
 import com.beanbeanjuice.simpleproxychat.commands.bungee.ban.BungeeUnbanCommand;
+import com.beanbeanjuice.simpleproxychat.commands.bungee.whisper.BungeeReplyCommand;
+import com.beanbeanjuice.simpleproxychat.commands.bungee.whisper.BungeeWhisperCommand;
 import com.beanbeanjuice.simpleproxychat.socket.bungee.BungeeCordPluginMessagingListener;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.helper.WhisperHandler;
@@ -187,6 +189,7 @@ public final class SimpleProxyChatBungee extends Plugin {
         this.getProxy().getPluginManager().registerCommand(this, new BungeeChatToggleCommand(this, config));
         this.getProxy().getPluginManager().registerCommand(this, new BungeeWhisperCommand(this, config, config.getAsArrayList(ConfigDataKey.WHISPER_ALIASES).toArray(new String[0])));
         this.getProxy().getPluginManager().registerCommand(this, new BungeeReplyCommand(this, config, config.getAsArrayList(ConfigDataKey.REPLY_ALIASES).toArray(new String[0])));
+        this.getProxy().getPluginManager().registerCommand(this, new BungeeBroadcastCommand(this));
 
         // Only enable when needed.
         if (config.getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) {

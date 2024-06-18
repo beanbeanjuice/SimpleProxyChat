@@ -1,4 +1,4 @@
-package com.beanbeanjuice.simpleproxychat.commands.bungee;
+package com.beanbeanjuice.simpleproxychat.commands.bungee.whisper;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
