@@ -49,4 +49,4 @@ Fixes # (issue)
 - [ ] New and existing Maven CI tests have passed.
 - [ ] The pull request is properly merging into the correct branch.
 - [ ] All existing local code has been pushed to the GitHub repository.
-- [ ] Changes have been documented in the current draft [ProxyChat Releases](https://github.com/beanbeanjuice/SimpleProxyChat/releases) update.
+- [ ] Changes have been documented in the current draft [SimpleProxyChat Releases](https://github.com/beanbeanjuice/SimpleProxyChat/releases) update.
