@@ -122,6 +122,7 @@ aliases:
 # simpleproxychat.ban - Ban a player from the proxy. ➕
 # simpleproxychat.unban - Unban a player from the proxy. ➕
 # simpleproxychat.whisper - Whisper to another player on the proxy. ➕
+# simpleproxychat.broadcast - Broadcast a message to everyone on the server. ➕
 use-permissions: false
 
 # Only messages that start with this character will be sent through the plugin.
@@ -156,6 +157,13 @@ update-notifications: true
 # A FULL PROXY RESTART IS REQUIRED TO USE THIS.
 use-simple-proxy-chat-banning-system: false
 
+# This will store and re-send the last few chat messages when a player switches servers.
+# This is here because sometimes Velocity/Bungee does not keep the previous messages when switching.
+# This WILL retain old formatting if you change the formatting prior to reloading.
+send-previous-messages-on-switch:
+   enabled: false
+   amount: 15
+
 # These require a restart in order to take place.
 commands:
    whisper-aliases:
@@ -164,7 +172,7 @@ commands:
       - "spc-r"
 
 # DO NOT TOUCH THIS
-file-version: 12
+file-version: 13
 ```
 
 **messages.yml**
