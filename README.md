@@ -83,10 +83,10 @@
 # True if you will be using Discord. The reload command does not work with this.
 use-discord: false
 
-# Discord Bot Token (IGNORE IF use_discord = false). The reload command does not work with this.
+# Discord Bot Token (IGNORE IF use_discord = false).
 BOT-TOKEN: "TOKEN_HERE"
 
-# Channel to send Discord messages to (IGNORE IF use_discord = false). The reload command does not work with this.
+# Channel to send Discord messages to (IGNORE IF use_discord = false).
 CHANNEL-ID: "GLOBAL_CHANNEL_ID"
 
 bot-activity:
