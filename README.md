@@ -83,10 +83,10 @@
 # True if you will be using Discord. The reload command does not work with this.
 use-discord: false
 
-# Discord Bot Token (IGNORE IF use_discord = false). The reload command does not work with this.
+# Discord Bot Token (IGNORE IF use_discord = false).
 BOT-TOKEN: "TOKEN_HERE"
 
-# Channel to send Discord messages to (IGNORE IF use_discord = false). The reload command does not work with this.
+# Channel to send Discord messages to (IGNORE IF use_discord = false).
 CHANNEL-ID: "GLOBAL_CHANNEL_ID"
 
 bot-activity:
@@ -122,6 +122,7 @@ aliases:
 # simpleproxychat.ban - Ban a player from the proxy. ➕
 # simpleproxychat.unban - Unban a player from the proxy. ➕
 # simpleproxychat.whisper - Whisper to another player on the proxy. ➕
+# simpleproxychat.broadcast - Broadcast a message to everyone on the server. ➕
 use-permissions: false
 
 # Only messages that start with this character will be sent through the plugin.
@@ -156,6 +157,13 @@ update-notifications: true
 # A FULL PROXY RESTART IS REQUIRED TO USE THIS.
 use-simple-proxy-chat-banning-system: false
 
+# This will store and re-send the last few chat messages when a player switches servers.
+# This is here because sometimes Velocity/Bungee does not keep the previous messages when switching.
+# This WILL retain old formatting if you change the formatting prior to reloading.
+send-previous-messages-on-switch:
+   enabled: false
+   amount: 15
+
 # These require a restart in order to take place.
 commands:
    whisper-aliases:
@@ -164,7 +172,7 @@ commands:
       - "spc-r"
 
 # DO NOT TOUCH THIS
-file-version: 12
+file-version: 13
 ```
 
 **messages.yml**
@@ -226,6 +234,9 @@ minecraft:
          banned: "%plugin-prefix% &c%player% &7has been banned."
          unbanned: "%plugin-prefix% &c%player% &7has been unbanned."
          login-message: "&cYou have been banned from the proxy."
+      broadcast:
+         usage: "%plugin-prefix% &c/spc-broadcast (message)"
+         message: "%plugin-prefix% &8[&a&lBROADCAST&r&8] &6%message%"
 
 # Discord Stuff
 discord:
@@ -272,7 +283,7 @@ console:
 update-message: "&7There is an update! You are on &c%old%. New version is &a%new%&7: &6%link%"
 
 # DO NOT TOUCH THIS
-file-version: 8
+file-version: 9
 ```
 
 ---
@@ -285,6 +296,9 @@ file-version: 8
 * `/spc-chat` - Lock/unlock the chat.
 * `/spc-whipser` - Send a private message to someone.
 * `/spc-reply` - Reply to a private message without specifying a user.
+* `/spc-ban` - Ban a player from the proxy.
+* `/spc-unban` - Unban a player from the proxy.
+* `/spc-broadcast` - Broadcast a message to every player on the network.
 
 ---
 
@@ -304,6 +318,7 @@ file-version: 8
 * `simpleproxychat.ban` - Ban someone.
 * `simpleproxychat.unban` - Unban someone.
 * `simpleproxychat.whisper` - Private messaging permissions.
+* `simpleproxychat.broadcast` - Broadcast a message to everyone on the server.
 
 ---
 
