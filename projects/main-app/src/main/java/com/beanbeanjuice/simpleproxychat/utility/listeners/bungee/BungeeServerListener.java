@@ -175,7 +175,8 @@ public class BungeeServerListener implements Listener {
                                 return streamPlayer.hasPermission(Permission.READ_SWITCH_MESSAGE.getPermissionNode());
                             return true;
                         })
-                        .forEach((streamPlayer) -> streamPlayer.sendMessage(ChatMessageType.CHAT, Helper.convertToBungee(message)))
+                        .forEach((streamPlayer) -> streamPlayer.sendMessage(ChatMessageType.CHAT, Helper.convertToBungee(message))),
+                (message) -> player.sendMessage(ChatMessageType.CHAT, Helper.convertToBungee(message))
         );
     }
 
