@@ -26,6 +26,7 @@ public class Config {
     private YamlDocument yamlMessages;
     private final File configFolder;
     private final HashMap<ConfigDataKey, Object> config;
+    private final ArrayList<Runnable> reloadFunctions;
 
     private boolean initialSetup = true;
     @Getter private final ServerChatLockHelper serverChatLockHelper;
@@ -33,6 +34,7 @@ public class Config {
     public Config(File configFolder) {
         this.configFolder = configFolder;
         config = new HashMap<>();
+        reloadFunctions = new ArrayList<>();
         serverChatLockHelper = new ServerChatLockHelper();
     }
 
@@ -48,11 +50,16 @@ public class Config {
         } catch (IOException ignored) { }
     }
 
+    public void addReloadListener(Runnable runnable) {
+        reloadFunctions.add(runnable);
+    }
+
     public void reload() {
         try {
             yamlConfig.reload();
             yamlMessages.reload();
             readConfig();
+            reloadFunctions.forEach(Runnable::run);
         } catch (IOException ignored) { }
     }
 
@@ -115,6 +122,8 @@ public class Config {
         config.put(ConfigDataKey.USE_HELPER, yamlConfig.getBoolean("use-helper"));
         config.put(ConfigDataKey.UPDATE_NOTIFICATIONS, yamlConfig.getBoolean("update-notifications"));
         config.put(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM, yamlConfig.getBoolean("use-simple-proxy-chat-banning-system"));
+        config.put(ConfigDataKey.SEND_PREVIOUS_MESSAGES_ON_SWITCH_ENABLED, yamlConfig.getBoolean("send-previous-messages-on-switch.enabled"));
+        config.put(ConfigDataKey.SEND_PREVIOUS_MESSAGES_ON_SWITCH_AMOUNT, yamlConfig.getInt("send-previous-messages-on-switch.amount"));
 
         ArrayList<String> whisperAliases = (ArrayList<String>) yamlConfig.getStringList("commands.whisper-aliases");
         config.put(ConfigDataKey.WHISPER_ALIASES, whisperAliases);

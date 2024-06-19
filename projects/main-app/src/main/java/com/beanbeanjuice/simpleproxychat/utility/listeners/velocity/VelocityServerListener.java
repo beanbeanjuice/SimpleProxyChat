@@ -154,7 +154,8 @@ public class VelocityServerListener {
                                 return true;
                             })
                             .forEach((streamPlayer) -> streamPlayer.sendMessage(component));
-                }
+                },
+                (message) -> event.getPlayer().sendMessage(Helper.stringToComponent(message))
         );
     }
 
