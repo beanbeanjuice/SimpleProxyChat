@@ -52,7 +52,6 @@ allprojects {
             name = "placeholder-api-repo"
             url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
         }
-
     }
 
     dependencies {
