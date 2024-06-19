@@ -9,6 +9,7 @@ import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.epoch.EpochHelper;
+import com.beanbeanjuice.simpleproxychat.utility.helper.LastMessagesHelper;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -38,6 +39,7 @@ public class ChatHandler {
     private final Config config;
     private final EpochHelper epochHelper;
     private final Bot discordBot;
+    private final LastMessagesHelper lastMessagesHelper;
 
     private final Consumer<String> globalLogger;
     private final Consumer<String> pluginLogger;
@@ -47,6 +49,7 @@ public class ChatHandler {
         this.config = config;
         this.epochHelper = epochHelper;
         this.discordBot = discordBot;
+        this.lastMessagesHelper = new LastMessagesHelper(config);
 
         this.globalLogger = globalLogger;
         this.pluginLogger = pluginLogger;
@@ -89,7 +92,10 @@ public class ChatHandler {
         }
 
         // Log to Minecraft
-        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_CHAT_ENABLED)) chatMessageData.chatSendToAllOtherPlayers(minecraftMessage);
+        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_CHAT_ENABLED)) {
+            chatMessageData.chatSendToAllOtherPlayers(minecraftMessage);
+            lastMessagesHelper.addMessage(minecraftMessage);
+        }
 
     }
 
@@ -226,7 +232,7 @@ public class ChatHandler {
     }
 
     public void runProxySwitchMessage(String from, String to, String playerName, UUID playerUUID,
-                                      Consumer<String> minecraftLogger) {
+                                      Consumer<String> minecraftLogger, Consumer<String> playerLogger) {
         String consoleConfigString = config.getAsString(ConfigDataKey.MINECRAFT_SWITCH_DEFAULT);
         String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_SWITCH_MESSAGE);
         String minecraftConfigString = config.getAsString(ConfigDataKey.MINECRAFT_SWITCH_SHORT);
@@ -267,8 +273,10 @@ public class ChatHandler {
         }
 
         // Log to Minecraft
-        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_SWITCH_ENABLED))
+        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_SWITCH_ENABLED)) {
             minecraftLogger.accept(minecraftMessage);
+            lastMessagesHelper.getBoundedArrayList().forEach(playerLogger);
+        }
     }
 
     /**
