@@ -39,6 +39,9 @@ public class Bot {
             bot = null;
             return;
         }
+
+        config.addReloadListener(this::updateActivity);
+        config.addReloadListener(this::updateStatus);
     }
 
     public void sendMessage(final String messageToSend) {
