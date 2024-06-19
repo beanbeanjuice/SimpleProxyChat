@@ -1,0 +1,100 @@
+# ==========================================================
+#                       INFORMATION
+#                 HEX Values are Supported
+#  Example: <#FFFFFF>Some text</#FFFFFF> this is a message!
+#         Supports Mini-Message/Legacy Color Codes
+# ==========================================================
+
+# True if you will be using Discord. The reload command does not work with this.
+use-discord: false
+
+# Discord Bot Token (IGNORE IF use_discord = false).
+BOT-TOKEN: "TOKEN_HERE"
+
+# Channel to send Discord messages to (IGNORE IF use_discord = false).
+CHANNEL-ID: "GLOBAL_CHANNEL_ID"
+
+bot-activity:
+  # Valid Types: ONLINE, DO_NOT_DISTURB, IDLE, INVISIBLE
+  status: ONLINE
+  # Valid Types: PLAYING, STREAMING, LISTENING, WATCHING, COMPETING
+  type: "COMPETING"
+  text: "SimpleProxyChat by beanbeanjuice"
+
+# The amount of seconds to check if a server is online/offline.
+# Smaller numbers can cause errors. Beware.
+server-update-interval: 3
+
+# Use this if you want to change the default aliases.
+# It MUST be the same name you have in your bungee/velocity config.
+# Simply set it to disabled: disabled to disable it.
+aliases:
+  ServerInConfigExample: ServerAliasExample
+  hub: Hub1
+  smp: smp1
+
+# Whether to use the permission system.
+# Some permissions (denoted with ➕) are always active even if this is false.
+# simpleproxychat.read.chat - Read chat messages.
+# simpleproxychat.read.join - Read join messages.
+# simpleproxychat.read.leave - Read leave messages.
+# simpleproxychat.read.fake - Read the fake join/leave messages. Players must also have the REAL join/leave permission.
+# simpleproxychat.read.switch - Read switch messages.
+# simpleproxychat.read.update - Read update messages. ➕
+# simpleproxychat.toggle.chat - Toggle proxy chat for a single server. ➕
+# simpleproxychat.toggle.chat.all - Toggle proxy chat for all servers. ➕
+# simpleproxychat.reload - Reload the config. ➕
+# simpleproxychat.ban - Ban a player from the proxy. ➕
+# simpleproxychat.unban - Unban a player from the proxy. ➕
+# simpleproxychat.whisper - Whisper to another player on the proxy. ➕
+# simpleproxychat.broadcast - Broadcast a message to everyone on the server. ➕
+use-permissions: false
+
+# Only messages that start with this character will be sent through the plugin.
+# Set to '' to disable.
+# Example: If it is set to '$', then when a player sends $hello, it will be sent through the proxy.
+proxy-message-prefix: ''
+
+# Whether to send if the statuses of the servers connected to the proxy when the proxy starts up.
+# THIS IS FOR DISCORD MESSAGES ONLY.
+use-initial-server-status: true
+
+# Whether to send a fake join/leave message when vanishing/unvanishing.
+use-fake-messages: true
+
+# Format: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
+# Timezone: https://www.joda.org/joda-time/timezones.html
+timestamp:
+  # If your server is prone to getting off-sync on the time you can use an API.
+  # WARNING: Using the API will make messages somewhat longer to send.
+  # Additionally, the maximum accuracy will only be up to 1 minute, rather than seconds.
+  use-api: false
+  format: "hh:mm a"
+  timezone: "America/Los_Angeles"
+
+# True if you will be using the helper plugin.
+use-helper: false
+
+update-notifications: true
+
+# It is HIGHLY recommended to use a more robust proxy-wide banning system such as LiteBans or AdvancedBan.
+# However, if you would rather a light-weight, simple, banning system. You can enable it here.
+# A FULL PROXY RESTART IS REQUIRED TO USE THIS.
+use-simple-proxy-chat-banning-system: false
+
+# This will store and re-send the last few chat messages when a player switches servers.
+# This is here because sometimes Velocity/Bungee does not keep the previous messages when switching.
+# This WILL retain old formatting if you change the formatting prior to reloading.
+send-previous-messages-on-switch:
+  enabled: false
+  amount: 15
+
+# These require a restart in order to take place.
+commands:
+  whisper-aliases:
+    - "spc-msg"
+  reply-aliases:
+    - "spc-r"
+
+# DO NOT TOUCH THIS
+file-version: 13
