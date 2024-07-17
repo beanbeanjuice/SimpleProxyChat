@@ -78,12 +78,12 @@ public class SimpleProxyChatVelocity {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         // Initialize discord bot.
         this.getLogger().info("Attempting to initialize Discord bot... (if enabled)");
-        discordBot = new Bot(this.config, this.getLogger()::warn);
+        discordBot = new Bot(this.config, this.getLogger()::warn, this::getOnlinePlayers, this::getMaxPlayers);
 
         // Bot ready.
         this.proxyServer.getScheduler().buildTask(this, () -> {
-            try { discordBot.start();
-            } catch (Exception e) { this.getLogger().warn("There was an error starting the discord bot: {}", e.getMessage()); }
+            try { discordBot.start(); }
+            catch (Exception e) { this.getLogger().warn("There was an error starting the discord bot: {}", e.getMessage()); }
         }).schedule();
 
         hookPlugins();
@@ -91,20 +91,8 @@ public class SimpleProxyChatVelocity {
         registerCommands();
 
         // Start Channel Topic Updater
-        this.proxyServer.getScheduler()
-                .buildTask(this, () -> {
-                    int numPlayers = proxyServer.getPlayerCount();
-
-                    if (config.getAsBoolean(ConfigDataKey.VANISH_ENABLED))
-                        numPlayers = (int) proxyServer.getAllPlayers().stream()
-                                .filter((player) -> !VelocityVanishAPI.isInvisible(player))
-                                .count();
-
-                    discordBot.channelUpdaterFunction(numPlayers);
-                })
-                .delay(10, TimeUnit.MINUTES)
-                .repeat(10, TimeUnit.MINUTES)
-                .schedule();
+        this.proxyServer.getScheduler().buildTask(this, discordBot::channelUpdaterFunction).delay(10, TimeUnit.MINUTES).repeat(10, TimeUnit.MINUTES).schedule();
+        this.proxyServer.getScheduler().buildTask(this, discordBot::updateActivity).delay(5, TimeUnit.MINUTES).repeat(5, TimeUnit.MINUTES).schedule();
 
         // Start Update Checker
         startUpdateChecker();
@@ -272,6 +260,19 @@ public class SimpleProxyChatVelocity {
             commandManager.register(banCommand, new VelocityBanCommand(this));
             commandManager.register(unbanCommand, new VelocityUnbanCommand(this));
         }
+    }
+
+    private int getOnlinePlayers() {
+        if (config.getAsBoolean(ConfigDataKey.VANISH_ENABLED))
+            return (int) proxyServer.getAllPlayers().stream()
+                    .filter((player) -> !VelocityVanishAPI.isInvisible(player))
+                    .count();
+
+        return this.getProxyServer().getPlayerCount();
+    }
+
+    private int getMaxPlayers() {
+        return this.getProxyServer().getConfiguration().getShowMaxPlayers();
     }
 
     @Subscribe(order = PostOrder.LAST)
