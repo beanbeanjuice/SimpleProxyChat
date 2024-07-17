@@ -92,9 +92,10 @@ CHANNEL-ID: "GLOBAL_CHANNEL_ID"
 bot-activity:
    # Valid Types: ONLINE, DO_NOT_DISTURB, IDLE, INVISIBLE
    status: ONLINE
-   # Valid Types: PLAYING, STREAMING, LISTENING, WATCHING, COMPETING
-   type: "COMPETING"
-   text: "SimpleProxyChat by beanbeanjuice"
+   # Valid Types: PLAYING, STREAMING, LISTENING, WATCHING, COMPETING, CUSTOM_STATUS
+   type: "CUSTOM_STATUS"
+   # Valid placeholders are %online% and/or %max-players% (UPDATES EVERY 5 MINUTES)
+   text: "%online%/%max-players% - SimpleProxyChat by beanbeanjuice"
 
 # The amount of seconds to check if a server is online/offline.
 # Smaller numbers can cause errors. Beware.
@@ -344,6 +345,8 @@ file-version: 9
 * `%message%` - The player's message.
 * `%epoch%` - This get's the current time (in milliseconds). Formats can be used like [this](https://gist.github.com/LeviSnoot/d9147767abeef2f770e9ddcd91eb85aa). An example would be `<t:%epoch%>`. **Discord Only**
 * `%time%` - Similar to `%epoch%`, but uses a special formatting and timezone found in `config.yml`. **Discord and Minecraft**
+* `%online%` - **Discord Status Only**
+* `%max-players%` - **Discord Status Online**
 
 ---
 
