@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class Bot {
@@ -28,11 +29,18 @@ public class Bot {
     private final Consumer<String> errorLogger;
     private JDA bot;
 
+    private final Supplier<Integer> getOnlinePlayers;
+    private final Supplier<Integer> getMaxPlayers;
+
     private final Queue<Runnable> runnables;
 
-    public Bot(final Config config, final Consumer<String> errorLogger) {
+    public Bot(final Config config, final Consumer<String> errorLogger, final Supplier<Integer> getOnlinePlayers, final Supplier<Integer> getMaxPlayers) {
         this.config = config;
         this.errorLogger = errorLogger;
+
+        this.getOnlinePlayers = getOnlinePlayers;
+        this.getMaxPlayers = getMaxPlayers;
+
         runnables = new ConcurrentLinkedQueue<>();
 
         if (!config.getAsBoolean(ConfigDataKey.USE_DISCORD)) {
@@ -135,9 +143,9 @@ public class Bot {
         );
     }
 
-    public void channelUpdaterFunction(final int players) {
+    public void channelUpdaterFunction() {
         if (bot == null) return;
-        String topicMessage = config.getAsString(ConfigDataKey.DISCORD_TOPIC_ONLINE).replace("%online%", String.valueOf(players));
+        String topicMessage = config.getAsString(ConfigDataKey.DISCORD_TOPIC_ONLINE).replace("%online%", String.valueOf(getOnlinePlayers.get()));
         this.updateChannelTopic(topicMessage);
     }
 
@@ -172,6 +180,9 @@ public class Bot {
 
     public void updateActivity() {
         this.getJDA().ifPresent((jda) -> {
+            int onlinePlayers = getOnlinePlayers.get();
+            int maxPlayers = getMaxPlayers.get();
+
             Activity.ActivityType type;
             String text;
 
@@ -182,6 +193,9 @@ public class Bot {
                 type = Activity.ActivityType.WATCHING;
                 text = "CONFIG ERROR";
             }
+
+            text = text.replace("%online%", String.valueOf(onlinePlayers))
+                       .replace("%max-players%", String.valueOf(maxPlayers));
             jda.getPresence().setActivity(Activity.of(type, text));
         });
     }
@@ -220,6 +234,7 @@ public class Bot {
     }
 
     public void stop() {
+        if (bot == null) return;
         sendProxyStatus(false);
 
         this.updateChannelTopic(config.getAsString(ConfigDataKey.DISCORD_TOPIC_OFFLINE));
