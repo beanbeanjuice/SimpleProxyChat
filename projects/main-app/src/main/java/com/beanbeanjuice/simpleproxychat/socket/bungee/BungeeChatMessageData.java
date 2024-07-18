@@ -16,7 +16,7 @@ import static com.beanbeanjuice.simpleproxychat.utility.helper.Helper.convertToB
 
 public class BungeeChatMessageData extends ChatMessageData {
 
-    private final   SimpleProxyChatBungee plugin;
+    private final SimpleProxyChatBungee plugin;
     @Getter private final ServerInfo serverInfo;
 
     public BungeeChatMessageData(SimpleProxyChatBungee plugin, MessageType type, ServerInfo serverInfo,
@@ -59,8 +59,10 @@ public class BungeeChatMessageData extends ChatMessageData {
         plugin.getProxy().getPlayers().stream()
                 .filter((streamPlayer) -> !blacklistedPlayers.contains(streamPlayer))
                 .filter((streamPlayer) -> {
-                    for (ProxiedPlayer blacklistedPlayer : blacklistedPlayers)
-                        if (blacklistedPlayer.getName().equals(streamPlayer.getName())) return false;
+                    if (blacklistedPlayers.contains(streamPlayer)) return false;
+                    if (blacklistedPlayers.stream().map(ProxiedPlayer::getName).toList().contains(streamPlayer.getName())) return false;
+                    if (blacklistedPlayers.stream().map(ProxiedPlayer::getUniqueId).toList().contains(streamPlayer.getUniqueId())) return false;
+
                     return true;
                 })
                 .filter((streamPlayer) -> {
