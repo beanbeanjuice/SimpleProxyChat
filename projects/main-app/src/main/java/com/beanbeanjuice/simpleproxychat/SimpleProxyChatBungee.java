@@ -52,28 +52,20 @@ public final class SimpleProxyChatBungee extends Plugin {
         epochHelper = new EpochHelper(config);
 
         this.getLogger().info("Attempting to initialize Discord bot... (if enabled)");
-        discordBot = new Bot(this.config, this.getLogger()::warning);
+        discordBot = new Bot(this.config, this.getLogger()::warning, this::getOnlinePlayers, this::getMaxPlayers);
 
         this.getProxy().getScheduler().runAsync(this, () -> {
-            try { discordBot.start();
-            } catch (Exception e) { getLogger().warning("There was an error starting the discord bot: " + e.getMessage()); }
+            try { discordBot.start(); }
+            catch (Exception e) { getLogger().warning("There was an error starting the discord bot: " + e.getMessage()); }
         });
 
         registerListeners();
         hookPlugins();
         registerCommands();
 
-        // Discord Topic Updater
-        this.getProxy().getScheduler().schedule(this, () -> {
-            int numPlayers = this.getProxy().getPlayers().size();
-
-            if (config.getAsBoolean(ConfigDataKey.VANISH_ENABLED))
-                numPlayers = (int) this.getProxy().getPlayers().stream()
-                        .filter((player) -> !BungeeVanishAPI.isInvisible(player))
-                        .count();
-
-            discordBot.channelUpdaterFunction(numPlayers);
-        }, 10, 10, TimeUnit.MINUTES);
+        // Discord Topic/Status Updater
+        this.getProxy().getScheduler().schedule(this, discordBot::channelUpdaterFunction, 10, 10, TimeUnit.MINUTES);
+        this.getProxy().getScheduler().schedule(this, discordBot::updateActivity, 5, 5, TimeUnit.MINUTES);
 
         // Update Checker
         startUpdateChecker();
@@ -205,6 +197,19 @@ public final class SimpleProxyChatBungee extends Plugin {
 
     private void stopPluginMessaging() {
         this.getProxy().unregisterChannel("BungeeCord");
+    }
+
+    private int getOnlinePlayers() {
+        if (config.getAsBoolean(ConfigDataKey.VANISH_ENABLED))
+            return (int) this.getProxy().getPlayers().stream()
+                    .filter((player) -> !BungeeVanishAPI.isInvisible(player))
+                    .count();
+
+        return this.getProxy().getOnlineCount();
+    }
+
+    private int getMaxPlayers() {
+        return this.getProxy().getConfig().getPlayerLimit();
     }
 
     @Override
