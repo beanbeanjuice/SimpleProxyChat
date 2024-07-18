@@ -1,6 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-version = "0.5.2"
+version = "0.5.3"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -72,7 +72,10 @@ inline fun <reified C> Project.configure(name: String, configuration: C.() -> Un
 }
 
 tasks.withType<ShadowJar> {
+//    relocate("net.kyori", "com.beanbeanjuice.simpleproxychat.libs.net.kyori")  // check
     relocate("net.dv8tion", "com.beanbeanjuice.simpleproxychat.libs.net.dv8tion")
     relocate("dev.dejvokep", "com.beanbeanjuice.simpleproxychat.libs.dev.dejvokep")
     relocate("org.bstats", "com.beanbeanjuice.simpleproxychat.libs.org.bstats")
+    relocate("joda-time", "com.beanbeanjuice.simpleproxychat.libs.joda-time")  // check
+    relocate("org.apache.maven", "com.beanbeanjuice.simpleproxychat.libs.org.apache.maven")  // check
 }
