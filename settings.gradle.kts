@@ -1,4 +1,4 @@
-rootProject.name = "SimpleProxyChatMaster"
+rootProject.name = "SimpleProxyChat"
 
 include(
     "projects/main-app",
