@@ -1,6 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-version = "0.5.3"
+version = "0.5.4"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -14,15 +14,15 @@ dependencies {
 
     // Bungee
     compileOnly("net.md-5", "bungeecord-api", "1.20-R0.2")
-    implementation("net.kyori", "adventure-api", "4.17.0")  // Convert Velocity -> Bungee
-    implementation("net.kyori", "adventure-text-minimessage", "4.17.0")  // Convert Velocity -> Bungee
-    implementation("net.kyori", "adventure-text-serializer-plain", "4.17.0")  // Convert Velocity -> Bungee
-    implementation("net.kyori", "adventure-text-serializer-legacy", "4.17.0")  // Convert Velocity -> Bungee
-    implementation("net.kyori", "adventure-text-serializer-gson", "4.17.0")  // Convert Velocity -> Bungee
-    implementation("net.kyori", "adventure-text-serializer-bungeecord", "4.3.2")  // Convert Velocity -> Bungee
+    implementation("net.kyori", "adventure-api", "4.17.0")  // Convert Velocity -> Bungee https://mvnrepository.com/artifact/net.kyori/adventure-api
+    implementation("net.kyori", "adventure-text-minimessage", "4.17.0")  // Convert Velocity -> Bungee https://mvnrepository.com/artifact/net.kyori/adventure-text-minimessage
+    implementation("net.kyori", "adventure-text-serializer-plain", "4.17.0")  // Convert Velocity -> Bungee https://mvnrepository.com/artifact/net.kyori/adventure-text-serializer-plain
+    implementation("net.kyori", "adventure-text-serializer-legacy", "4.17.0")  // Convert Velocity -> Bungee https://mvnrepository.com/artifact/net.kyori/adventure-text-serializer-legacy
+    implementation("net.kyori", "adventure-text-serializer-gson", "4.17.0")  // Convert Velocity -> Bungee https://mvnrepository.com/artifact/net.kyori/adventure-text-serializer-gson
+    implementation("net.kyori", "adventure-text-serializer-bungeecord", "4.3.4")  // Convert Velocity -> Bungee https://mvnrepository.com/artifact/net.kyori/adventure-platform-bungeecord
 
     // Discord Support
-    implementation("net.dv8tion", "JDA", "5.0.0-beta.20") {
+    implementation("net.dv8tion", "JDA", "5.0.2") {
         exclude(module = "opus-java")
     }
 
