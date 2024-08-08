@@ -64,8 +64,8 @@ public final class SimpleProxyChatBungee extends Plugin {
         registerCommands();
 
         // Discord Topic/Status Updater
-        this.getProxy().getScheduler().schedule(this, discordBot::channelUpdaterFunction, 10, 10, TimeUnit.MINUTES);
-        this.getProxy().getScheduler().schedule(this, discordBot::updateActivity, 5, 5, TimeUnit.MINUTES);
+        this.getProxy().getScheduler().schedule(this, discordBot::channelUpdaterFunction, 1, 10, TimeUnit.MINUTES);
+        this.getProxy().getScheduler().schedule(this, discordBot::updateActivity, 6, 6, TimeUnit.MINUTES);
 
         // Update Checker
         startUpdateChecker();
