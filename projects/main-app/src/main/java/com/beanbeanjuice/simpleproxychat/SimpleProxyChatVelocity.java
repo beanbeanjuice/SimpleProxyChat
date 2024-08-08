@@ -91,8 +91,8 @@ public class SimpleProxyChatVelocity {
         registerCommands();
 
         // Start Channel Topic Updater
-        this.proxyServer.getScheduler().buildTask(this, discordBot::channelUpdaterFunction).delay(10, TimeUnit.MINUTES).repeat(10, TimeUnit.MINUTES).schedule();
-        this.proxyServer.getScheduler().buildTask(this, discordBot::updateActivity).delay(5, TimeUnit.MINUTES).repeat(5, TimeUnit.MINUTES).schedule();
+        this.proxyServer.getScheduler().buildTask(this, discordBot::channelUpdaterFunction).delay(1, TimeUnit.MINUTES).repeat(10, TimeUnit.MINUTES).schedule();
+        this.proxyServer.getScheduler().buildTask(this, discordBot::updateActivity).delay(6, TimeUnit.MINUTES).repeat(6, TimeUnit.MINUTES).schedule();
 
         // Start Update Checker
         startUpdateChecker();

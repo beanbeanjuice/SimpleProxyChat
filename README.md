@@ -335,18 +335,18 @@ file-version: 9
 * `%from%` - The server the player just disconnected from. Uses the alias if one is specified.
 * `%original_from%` - Same as `%from%`, but does not use the alias.
 * `%player%` - The player's Minecraft username.
-* `%sender%` - (PRIVATE MESSAGING ONLY) The person sending the private message.
-* `%receiver%` - (PRIVATE MESSAGING ONLY) The person receiving the private message.
+* `%sender%` - The person sending the private message. **Private Messaging Only**
+* `%receiver%` - The person receiving the private message. **Private Messaging Only**
 * `%user%` - The player's Discord username.
 * `%nick%` - The player's Discord nickname.
 * `%role%` - The player's Discord role.
 * `%prefix%` - The player's prefix. **LuckPerms Only**
 * `%suffix%` - The player's suffix. **LuckPerms Only**
 * `%message%` - The player's message.
-* `%epoch%` - This get's the current time (in milliseconds). Formats can be used like [this](https://gist.github.com/LeviSnoot/d9147767abeef2f770e9ddcd91eb85aa). An example would be `<t:%epoch%>`. **Discord Only**
-* `%time%` - Similar to `%epoch%`, but uses a special formatting and timezone found in `config.yml`. **Discord and Minecraft**
+* `%epoch%` - This gets the current time (in milliseconds). Formats can be used like [this](https://gist.github.com/LeviSnoot/d9147767abeef2f770e9ddcd91eb85aa). An example would be `<t:%epoch%>`. **Discord Only**
+* `%time%` - Similar to `%epoch%`, but uses a special formatting and timezone found in `config.yml`.
 * `%online%` - **Discord Status Only**
-* `%max-players%` - **Discord Status Online**
+* `%max-players%` - **Discord Status Only**
 
 ---
 
