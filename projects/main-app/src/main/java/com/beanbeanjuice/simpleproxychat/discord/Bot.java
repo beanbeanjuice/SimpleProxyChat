@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
@@ -33,6 +34,8 @@ public class Bot {
     private final Supplier<Integer> getMaxPlayers;
 
     private final Queue<Runnable> runnables;
+
+    private boolean channelTopicErrorSent = false;
 
     public Bot(final Config config, final Consumer<String> errorLogger, final Supplier<Integer> getOnlinePlayers, final Supplier<Integer> getMaxPlayers) {
         this.config = config;
@@ -138,7 +141,20 @@ public class Bot {
         if (bot == null) return;
 
         this.getBotTextChannel().ifPresentOrElse(
-                (textChannel) -> textChannel.getManager().setTopic(topic).queue(),
+                (textChannel) -> {
+                    try {
+                        textChannel.getManager().setTopic(topic).queue();
+                    } catch (InsufficientPermissionException e) {
+                        if (!channelTopicErrorSent) {
+                            channelTopicErrorSent = true;
+                            errorLogger.accept("""
+                                    No permission to edit channel topic. If you don't want the channel topics to be updated, \
+                                    simply ignore this message. Otherwise, please give the Discord bot the MANAGE_CHANNELS \
+                                    permission. This message will only be sent once per server restart. \
+                                    """);
+                        }
+                    }
+                },
                 () -> errorLogger.accept("There was an error updating the Discord channel topic. Does the channel exist? Does the bot have access to the channel?")
         );
     }
