@@ -1,10 +1,9 @@
 package com.beanbeanjuice.simpleproxychat.utility.helper;
 
+import com.beanbeanjuice.simpleproxychat.utility.ISimpleProxyChat;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
-import de.myzelyam.api.vanish.BungeeVanishAPI;
-import de.myzelyam.api.vanish.VelocityVanishAPI;
 import litebans.api.Database;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
@@ -14,7 +13,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
-import nl.chimpgamer.networkmanager.api.NetworkManagerProvider;
+import nl.chimpgamer.networkmanager.api.NetworkManagerPlugin;
 
 import java.util.List;
 import java.util.UUID;
@@ -103,28 +102,26 @@ public class Helper {
         return MiniMessage.miniMessage().deserialize(string);
     }
 
-    public static boolean serverHasChatLocked(Config config, String serverName) {
-        if (config.getAsBoolean(ConfigDataKey.NETWORKMANAGER_ENABLED) &&
-                (
-                    NetworkManagerProvider.Companion.get().getChatManager().isChatLocked(serverName) ||
-                    NetworkManagerProvider.Companion.get().getChatManager().isChatLocked("all")
-                )
-        ) return true;
+    public static boolean serverHasChatLocked(ISimpleProxyChat plugin, String serverName) {
+        if (plugin.isNetworkManagerEnabled() && plugin.getNetworkManager().map(NetworkManagerPlugin.class::cast).map((nm) -> nm.getChatManager().isChatLocked(serverName) || nm.getChatManager().isChatLocked("all")).orElse(false))
+            return true;
 
-        if (config.getServerChatLockHelper().serverIsLocked(serverName)) return true;
+        if (plugin.getSPCConfig().getServerChatLockHelper().serverIsLocked(serverName)) return true;
 
         // TODO: Other methods of checking if chat is locked.
         return false;
     }
 
-    public static boolean playerCanChat(Config config, UUID playerUUID, String playerName) {
-        if (config.getAsBoolean(ConfigDataKey.LITEBANS_ENABLED) && Database.get().isPlayerMuted(playerUUID, null))
+    public static boolean playerCanChat(ISimpleProxyChat plugin, UUID playerUUID, String playerName) {
+        if (plugin.isLiteBansEnabled() && plugin.getLiteBansDatabase().map(Database.class::cast).map((db) -> db.isPlayerMuted(playerUUID, null)).orElse(false))
             return false;
 
-        if (config.getAsBoolean(ConfigDataKey.ADVANCEDBAN_ENABLED)) {
-            String uuidAsString = UUIDManager.get().getUUID(playerName);
-            if (PunishmentManager.get().isMuted(uuidAsString)) return false;
-        }
+        if (plugin.isAdvancedBanEnabled() && plugin.getAdvancedBanUUIDManager().map(UUIDManager.class::cast).map((uuidManager) -> {
+            String uuid = uuidManager.getUUID(playerName);
+
+            return plugin.getAdvancedBanPunishmentManager().map(PunishmentManager.class::cast).map((punishmentManager) -> punishmentManager.isMuted(uuid)).orElse(false);
+        }).orElse(false))
+            return false;
 
         // TODO: Other methods of checking if player can talk.
         return true;

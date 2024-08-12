@@ -9,6 +9,7 @@ import com.beanbeanjuice.simpleproxychat.commands.velocity.ban.VelocityBanComman
 import com.beanbeanjuice.simpleproxychat.commands.velocity.ban.VelocityUnbanCommand;
 import com.beanbeanjuice.simpleproxychat.socket.velocity.VelocityPluginMessagingListener;
 import com.beanbeanjuice.simpleproxychat.utility.BanHelper;
+import com.beanbeanjuice.simpleproxychat.utility.ISimpleProxyChat;
 import com.beanbeanjuice.simpleproxychat.utility.UpdateChecker;
 import com.beanbeanjuice.simpleproxychat.utility.helper.WhisperHandler;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
@@ -31,17 +32,25 @@ import com.velocitypowered.api.plugin.PluginManager;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import de.myzelyam.api.vanish.VelocityVanishAPI;
+import litebans.api.Database;
 import lombok.Getter;
+import me.leoko.advancedban.manager.PunishmentManager;
+import me.leoko.advancedban.manager.UUIDManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
+import nl.chimpgamer.networkmanager.api.NetworkManagerPlugin;
+import nl.chimpgamer.networkmanager.api.NetworkManagerProvider;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-public class SimpleProxyChatVelocity {
+public class SimpleProxyChatVelocity implements ISimpleProxyChat {
 
     private final Metrics.Factory metricsFactory;
 
@@ -54,6 +63,8 @@ public class SimpleProxyChatVelocity {
     @Getter private BanHelper banHelper;
     private Metrics metrics;
     private VelocityServerListener serverListener;
+
+    private PluginManager pluginManager;
 
     private final File dataDirectory;
 
@@ -77,7 +88,7 @@ public class SimpleProxyChatVelocity {
     @Subscribe(order = PostOrder.LAST)
     public void onProxyInitialization(ProxyInitializeEvent event) {
         // Initialize discord bot.
-        this.getLogger().info("Attempting to initialize Discord bot... (if enabled)");
+        this.getLogger().info("Attempting to initialize Discord bot... (IF ENABLED)");
         discordBot = new Bot(this.config, this.getLogger()::warn, this::getOnlinePlayers, this::getMaxPlayers);
 
         // Bot ready.
@@ -146,40 +157,35 @@ public class SimpleProxyChatVelocity {
     }
 
     private void hookPlugins() {
-        PluginManager pm = this.proxyServer.getPluginManager();
+        this.pluginManager = this.proxyServer.getPluginManager();
 
         // Enable vanish support.
-        if (pm.getPlugin("premiumvanish").isPresent() || pm.getPlugin("supervanish").isPresent()) {
-            this.config.overwrite(ConfigDataKey.VANISH_ENABLED, true);
+        if (this.isVanishAPIEnabled()) {
             this.getLogger().info("PremiumVanish/SuperVanish support has been enabled.");
         }
 
         // Registering LuckPerms support.
-        if (pm.getPlugin("luckperms").isPresent()) {
-            config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, true);
+        if (this.isLuckPermsEnabled()) {
             this.getLogger().info("LuckPerms support has been enabled.");
         }
 
         // Registering LiteBans support.
-        if (pm.getPlugin("litebans").isPresent()) {
-            config.overwrite(ConfigDataKey.LITEBANS_ENABLED, true);
+        if (this.isLiteBansEnabled()) {
             this.getLogger().info("LiteBans support has been enabled.");
         }
 
         // Registering AdvancedBan support.
-        if (pm.getPlugin("advancedban").isPresent()) {
-            config.overwrite(ConfigDataKey.ADVANCEDBAN_ENABLED, true);
+        if (this.isAdvancedBanEnabled()) {
             this.getLogger().info("AdvancedBan support has been enabled.");
         }
 
         // Registering NetworkManager support.
-        if (pm.getPlugin("networkmanager").isPresent()) {
-            config.overwrite(ConfigDataKey.NETWORKMANAGER_ENABLED, true);
+        if (this.isNetworkManagerEnabled()) {
             this.getLogger().info("NetworkManager support has been enabled.");
         }
 
         // Registering the Simple Banning System
-        if (!config.getAsBoolean(ConfigDataKey.LITEBANS_ENABLED) && !config.getAsBoolean(ConfigDataKey.ADVANCEDBAN_ENABLED) && config.getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) {
+        if (!this.isLiteBansEnabled() && !this.isAdvancedBanEnabled() && config.getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) {
             getLogger().info("LiteBans and AdvancedBan not found. Using the built-in banning system for SimpleProxyChat...");
             banHelper = new BanHelper(dataDirectory);
             banHelper.initialize();
@@ -190,17 +196,7 @@ public class SimpleProxyChatVelocity {
 
     private void registerListeners() {
         // Register chat listener.
-        ChatHandler chatHandler = new ChatHandler(
-                config,
-                epochHelper,
-                discordBot,
-                (message) -> {
-                    logger.info(Helper.sanitize(message));
-                    Component messageComponent = MiniMessage.miniMessage().deserialize(message);
-                    proxyServer.getAllPlayers().forEach((player) -> player.sendMessage(messageComponent));
-                },
-                (message) -> logger.info(Helper.sanitize(message))
-        );
+        ChatHandler chatHandler = new ChatHandler(this, epochHelper);
         serverListener = new VelocityServerListener(this, chatHandler);
         serverListener.initializeVelocityVanishListener();
         this.proxyServer.getEventManager().register(this, serverListener);
@@ -263,7 +259,7 @@ public class SimpleProxyChatVelocity {
     }
 
     private int getOnlinePlayers() {
-        if (config.getAsBoolean(ConfigDataKey.VANISH_ENABLED))
+        if (this.isVanishAPIEnabled())
             return (int) proxyServer.getAllPlayers().stream()
                     .filter((player) -> !VelocityVanishAPI.isInvisible(player))
                     .count();
@@ -281,4 +277,80 @@ public class SimpleProxyChatVelocity {
         discordBot.stop();
     }
 
+    @Override
+    public boolean isLuckPermsEnabled() {
+        return this.pluginManager.getPlugin("luckperms").isPresent();
+    }
+
+    @Override
+    public Optional<?> getLuckPerms() {
+        if (!this.isLuckPermsEnabled()) return Optional.empty();
+
+        return Optional.of(LuckPermsProvider.get());
+    }
+
+    @Override
+    public boolean isVanishAPIEnabled() {
+        return (pluginManager.getPlugin("premiumvanish").isPresent() || pluginManager.getPlugin("supervanish").isPresent());
+    }
+
+    @Override
+    public boolean isLiteBansEnabled() {
+        return this.pluginManager.getPlugin("litebans").isPresent();
+    }
+
+    @Override
+    public Optional<?> getLiteBansDatabase() {
+        if (!this.isLiteBansEnabled()) return Optional.empty();
+
+        return Optional.ofNullable(Database.get());
+    }
+
+    @Override
+    public boolean isAdvancedBanEnabled() {
+        return this.pluginManager.getPlugin("advancedban").isPresent();
+    }
+
+    @Override
+    public Optional<?> getAdvancedBanUUIDManager() {
+        if (!this.isAdvancedBanEnabled()) return Optional.empty();
+
+        return Optional.of(UUIDManager.get());
+    }
+
+    @Override
+    public Optional<?> getAdvancedBanPunishmentManager() {
+        if (!this.isAdvancedBanEnabled()) return Optional.empty();
+
+        return Optional.of(PunishmentManager.get());
+    }
+
+    @Override
+    public boolean isNetworkManagerEnabled() {
+        return this.pluginManager.getPlugin("networkmanager").isPresent();
+    }
+
+    @Override
+    public Optional<?> getNetworkManager() {
+        if (!this.isNetworkManagerEnabled()) return Optional.empty();
+
+        return Optional.of(NetworkManagerProvider.Companion.get());
+    }
+
+    @Override
+    public Config getSPCConfig() {
+        return this.config;
+    }
+
+    @Override
+    public void sendAll(String message) {
+        logger.info(Helper.sanitize(message));
+        Component messageComponent = MiniMessage.miniMessage().deserialize(message);
+        proxyServer.getAllPlayers().forEach((player) -> player.sendMessage(messageComponent));
+    }
+
+    @Override
+    public void log(String message) {
+        this.logger.info(Helper.sanitize(message));
+    }
 }

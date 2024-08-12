@@ -3,6 +3,7 @@ package com.beanbeanjuice.simpleproxychat.chat;
 import com.beanbeanjuice.simpleproxychat.discord.Bot;
 import com.beanbeanjuice.simpleproxychat.discord.DiscordChatHandler;
 import com.beanbeanjuice.simpleproxychat.socket.ChatMessageData;
+import com.beanbeanjuice.simpleproxychat.utility.ISimpleProxyChat;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
@@ -13,6 +14,7 @@ import com.beanbeanjuice.simpleproxychat.utility.helper.LastMessagesHelper;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.Node;
@@ -36,24 +38,20 @@ public class ChatHandler {
 
     private static final String MINECRAFT_PLAYER_HEAD_URL = "https://crafthead.net/avatar/{PLAYER_UUID}";
 
+    private final ISimpleProxyChat plugin;
     private final Config config;
-    private final EpochHelper epochHelper;
     private final Bot discordBot;
+    private final EpochHelper epochHelper;
     private final LastMessagesHelper lastMessagesHelper;
 
-    private final Consumer<String> globalLogger;
-    private final Consumer<String> pluginLogger;
-
-    public ChatHandler(Config config, EpochHelper epochHelper, Bot discordBot,
-                       Consumer<String> globalLogger, Consumer<String> pluginLogger) {
-        this.config = config;
+    public ChatHandler(ISimpleProxyChat plugin, EpochHelper epochHelper) {
+        this.plugin = plugin;
+        this.config = plugin.getSPCConfig();
+        this.discordBot = plugin.getDiscordBot();
         this.epochHelper = epochHelper;
-        this.discordBot = discordBot;
-        this.lastMessagesHelper = new LastMessagesHelper(config);
+        this.lastMessagesHelper = new LastMessagesHelper(plugin.getSPCConfig());
 
-        this.globalLogger = globalLogger;
-        this.pluginLogger = pluginLogger;
-        discordBot.addRunnableToQueue(() -> discordBot.getJDA().ifPresent((jda) -> jda.addEventListener(new DiscordChatHandler(config, this::sendFromDiscord))));
+        plugin.getDiscordBot().addRunnableToQueue(() -> plugin.getDiscordBot().getJDA().ifPresent((jda) -> jda.addEventListener(new DiscordChatHandler(config, this::sendFromDiscord))));
     }
 
     private Optional<String> getValidMessage(String message) {
@@ -69,7 +67,7 @@ public class ChatHandler {
 
     public void chat(ChatMessageData chatMessageData, String minecraftMessage, String discordMessage, String discordEmbedTitle, String discordEmbedMessage) {
         // Log to Console
-        if (config.getAsBoolean(ConfigDataKey.CONSOLE_CHAT)) pluginLogger.accept(minecraftMessage);
+        if (config.getAsBoolean(ConfigDataKey.CONSOLE_CHAT)) plugin.log(minecraftMessage);
 
         // Log to Discord
         if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_ENABLED)) {
@@ -100,7 +98,7 @@ public class ChatHandler {
     }
 
     public void runProxyChatMessage(ChatMessageData chatMessageData) {
-        if (Helper.serverHasChatLocked(config, chatMessageData.getServername())) return;
+        if (Helper.serverHasChatLocked(plugin, chatMessageData.getServername())) return;
 
         String playerMessage = chatMessageData.getMessage();
         String serverName = chatMessageData.getServername();
@@ -132,11 +130,9 @@ public class ChatHandler {
         String discordEmbedTitle = Helper.replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_TITLE), replacements);
         String discordEmbedMessage = Helper.replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_MESSAGE), replacements);
 
-        if (config.getAsBoolean(ConfigDataKey.LUCKPERMS_ENABLED)) {
-            minecraftMessage = replacePrefixSuffix(minecraftMessage, playerUUID, aliasedServerName, serverName);
-            discordMessage = replacePrefixSuffix(discordMessage, playerUUID, aliasedServerName, serverName);
-            discordEmbedTitle = replacePrefixSuffix(discordEmbedTitle, chatMessageData.getPlayerUUID(), aliasedServerName, chatMessageData.getServername());
-        }
+        minecraftMessage = replacePrefixSuffix(minecraftMessage, playerUUID, aliasedServerName, serverName);
+        discordMessage = replacePrefixSuffix(discordMessage, playerUUID, aliasedServerName, serverName);
+        discordEmbedTitle = replacePrefixSuffix(discordEmbedTitle, chatMessageData.getPlayerUUID(), aliasedServerName, chatMessageData.getServername());
 
         if (config.getAsBoolean(ConfigDataKey.USE_HELPER)) {
             chatMessageData.setMinecraftMessage(minecraftMessage);
@@ -169,13 +165,11 @@ public class ChatHandler {
         String message = Helper.replaceKeys(configString, replacements);
         String discordMessage = Helper.replaceKeys(discordConfigString, replacements);
 
-        if (config.getAsBoolean(ConfigDataKey.LUCKPERMS_ENABLED)) {
-            message = replacePrefixSuffix(message, playerUUID, aliasedServerName, serverName);
-            discordMessage = replacePrefixSuffix(discordMessage, playerUUID, aliasedServerName, serverName);
-        }
+        message = replacePrefixSuffix(message, playerUUID, aliasedServerName, serverName);
+        discordMessage = replacePrefixSuffix(discordMessage, playerUUID, aliasedServerName, serverName);
 
         // Log to Console
-        if (config.getAsBoolean(ConfigDataKey.CONSOLE_LEAVE)) pluginLogger.accept(message);
+        if (config.getAsBoolean(ConfigDataKey.CONSOLE_LEAVE)) plugin.log(message);
 
 
         // Log to Discord
@@ -211,13 +205,11 @@ public class ChatHandler {
         String message = Helper.replaceKeys(configString, replacements);
         String discordMessage = Helper.replaceKeys(discordConfigString, replacements);
 
-        if (config.getAsBoolean(ConfigDataKey.LUCKPERMS_ENABLED)) {
-            message = replacePrefixSuffix(message, playerUUID, aliasedServerName, serverName);
-            discordMessage = replacePrefixSuffix(discordMessage, playerUUID, aliasedServerName, serverName);
-        }
+        message = replacePrefixSuffix(message, playerUUID, aliasedServerName, serverName);
+        discordMessage = replacePrefixSuffix(discordMessage, playerUUID, aliasedServerName, serverName);
 
         // Log to Console
-        if (config.getAsBoolean(ConfigDataKey.CONSOLE_JOIN)) pluginLogger.accept(message);
+        if (config.getAsBoolean(ConfigDataKey.CONSOLE_JOIN)) plugin.log(message);
 
         // Log to Discord
         if (config.getAsBoolean(ConfigDataKey.DISCORD_JOIN_ENABLED)) {
@@ -256,14 +248,12 @@ public class ChatHandler {
         String discordMessage = Helper.replaceKeys(discordConfigString, replacements);
         String minecraftMessage = Helper.replaceKeys(minecraftConfigString, replacements);
 
-        if (config.getAsBoolean(ConfigDataKey.LUCKPERMS_ENABLED)) {
-            consoleMessage = replacePrefixSuffix(consoleMessage, playerUUID, aliasedTo, to);
-            minecraftMessage = replacePrefixSuffix(minecraftMessage, playerUUID, aliasedTo, to);
-            discordMessage = replacePrefixSuffix(discordMessage, playerUUID, aliasedTo, to);
-        }
+        consoleMessage = replacePrefixSuffix(consoleMessage, playerUUID, aliasedTo, to);
+        minecraftMessage = replacePrefixSuffix(minecraftMessage, playerUUID, aliasedTo, to);
+        discordMessage = replacePrefixSuffix(discordMessage, playerUUID, aliasedTo, to);
 
         // Log to Console
-        if (config.getAsBoolean(ConfigDataKey.CONSOLE_SWITCH)) pluginLogger.accept(consoleMessage);
+        if (config.getAsBoolean(ConfigDataKey.CONSOLE_SWITCH)) plugin.log(consoleMessage);
 
         // Log to Discord
         if (config.getAsBoolean(ConfigDataKey.DISCORD_SWITCH_ENABLED)) {
@@ -329,7 +319,7 @@ public class ChatHandler {
                 Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX))
         );
 
-        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_ENABLED)) globalLogger.accept(message);
+        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_ENABLED)) plugin.sendAll(message);
     }
 
     private List<String> getPrefixBasedOnServerContext(User user, String... serverKeys) {
@@ -385,8 +375,16 @@ public class ChatHandler {
     }
 
     private String replacePrefixSuffix(String message, UUID playerUUID, String aliasedServerName, String serverName) {
-        try {
-            User user = LuckPermsProvider.get().getUserManager().loadUser(playerUUID).get();
+        if (!this.plugin.isLuckPermsEnabled()) return message;
+
+        return this.plugin.getLuckPerms().map(LuckPerms.class::cast).map((luckPerms) -> {
+            User user = null;
+            try {
+                user = luckPerms.getUserManager().loadUser(playerUUID).get();
+            } catch (Exception e) {
+                plugin.log("Error contacting the LuckPerms API: " + e.getMessage());
+                return message;
+            }
 
             // Get prefix based on aliased name. If none show up, use original name. If none show up, use top prefix.
             List<String> prefixList = getPrefixBasedOnServerContext(user, serverName, aliasedServerName, "");
@@ -396,10 +394,7 @@ public class ChatHandler {
             String suffix = suffixList.isEmpty() ? "" : Helper.translateLegacyCodes(suffixList.get(0));
 
             return message.replace("%prefix%", prefix).replace("%suffix%", suffix);
-        } catch (Exception e) {
-            pluginLogger.accept("There was an error contacting the LuckPerms API: " + e.getMessage());
-            return message;
-        }
+        }).orElse(message);
     }
 
     /**
