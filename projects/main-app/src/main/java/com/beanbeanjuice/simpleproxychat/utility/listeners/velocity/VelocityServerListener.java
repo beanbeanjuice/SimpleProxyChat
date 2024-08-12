@@ -47,7 +47,7 @@ public class VelocityServerListener {
     public void onPlayerChat(PlayerChatEvent event) {
         String playerMessage = event.getMessage();
         Player player = event.getPlayer();
-        if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && VelocityVanishAPI.isInvisible(player)) {
+        if (plugin.isVanishAPIEnabled() && VelocityVanishAPI.isInvisible(player)) {
             // If is allowed to speak in vanish, continue.
             if (!event.getMessage().endsWith("/")) {
                 String errorMessage = plugin.getConfig().getAsString(ConfigDataKey.MINECRAFT_CHAT_VANISHED_MESSAGE);
@@ -56,7 +56,7 @@ public class VelocityServerListener {
             }
             playerMessage = playerMessage.substring(0, playerMessage.length() - 1);
         }
-        if (!Helper.playerCanChat(plugin.getConfig(), player.getUniqueId(), player.getUsername())) return;
+        if (!Helper.playerCanChat(plugin, player.getUniqueId(), player.getUsername())) return;
 
         String finalPlayerMessage = playerMessage;
         event.getPlayer().getCurrentServer().ifPresent((connection) -> {
@@ -67,7 +67,7 @@ public class VelocityServerListener {
 
     @Subscribe
     public void onDisconnect(DisconnectEvent event) {
-        if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && VelocityVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
+        if (plugin.isVanishAPIEnabled() && VelocityVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
 
         leave(event.getPlayer());
     }
@@ -77,7 +77,7 @@ public class VelocityServerListener {
         KickedFromServerEvent.ServerKickResult result = event.getResult();
         if (result.toString().contains("velocity.error.cant-connect")) return;
         if (event.getServerKickReason().isEmpty()) return;
-        if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && VelocityVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
+        if (plugin.isVanishAPIEnabled() && VelocityVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
 
         leave(event.getPlayer(), event.getServer().getServerInfo().getName());
     }
@@ -124,7 +124,7 @@ public class VelocityServerListener {
 
     @Subscribe
     public void onServerConnected(ServerConnectedEvent event) {
-        if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && VelocityVanishAPI.isInvisible(event.getPlayer())) return;
+        if (plugin.isVanishAPIEnabled() && VelocityVanishAPI.isInvisible(event.getPlayer())) return;
 
         // First Join
         if (event.getPreviousServer().isEmpty()) {

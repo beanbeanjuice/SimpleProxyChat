@@ -1,6 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-version = "0.0.3"
+version = "0.0.4"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -9,7 +9,7 @@ java {
 
 dependencies {
     // Spigot. Duh.
-    compileOnly("org.spigotmc", "spigot-api", "1.20.6-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc", "spigot-api", "1.21.1-R0.1-SNAPSHOT")
 
     // PlaceholderAPI
     compileOnly("me.clip", "placeholderapi", "2.11.6")

@@ -43,8 +43,8 @@ public class BungeeServerListener implements Listener {
         if (event.isCommand() || event.isProxyCommand()) return;
 
         ProxiedPlayer player = (ProxiedPlayer) event.getSender();
-        if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(player)) {
-            // TODO: If is allowed to speak in vanisht hen continue.
+        if (plugin.isVanishAPIEnabled() && BungeeVanishAPI.isInvisible(player)) {
+            // TODO: If is allowed to speak in vanish then continue.
             if (!event.getMessage().endsWith("/")) {
                 String errorMessage = plugin.getConfig().getAsString(ConfigDataKey.MINECRAFT_CHAT_VANISHED_MESSAGE);
                 player.sendMessage(ChatMessageType.SYSTEM, Helper.convertToBungee(errorMessage));
@@ -52,7 +52,7 @@ public class BungeeServerListener implements Listener {
             }
             event.setMessage(event.getMessage().substring(0, event.getMessage().length() - 1));
         }
-        if (!Helper.playerCanChat(plugin.getConfig(), player.getUniqueId(), player.getName())) return;
+        if (!Helper.playerCanChat(plugin, player.getUniqueId(), player.getName())) return;
 
         Server currentServer = (Server) event.getReceiver();
         String playerMessage = event.getMessage();
@@ -85,7 +85,7 @@ public class BungeeServerListener implements Listener {
     public void onPlayerLeaveProxy(PlayerDisconnectEvent event) {
         if (!event.getPlayer().getGroups().contains("successful-connection")) return;
         if (!event.getPlayer().getGroups().contains("not-first-join")) return;
-        if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
+        if (plugin.isVanishAPIEnabled() && BungeeVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
 
         leave(event.getPlayer(), false);
     }
@@ -129,7 +129,7 @@ public class BungeeServerListener implements Listener {
         if (!event.getPlayer().getGroups().contains("successful-connection")) return;
         event.getPlayer().addGroups("not-first-join");
 
-        if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
+        if (plugin.isVanishAPIEnabled() && BungeeVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
 
         join(event.getPlayer(), event.getServer(), false);
     }
@@ -157,7 +157,7 @@ public class BungeeServerListener implements Listener {
     public void onPlayerServerSwitch(ServerSwitchEvent event) {
         ProxiedPlayer player = event.getPlayer();
 
-        if (plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED) && BungeeVanishAPI.isInvisible(player)) return;  // Ignore if player is invisible.
+        if (plugin.isVanishAPIEnabled() && BungeeVanishAPI.isInvisible(player)) return;  // Ignore if player is invisible.
         if (event.getFrom() == null) return;  // This means the player just joined the network.
 
         ServerInfo from = event.getFrom();
@@ -201,7 +201,7 @@ public class BungeeServerListener implements Listener {
                 })
                 .filter((player) -> {
                     if (player.getServer() == null || player.getServer().getInfo() == null) return false;
-                    return !Helper.serverHasChatLocked(plugin.getConfig(), player.getServer().getInfo().getName());
+                    return !Helper.serverHasChatLocked(plugin, player.getServer().getInfo().getName());
                 })
                 .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, Helper.convertToBungee(parsedMessage)));
     }
