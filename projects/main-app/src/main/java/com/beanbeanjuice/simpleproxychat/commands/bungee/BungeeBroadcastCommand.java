@@ -10,9 +10,6 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
 public class BungeeBroadcastCommand extends Command {
 
     private final SimpleProxyChatBungee plugin;

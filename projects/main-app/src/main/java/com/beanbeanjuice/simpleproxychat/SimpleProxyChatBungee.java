@@ -6,6 +6,7 @@ import com.beanbeanjuice.simpleproxychat.commands.bungee.ban.BungeeUnbanCommand;
 import com.beanbeanjuice.simpleproxychat.commands.bungee.whisper.BungeeReplyCommand;
 import com.beanbeanjuice.simpleproxychat.commands.bungee.whisper.BungeeWhisperCommand;
 import com.beanbeanjuice.simpleproxychat.socket.bungee.BungeeCordPluginMessagingListener;
+import com.beanbeanjuice.simpleproxychat.utility.ISimpleProxyChat;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.helper.WhisperHandler;
 import com.beanbeanjuice.simpleproxychat.utility.BanHelper;
@@ -20,19 +21,27 @@ import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
 import de.myzelyam.api.vanish.BungeeVanishAPI;
+import litebans.api.Database;
 import lombok.Getter;
+import me.leoko.advancedban.manager.PunishmentManager;
+import me.leoko.advancedban.manager.UUIDManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
+import nl.chimpgamer.networkmanager.api.NetworkManagerPlugin;
+import nl.chimpgamer.networkmanager.api.NetworkManagerProvider;
 import org.bstats.bungeecord.Metrics;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
-public final class SimpleProxyChatBungee extends Plugin {
+public final class SimpleProxyChatBungee extends Plugin implements ISimpleProxyChat {
 
     @Getter private Config config;
     @Getter private EpochHelper epochHelper;
@@ -41,6 +50,7 @@ public final class SimpleProxyChatBungee extends Plugin {
     @Getter private BungeeServerListener serverListener;
     @Getter private WhisperHandler whisperHandler;
     @Getter private BanHelper banHelper;
+    private PluginManager pluginManager;
 
     @Override
     public void onEnable() {
@@ -51,7 +61,7 @@ public final class SimpleProxyChatBungee extends Plugin {
 
         epochHelper = new EpochHelper(config);
 
-        this.getLogger().info("Attempting to initialize Discord bot... (if enabled)");
+        this.getLogger().info("Attempting to initialize Discord bot... (IF ENABLED)");
         discordBot = new Bot(this.config, this.getLogger()::warning, this::getOnlinePlayers, this::getMaxPlayers);
 
         this.getProxy().getScheduler().runAsync(this, () -> {
@@ -117,41 +127,36 @@ public final class SimpleProxyChatBungee extends Plugin {
     }
 
     private void hookPlugins() {
-        PluginManager pm = this.getProxy().getPluginManager();
+        this.pluginManager = this.getProxy().getPluginManager();
 
         // Enable vanish support.
-        if (pm.getPlugin("PremiumVanish") != null || pm.getPlugin("SuperVanish") != null) {
-            this.config.overwrite(ConfigDataKey.VANISH_ENABLED, true);
+        if (this.isVanishAPIEnabled()) {
             this.getLogger().log(Level.INFO, "PremiumVanish/SuperVanish support has been enabled.");
             this.getProxy().getPluginManager().registerListener(this, new BungeeVanishListener(serverListener, config));
         }
 
         // Registering LuckPerms support.
-        if (pm.getPlugin("LuckPerms") != null) {
-            config.overwrite(ConfigDataKey.LUCKPERMS_ENABLED, true);
+        if (this.isLuckPermsEnabled()) {
             getLogger().info("LuckPerms support has been enabled.");
         }
 
         // Registering LiteBans support.
-        if (pm.getPlugin("LiteBans") != null) {
-            config.overwrite(ConfigDataKey.LITEBANS_ENABLED, true);
+        if (this.isLiteBansEnabled()) {
             getLogger().info("LiteBans support has been enabled.");
         }
 
         // Registering AdvancedBan support.
-        if (pm.getPlugin("AdvancedBan") != null) {
-            config.overwrite(ConfigDataKey.ADVANCEDBAN_ENABLED, true);
+        if (this.isAdvancedBanEnabled()) {
             getLogger().info("AdvancedBan support has been enabled.");
         }
 
         // Registering NetworkManager support.
-        if (pm.getPlugin("NetworkManager") != null) {
-            config.overwrite(ConfigDataKey.NETWORKMANAGER_ENABLED, true);
+        if (this.isNetworkManagerEnabled()) {
             getLogger().info("NetworkManager support has been enabled.");
         }
 
         // Registering the Simple Ban System
-        if (!config.getAsBoolean(ConfigDataKey.LITEBANS_ENABLED) && !config.getAsBoolean(ConfigDataKey.ADVANCEDBAN_ENABLED) && config.getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) {
+        if (!this.isLiteBansEnabled() && !this.isAdvancedBanEnabled() && config.getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) {
             getLogger().info("LiteBans and AdvancedBan not found. Using the built-in banning system for SimpleProxyChat...");
             banHelper = new BanHelper(this.getDataFolder());
             banHelper.initialize();
@@ -162,13 +167,7 @@ public final class SimpleProxyChatBungee extends Plugin {
 
     private void registerListeners() {
         // Register Discord Listener
-        ChatHandler chatHandler = new ChatHandler(
-                config,
-                epochHelper,
-                discordBot,
-                (message) -> this.getProxy().broadcast(Helper.convertToBungee(message)),
-                (message) -> getLogger().info(Helper.sanitize(message))
-        );
+        ChatHandler chatHandler = new ChatHandler(this, epochHelper);
 
         serverListener = new BungeeServerListener(this, chatHandler);
         this.getProxy().getPluginManager().registerListener(this, serverListener);
@@ -200,7 +199,7 @@ public final class SimpleProxyChatBungee extends Plugin {
     }
 
     private int getOnlinePlayers() {
-        if (config.getAsBoolean(ConfigDataKey.VANISH_ENABLED))
+        if (this.isVanishAPIEnabled())
             return (int) this.getProxy().getPlayers().stream()
                     .filter((player) -> !BungeeVanishAPI.isInvisible(player))
                     .count();
@@ -217,6 +216,80 @@ public final class SimpleProxyChatBungee extends Plugin {
         this.getLogger().info("The plugin is shutting down...");
         stopPluginMessaging();
         discordBot.stop();
+    }
+
+    @Override
+    public boolean isLuckPermsEnabled() {
+        return this.pluginManager.getPlugin("LuckPerms") != null;
+    }
+
+    @Override
+    public Optional<?> getLuckPerms() {
+        if (!this.isLuckPermsEnabled()) return Optional.empty();
+        return Optional.of(LuckPermsProvider.get());
+    }
+
+    @Override
+    public boolean isVanishAPIEnabled() {
+        return this.pluginManager.getPlugin("PremiumVanish") != null || this.pluginManager.getPlugin("SuperVanish") != null;
+    }
+
+    @Override
+    public boolean isLiteBansEnabled() {
+        return this.pluginManager.getPlugin("LiteBans") != null;
+    }
+
+    @Override
+    public Optional<?> getLiteBansDatabase() {
+        if (!this.isLiteBansEnabled()) return Optional.empty();
+
+        return Optional.of(Database.get());
+    }
+
+    @Override
+    public boolean isAdvancedBanEnabled() {
+        return this.pluginManager.getPlugin("AdvancedBan") != null;
+    }
+
+    @Override
+    public Optional<?> getAdvancedBanUUIDManager() {
+        if (!this.isAdvancedBanEnabled()) return Optional.empty();
+
+        return Optional.ofNullable(UUIDManager.get());
+    }
+
+    @Override
+    public Optional<?> getAdvancedBanPunishmentManager() {
+        if (!this.isAdvancedBanEnabled()) return Optional.empty();
+
+        return Optional.ofNullable(PunishmentManager.get());
+    }
+
+    @Override
+    public boolean isNetworkManagerEnabled() {
+        return this.pluginManager.getPlugin("NetworkManager") != null;
+    }
+
+    @Override
+    public Optional<?> getNetworkManager() {
+        if (!this.isNetworkManagerEnabled()) return Optional.empty();
+
+        return Optional.of(NetworkManagerProvider.Companion.get());
+    }
+
+    @Override
+    public Config getSPCConfig() {
+        return this.config;
+    }
+
+    @Override
+    public void sendAll(String message) {
+        this.getProxy().broadcast(Helper.convertToBungee(message));
+    }
+
+    @Override
+    public void log(String message) {
+        this.getLogger().info(Helper.sanitize(message));
     }
 
 }
