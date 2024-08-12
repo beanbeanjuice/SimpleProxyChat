@@ -28,7 +28,7 @@ public class VelocityVanishListener {
     }
 
     private void checkStateChange() {
-        if (!plugin.getConfig().getAsBoolean(ConfigDataKey.VANISH_ENABLED)) return;
+        if (!plugin.isVanishAPIEnabled()) return;
 
         plugin.getProxyServer().getAllPlayers().forEach(player -> {
             if (hasStateChange(player)) {
