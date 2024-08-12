@@ -33,7 +33,7 @@ public class Bot {
     private final Supplier<Integer> getOnlinePlayers;
     private final Supplier<Integer> getMaxPlayers;
 
-    private final Queue<Runnable> runnables;
+    private final Queue<Runnable> runnableQueue;
 
     private boolean channelTopicErrorSent = false;
 
@@ -44,7 +44,7 @@ public class Bot {
         this.getOnlinePlayers = getOnlinePlayers;
         this.getMaxPlayers = getMaxPlayers;
 
-        runnables = new ConcurrentLinkedQueue<>();
+        this.runnableQueue = new ConcurrentLinkedQueue<>();
 
         if (!config.getAsBoolean(ConfigDataKey.USE_DISCORD)) {
             bot = null;
@@ -170,7 +170,7 @@ public class Bot {
     }
 
     public void addRunnableToQueue(final Runnable runnable) {
-        runnables.add(runnable);
+        this.runnableQueue.add(runnable);
     }
 
     public void start() throws InterruptedException {
@@ -191,7 +191,7 @@ public class Bot {
         this.updateActivity();
         this.updateStatus();
 
-        runnables.forEach(Runnable::run);
+        this.runnableQueue.forEach(Runnable::run);
     }
 
     public void updateActivity() {
