@@ -125,10 +125,20 @@ public class Config {
         config.put(ConfigDataKey.SEND_PREVIOUS_MESSAGES_ON_SWITCH_ENABLED, yamlConfig.getBoolean("send-previous-messages-on-switch.enabled"));
         config.put(ConfigDataKey.SEND_PREVIOUS_MESSAGES_ON_SWITCH_AMOUNT, yamlConfig.getInt("send-previous-messages-on-switch.amount"));
 
+        ArrayList<String> reloadAliases = (ArrayList<String>) yamlConfig.getStringList("commands.reload-aliases");
+        config.put(ConfigDataKey.RELOAD_ALIASES, reloadAliases);
+        ArrayList<String> chatToggleAliases = (ArrayList<String>) yamlConfig.getStringList("commands.chat-toggle-aliases");
+        config.put(ConfigDataKey.CHAT_TOGGLE_ALIASES, chatToggleAliases);
+        ArrayList<String> BanAliases = (ArrayList<String>) yamlConfig.getStringList("commands.ban-aliases");
+        config.put(ConfigDataKey.BAN_ALIASES, BanAliases);
+        ArrayList<String> UnbanAliases = (ArrayList<String>) yamlConfig.getStringList("commands.unban-aliases");
+        config.put(ConfigDataKey.UNBAN_ALIASES, UnbanAliases);
         ArrayList<String> whisperAliases = (ArrayList<String>) yamlConfig.getStringList("commands.whisper-aliases");
         config.put(ConfigDataKey.WHISPER_ALIASES, whisperAliases);
         ArrayList<String> replyAliases = (ArrayList<String>) yamlConfig.getStringList("commands.reply-aliases");
         config.put(ConfigDataKey.REPLY_ALIASES, replyAliases);
+        ArrayList<String> broadcastAliases = (ArrayList<String>) yamlConfig.getStringList("commands.broadcast-aliases");
+        config.put(ConfigDataKey.BROADCAST_ALIASES, broadcastAliases);
 
         // Checking timezone.
         try {
