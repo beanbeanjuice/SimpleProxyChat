@@ -211,12 +211,12 @@ public class SimpleProxyChatVelocity implements ISimpleProxyChat {
         CommandManager commandManager = proxyServer.getCommandManager();
 
         CommandMeta reloadCommand = commandManager.metaBuilder("spc-reload")
-                .aliases("spcreload")
+                .aliases(config.getAsArrayList(ConfigDataKey.RELOAD_ALIASES).toArray(new String[0]))
                 .plugin(this)
                 .build();
 
         CommandMeta chatToggleCommand = commandManager.metaBuilder("spc-chat")
-                .aliases("spcchat")
+                .aliases(config.getAsArrayList(ConfigDataKey.CHAT_TOGGLE_ALIASES).toArray(new String[0]))
                 .plugin(this)
                 .build();
 
@@ -231,17 +231,17 @@ public class SimpleProxyChatVelocity implements ISimpleProxyChat {
                 .build();
 
         CommandMeta banCommand = commandManager.metaBuilder("spc-ban")
-                .aliases("spcban")
+                .aliases(config.getAsArrayList(ConfigDataKey.BAN_ALIASES).toArray(new String[0]))
                 .plugin(this)
                 .build();
 
         CommandMeta unbanCommand = commandManager.metaBuilder("spc-unban")
-                .aliases("spcunban")
+                .aliases(config.getAsArrayList(ConfigDataKey.UNBAN_ALIASES).toArray(new String[0]))
                 .plugin(this)
                 .build();
 
         CommandMeta broadcastCommand = commandManager.metaBuilder("spc-broadcast")
-                .aliases("spcbroadcast", "spc-bc", "spcbc")
+                .aliases(config.getAsArrayList(ConfigDataKey.BROADCAST_ALIASES).toArray(new String[0]))
                 .plugin(this)
                 .build();
 
