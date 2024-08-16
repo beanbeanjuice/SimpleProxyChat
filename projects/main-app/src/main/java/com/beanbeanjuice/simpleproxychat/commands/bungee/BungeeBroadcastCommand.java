@@ -15,8 +15,8 @@ public class BungeeBroadcastCommand extends Command {
     private final SimpleProxyChatBungee plugin;
     private final Config config;
 
-    public BungeeBroadcastCommand(final SimpleProxyChatBungee plugin) {
-        super("Spc-broadcast", Permission.COMMAND_BROADCAST.getPermissionNode(), "Spc-bc");
+    public BungeeBroadcastCommand(final SimpleProxyChatBungee plugin, final String... aliases) {
+        super("Spc-broadcast", Permission.COMMAND_BROADCAST.getPermissionNode(), aliases);
 
         this.plugin = plugin;
         this.config = plugin.getConfig();

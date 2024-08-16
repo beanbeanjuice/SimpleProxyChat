@@ -15,8 +15,8 @@ public class BungeeReloadCommand extends Command {
     private final SimpleProxyChatBungee plugin;
     private final Config config;
 
-    public BungeeReloadCommand(final SimpleProxyChatBungee plugin) {
-        super("Spc-reload");
+    public BungeeReloadCommand(final SimpleProxyChatBungee plugin, final String... aliases) {
+        super("Spc-reload", null, aliases);
         this.plugin = plugin;
         this.config = plugin.getConfig();
     }
