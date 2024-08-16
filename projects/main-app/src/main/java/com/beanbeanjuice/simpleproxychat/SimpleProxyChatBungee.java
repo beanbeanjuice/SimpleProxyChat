@@ -176,16 +176,16 @@ public final class SimpleProxyChatBungee extends Plugin implements ISimpleProxyC
     }
 
     private void registerCommands() {
-        this.getProxy().getPluginManager().registerCommand(this, new BungeeReloadCommand(this));
-        this.getProxy().getPluginManager().registerCommand(this, new BungeeChatToggleCommand(this));
+        this.getProxy().getPluginManager().registerCommand(this, new BungeeReloadCommand(this, config.getAsArrayList(ConfigDataKey.RELOAD_ALIASES).toArray(new String[0])));
+        this.getProxy().getPluginManager().registerCommand(this, new BungeeChatToggleCommand(this, config.getAsArrayList(ConfigDataKey.CHAT_TOGGLE_ALIASES).toArray(new String[0])));
         this.getProxy().getPluginManager().registerCommand(this, new BungeeWhisperCommand(this, config.getAsArrayList(ConfigDataKey.WHISPER_ALIASES).toArray(new String[0])));
         this.getProxy().getPluginManager().registerCommand(this, new BungeeReplyCommand(this, config.getAsArrayList(ConfigDataKey.REPLY_ALIASES).toArray(new String[0])));
-        this.getProxy().getPluginManager().registerCommand(this, new BungeeBroadcastCommand(this));
+        this.getProxy().getPluginManager().registerCommand(this, new BungeeBroadcastCommand(this, config.getAsArrayList(ConfigDataKey.BROADCAST_ALIASES).toArray(new String[0])));
 
         // Only enable when needed.
         if (config.getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) {
-            this.getProxy().getPluginManager().registerCommand(this, new BungeeBanCommand(this));
-            this.getProxy().getPluginManager().registerCommand(this, new BungeeUnbanCommand(this));
+            this.getProxy().getPluginManager().registerCommand(this, new BungeeBanCommand(this, config.getAsArrayList(ConfigDataKey.BAN_ALIASES).toArray(new String[0])));
+            this.getProxy().getPluginManager().registerCommand(this, new BungeeUnbanCommand(this, config.getAsArrayList(ConfigDataKey.UNBAN_ALIASES).toArray(new String[0])));
         }
     }
 
