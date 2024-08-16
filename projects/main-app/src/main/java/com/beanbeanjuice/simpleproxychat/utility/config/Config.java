@@ -1,5 +1,6 @@
 package com.beanbeanjuice.simpleproxychat.utility.config;
 
+import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.helper.ServerChatLockHelper;
 import dev.dejvokep.boostedyaml.YamlDocument;
@@ -110,7 +111,8 @@ public class Config {
         Section aliasSection = yamlConfig.getSection("aliases");
         aliasSection.getKeys().stream()
                 .map((key) -> (String) key)
-                .forEach((key) -> aliases.put(key, aliasSection.getString(key)));
+                .map((key) -> Tuple.of(key, aliasSection.getString(key)))
+                .forEach((pair) -> aliases.put(pair.getKey(), Helper.translateLegacyCodes(pair.getValue())));
         config.put(ConfigDataKey.ALIASES, aliases);
         config.put(ConfigDataKey.USE_PERMISSIONS, yamlConfig.getBoolean("use-permissions"));
         config.put(ConfigDataKey.PROXY_MESSAGE_PREFIX, yamlConfig.getString("proxy-message-prefix"));
