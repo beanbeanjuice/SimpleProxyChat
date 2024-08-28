@@ -1,9 +1,10 @@
 package com.beanbeanjuice.simpleproxychat.utility.status;
 
 import com.beanbeanjuice.simpleproxychat.discord.Bot;
+import com.beanbeanjuice.simpleproxychat.utility.ISimpleProxyChat;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigKey;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
@@ -14,12 +15,13 @@ import java.util.function.Consumer;
 
 public class ServerStatusManager {
 
-    private final Hashtable<String, ServerStatus> servers;  // Hashtable for Thread Safety
+    private final ISimpleProxyChat plugin;
     private final Config config;
+    private final Hashtable<String, ServerStatus> servers = new Hashtable<>();  // Hashtable for Thread Safety
 
-    public ServerStatusManager(Config config) {
-        servers = new Hashtable<>();
-        this.config = config;
+    public ServerStatusManager(ISimpleProxyChat plugin) {
+        this.plugin = plugin;
+        this.config = plugin.getSPCConfig();
     }
 
     public ServerStatus getStatus(String serverName) {
@@ -32,11 +34,11 @@ public class ServerStatusManager {
     }
 
     public MessageEmbed getStatusEmbed(String serverName, boolean status) {
-        String statusMessageString = config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_MESSAGE);
-        String statusString = status ? config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_ONLINE) : config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_OFFLINE);
+        String statusMessageString = config.get(ConfigKey.DISCORD_PROXY_STATUS_MODULE_MESSAGE).asString();
+        String statusString = status ? config.get(ConfigKey.DISCORD_PROXY_STATUS_MODULE_ONLINE).asString() : config.get(ConfigKey.DISCORD_PROXY_STATUS_MODULE_OFFLINE).asString();
 
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle(config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_TITLE));
+        embedBuilder.setTitle(config.get(ConfigKey.DISCORD_PROXY_STATUS_MODULE_TITLE).asString());
         embedBuilder.addField(
                 Helper.convertAlias(config, serverName),
                 String.format("%s%s", statusMessageString, statusString),
@@ -46,10 +48,10 @@ public class ServerStatusManager {
     }
 
     public MessageEmbed getAllStatusEmbed() {
-        String title = config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_TITLE);
-        String message = config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_MESSAGE);
-        String onlineString = config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_ONLINE);
-        String offlineString = config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_OFFLINE);
+        String title = config.get(ConfigKey.DISCORD_PROXY_STATUS_MODULE_TITLE).asString();
+        String message = config.get(ConfigKey.DISCORD_PROXY_STATUS_MODULE_MESSAGE).asString();
+        String onlineString = config.get(ConfigKey.DISCORD_PROXY_STATUS_MODULE_ONLINE).asString();
+        String offlineString = config.get(ConfigKey.DISCORD_PROXY_STATUS_MODULE_OFFLINE).asString();
 
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle(title);
@@ -70,24 +72,24 @@ public class ServerStatusManager {
 
     public ArrayList<String> getAllStatusStrings() {
         ArrayList<String> statusStrings = new ArrayList<>();
-        if (config.getAsBoolean(ConfigDataKey.CONSOLE_SERVER_STATUS))
+        if (config.get(ConfigKey.CONSOLE_SERVER_STATUS).asBoolean())
             servers.forEach((serverName, serverStatus) -> statusStrings.add(getStatusString(serverName, serverStatus.getStatus())));
         return statusStrings;
     }
 
     public void runStatusLogic(String serverName, boolean newStatus, Bot discordBot, Consumer<String> logger) {
-        if (config.getAsBoolean(ConfigDataKey.PLUGIN_STARTING)) {
+        if (plugin.isPluginStarting()) {
             this.setStatus(serverName, newStatus);
             return;
         }
 
         ServerStatus currentStatus = this.getStatus(serverName);
         currentStatus.updateStatus(newStatus).ifPresent((isOnline) -> {
-            if (config.getAsBoolean(ConfigDataKey.DISCORD_PROXY_STATUS_ENABLED))
+            if (config.get(ConfigKey.DISCORD_PROXY_STATUS_ENABLED).asBoolean())
                 discordBot.sendMessageEmbed(this.getStatusEmbed(serverName, isOnline));
 
-            if (config.getAsBoolean(ConfigDataKey.CONSOLE_SERVER_STATUS))
-                logger.accept(this.getStatusString(serverName, isOnline));
+            if (config.get(ConfigKey.CONSOLE_SERVER_STATUS).asBoolean())
+                logger.accept(Helper.sanitize(this.getStatusString(serverName, isOnline)));
         });
     }
 }

@@ -7,7 +7,7 @@ import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.MessageType;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigKey;
 import de.myzelyam.api.vanish.*;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatMessageType;
@@ -46,7 +46,7 @@ public class BungeeServerListener implements Listener {
         if (plugin.isVanishAPIEnabled() && BungeeVanishAPI.isInvisible(player)) {
             // TODO: If is allowed to speak in vanish then continue.
             if (!event.getMessage().endsWith("/")) {
-                String errorMessage = plugin.getConfig().getAsString(ConfigDataKey.MINECRAFT_CHAT_VANISHED_MESSAGE);
+                String errorMessage = plugin.getConfig().get(ConfigKey.MINECRAFT_CHAT_VANISHED_MESSAGE).asString();
                 player.sendMessage(ChatMessageType.SYSTEM, Helper.convertToBungee(errorMessage));
                 return;
             }
@@ -111,7 +111,7 @@ public class BungeeServerListener implements Listener {
     public void onPreLogin(PreLoginEvent event) {
         String playerName = event.getConnection().getName();
 
-        if (!plugin.getConfig().getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) return;
+        if (!plugin.getConfig().get(ConfigKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM).asBoolean()) return;
         if (!plugin.getBanHelper().isBanned(playerName)) return;
 
         event.setCancelled(true);
@@ -171,7 +171,7 @@ public class BungeeServerListener implements Listener {
                 (message) -> from.getPlayers().stream()
                         .filter((streamPlayer) -> streamPlayer != player)
                         .filter((streamPlayer) -> {
-                            if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
+                            if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean())
                                 return streamPlayer.hasPermission(Permission.READ_SWITCH_MESSAGE.getPermissionNode());
                             return true;
                         })
@@ -181,8 +181,8 @@ public class BungeeServerListener implements Listener {
     }
 
     private void startServerStatusDetection() {
-        this.serverStatusManager = new ServerStatusManager(plugin.getConfig());
-        int updateInterval = plugin.getConfig().getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL);
+        this.serverStatusManager = new ServerStatusManager(plugin);
+        int updateInterval = plugin.getConfig().get(ConfigKey.SERVER_UPDATE_INTERVAL).asInt();
 
         plugin.getProxy().getScheduler().schedule(plugin, () -> plugin.getProxy().getServers().forEach((serverName, serverInfo) -> {
             serverInfo.ping((result, error) -> {
@@ -195,7 +195,7 @@ public class BungeeServerListener implements Listener {
     private void sendToAllServers(String parsedMessage, Permission permission) {
         plugin.getProxy().getPlayers().stream()
                 .filter((player) -> {
-                    if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
+                    if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean())
                         return player.hasPermission(permission.getPermissionNode());
                     return true;
                 })
@@ -209,12 +209,12 @@ public class BungeeServerListener implements Listener {
     private void sendToAllServersVanish(String parsedMessage, Permission permission) {
         plugin.getProxy().getPlayers().stream()
                 .filter((player) -> {
-                    if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
+                    if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean())
                         return player.hasPermission(permission.getPermissionNode());
                     return true;
                 })
                 .filter((player) -> {
-                    if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
+                    if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean())
                         return player.hasPermission(Permission.READ_FAKE_MESSAGE.getPermissionNode());
                     return true;
                 })

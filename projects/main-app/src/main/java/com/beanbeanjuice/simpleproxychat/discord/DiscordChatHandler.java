@@ -1,7 +1,7 @@
 package com.beanbeanjuice.simpleproxychat.discord;
 
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigKey;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
@@ -19,9 +19,9 @@ public class DiscordChatHandler extends ListenerAdapter {
     }
 
     public void onMessageReceived(MessageReceivedEvent event) {
-        if (!event.getChannel().getId().equalsIgnoreCase(config.getAsString(ConfigDataKey.CHANNEL_ID))) return;
+        if (!event.getChannel().getId().equalsIgnoreCase(config.get(ConfigKey.CHANNEL_ID).asString())) return;
         if (event.getAuthor().isBot()) return;
-        if (!config.getAsBoolean(ConfigDataKey.DISCORD_CHAT_ENABLED)) return;
+        if (!config.get(ConfigKey.DISCORD_CHAT_ENABLED).asBoolean()) return;
 
         sendFromDiscord.accept(event);
     }
