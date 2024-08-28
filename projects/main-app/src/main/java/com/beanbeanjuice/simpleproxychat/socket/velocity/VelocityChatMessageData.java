@@ -5,6 +5,7 @@ import com.beanbeanjuice.simpleproxychat.socket.ChatMessageData;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigKey;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.MessageType;
+import com.beanbeanjuice.simpleproxychat.utility.listeners.velocity.VelocityServerListener;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import lombok.Getter;
@@ -62,6 +63,7 @@ public class VelocityChatMessageData extends ChatMessageData {
                     if (!plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean()) return true;
                     return streamPlayer.hasPermission(Permission.READ_CHAT_MESSAGE.getPermissionNode());
                 })
+                .filter((streamPlayer) -> !VelocityServerListener.playerIsInDisabledServer(streamPlayer, plugin))
                 .forEach((streamPlayer) -> streamPlayer.sendMessage(component));
 
     }
