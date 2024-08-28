@@ -3,6 +3,7 @@ package com.beanbeanjuice.simpleproxychat.utility.listeners.bungee;
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
 import com.beanbeanjuice.simpleproxychat.socket.bungee.BungeeChatMessageData;
+import com.beanbeanjuice.simpleproxychat.utility.ISimpleProxyChat;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.MessageType;
@@ -37,12 +38,17 @@ public class BungeeServerListener implements Listener {
         startServerStatusDetection();
     }
 
+    public static boolean playerIsInDisabledServer(ProxiedPlayer player, ISimpleProxyChat plugin) {
+        return plugin.getSPCConfig().get(ConfigKey.DISABLED_SERVERS).asList().contains(player.getServer().getInfo().getName());
+    }
+
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onProxyChatEvent(ChatEvent event) {
         if (event.isCancelled()) return;
         if (event.isCommand() || event.isProxyCommand()) return;
-
         ProxiedPlayer player = (ProxiedPlayer) event.getSender();
+        if (playerIsInDisabledServer(player, plugin)) return;
+
         if (plugin.isVanishAPIEnabled() && BungeeVanishAPI.isInvisible(player)) {
             // TODO: If is allowed to speak in vanish then continue.
             if (!event.getMessage().endsWith("/")) {
@@ -67,6 +73,7 @@ public class BungeeServerListener implements Listener {
     */
     @EventHandler
     public void onPlayerLeaveServer(ServerDisconnectEvent event) {
+        if (playerIsInDisabledServer(event.getPlayer(), plugin)) return;
         previousServerHandler.put(event.getPlayer().getName(), event.getTarget());
     }
 
@@ -76,6 +83,7 @@ public class BungeeServerListener implements Listener {
     */
     @EventHandler
     public void onPlayerKick(ServerKickEvent event) {
+        if (playerIsInDisabledServer(event.getPlayer(), plugin)) return;
         if (event.getState() == ServerKickEvent.State.CONNECTING) return;
         if (!event.getPlayer().getGroups().contains("successful-connection")) return;
         previousServerHandler.put(event.getPlayer().getName(), event.getKickedFrom());
@@ -83,6 +91,7 @@ public class BungeeServerListener implements Listener {
 
     @EventHandler
     public void onPlayerLeaveProxy(PlayerDisconnectEvent event) {
+        if (playerIsInDisabledServer(event.getPlayer(), plugin)) return;
         if (!event.getPlayer().getGroups().contains("successful-connection")) return;
         if (!event.getPlayer().getGroups().contains("not-first-join")) return;
         if (plugin.isVanishAPIEnabled() && BungeeVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
@@ -125,6 +134,8 @@ public class BungeeServerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoinProxy(ServerConnectedEvent event) {
+        if (playerIsInDisabledServer(event.getPlayer(), plugin)) return;
+
         if (event.getPlayer().getGroups().contains("not-first-join")) return;  // If not first join, don't do anything.
         if (!event.getPlayer().getGroups().contains("successful-connection")) return;
         event.getPlayer().addGroups("not-first-join");
@@ -156,6 +167,8 @@ public class BungeeServerListener implements Listener {
     @EventHandler
     public void onPlayerServerSwitch(ServerSwitchEvent event) {
         ProxiedPlayer player = event.getPlayer();
+
+        if (playerIsInDisabledServer(player, plugin)) return;
 
         if (plugin.isVanishAPIEnabled() && BungeeVanishAPI.isInvisible(player)) return;  // Ignore if player is invisible.
         if (event.getFrom() == null) return;  // This means the player just joined the network.
@@ -202,6 +215,9 @@ public class BungeeServerListener implements Listener {
                 .filter((player) -> {
                     if (player.getServer() == null || player.getServer().getInfo() == null) return false;
                     return !Helper.serverHasChatLocked(plugin, player.getServer().getInfo().getName());
+                })
+                .filter((player) -> {  // Players IN the server will not receive the message.
+                    return !playerIsInDisabledServer(player, plugin);
                 })
                 .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, Helper.convertToBungee(parsedMessage)));
     }
