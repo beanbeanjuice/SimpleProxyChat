@@ -4,7 +4,7 @@ import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigKey;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
@@ -29,14 +29,14 @@ public class BungeeReplyCommand extends Command {
                 (receiver) -> {
                     String message = Helper.translateLegacyCodes(String.join(" ", args));
 
-                    String senderString = config.getAsString(ConfigDataKey.MINECRAFT_WHISPER_SEND);
-                    String receiverString = config.getAsString(ConfigDataKey.MINECRAFT_WHISPER_RECEIVE);
+                    String senderString = config.get(ConfigKey.MINECRAFT_WHISPER_SEND).asString();
+                    String receiverString = config.get(ConfigKey.MINECRAFT_WHISPER_RECEIVE).asString();
 
                     List<Tuple<String, String>> replacements = new ArrayList<>();
                     replacements.add(Tuple.of("sender", sender.getName()));
                     replacements.add(Tuple.of("receiver", receiver.getName()));
                     replacements.add(Tuple.of("message", message));
-                    replacements.add(Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
+                    replacements.add(Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()));
 
                     senderString = Helper.replaceKeys(senderString, replacements);
                     receiverString = Helper.replaceKeys(receiverString, replacements);
@@ -46,7 +46,7 @@ public class BungeeReplyCommand extends Command {
 
                     plugin.getWhisperHandler().set(sender.getName(), receiver.getName());
                 },
-                () -> sender.sendMessage(Helper.convertToBungee(config.getAsString(ConfigDataKey.MINECRAFT_WHISPER_ERROR)))
+                () -> sender.sendMessage(Helper.convertToBungee(config.get(ConfigKey.MINECRAFT_WHISPER_ERROR).asString()))
         );
 
     }

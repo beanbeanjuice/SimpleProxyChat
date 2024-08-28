@@ -2,7 +2,7 @@ package com.beanbeanjuice.simpleproxychat.discord;
 
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigKey;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -46,7 +46,7 @@ public class Bot {
 
         this.runnableQueue = new ConcurrentLinkedQueue<>();
 
-        if (!config.getAsBoolean(ConfigDataKey.USE_DISCORD)) {
+        if (!config.get(ConfigKey.USE_DISCORD).asBoolean()) {
             bot = null;
             return;
         }
@@ -96,7 +96,7 @@ public class Bot {
     }
 
     public Optional<TextChannel> getBotTextChannel() {
-        return Optional.ofNullable(bot.getTextChannelById(config.getAsString(ConfigDataKey.CHANNEL_ID)));
+        return Optional.ofNullable(bot.getTextChannelById(config.get(ConfigKey.CHANNEL_ID).asString()));
     }
 
     private MessageEmbed sanitizeEmbed(final MessageEmbed oldEmbed) {
@@ -161,7 +161,7 @@ public class Bot {
 
     public void channelUpdaterFunction() {
         if (bot == null) return;
-        String topicMessage = config.getAsString(ConfigDataKey.DISCORD_TOPIC_ONLINE).replace("%online%", String.valueOf(getOnlinePlayers.get()));
+        String topicMessage = config.get(ConfigKey.DISCORD_TOPIC_ONLINE).asString().replace("%online%", String.valueOf(getOnlinePlayers.get()));
         this.updateChannelTopic(topicMessage);
     }
 
@@ -174,7 +174,7 @@ public class Bot {
     }
 
     public void start() throws InterruptedException {
-        String token = config.getAsString(ConfigDataKey.BOT_TOKEN);
+        String token = config.get(ConfigKey.BOT_TOKEN).asString();
         if (token.isEmpty() || token.equalsIgnoreCase("TOKEN_HERE") || token.equalsIgnoreCase("null")) return;
 
         bot = JDABuilder
@@ -203,8 +203,8 @@ public class Bot {
             String text;
 
             try {
-                type = Activity.ActivityType.valueOf(config.getAsString(ConfigDataKey.BOT_ACTIVITY_TYPE));
-                text = config.getAsString(ConfigDataKey.BOT_ACTIVITY_TEXT);
+                type = Activity.ActivityType.valueOf(config.get(ConfigKey.BOT_ACTIVITY_TYPE).asString());
+                text = config.get(ConfigKey.BOT_ACTIVITY_TEXT).asString();
             } catch (Exception e) {
                 type = Activity.ActivityType.WATCHING;
                 text = "CONFIG ERROR";
@@ -221,7 +221,7 @@ public class Bot {
             OnlineStatus status;
 
             try {
-                status = OnlineStatus.valueOf(config.getAsString(ConfigDataKey.BOT_ACTIVITY_STATUS));
+                status = OnlineStatus.valueOf(config.get(ConfigKey.BOT_ACTIVITY_STATUS).asString());
             } catch (Exception e) {
                 status = OnlineStatus.IDLE;
             }
@@ -230,19 +230,19 @@ public class Bot {
     }
 
     public void sendProxyStatus(final boolean isStart) {
-        if (!config.getAsBoolean(ConfigDataKey.DISCORD_PROXY_STATUS_ENABLED)) return;
+        if (!config.get(ConfigKey.DISCORD_PROXY_STATUS_ENABLED).asBoolean()) return;
 
         if (isStart) {
             this.sendMessageEmbed(
                     new EmbedBuilder()
-                            .setTitle(config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_ENABLED))
+                            .setTitle(config.get(ConfigKey.DISCORD_PROXY_STATUS_MODULE_ENABLED).asString())
                             .setColor(Color.GREEN)
                             .build()
             );
         } else {
             this.sendMessageEmbed(
                     new EmbedBuilder()
-                            .setTitle(config.getAsString(ConfigDataKey.DISCORD_PROXY_STATUS_MODULE_DISABLED))
+                            .setTitle(config.get(ConfigKey.DISCORD_PROXY_STATUS_MODULE_DISABLED).asString())
                             .setColor(Color.RED)
                             .build()
             );
@@ -253,7 +253,7 @@ public class Bot {
         if (bot == null) return;
         sendProxyStatus(false);
 
-        this.updateChannelTopic(config.getAsString(ConfigDataKey.DISCORD_TOPIC_OFFLINE));
+        this.updateChannelTopic(config.get(ConfigKey.DISCORD_TOPIC_OFFLINE).asString());
 
         this.getJDA().ifPresent((jda) -> {
             try {

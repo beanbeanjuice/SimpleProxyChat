@@ -3,7 +3,7 @@ package com.beanbeanjuice.simpleproxychat.utility.helper;
 import com.beanbeanjuice.simpleproxychat.utility.ISimpleProxyChat;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigKey;
 import litebans.api.Database;
 import me.leoko.advancedban.manager.PunishmentManager;
 import me.leoko.advancedban.manager.UUIDManager;
@@ -75,7 +75,7 @@ public class Helper {
     }
 
     public static String convertAlias(Config config, String serverName) {
-        String alias = config.getAsStringMap(ConfigDataKey.ALIASES).get(serverName);
+        String alias = config.get(ConfigKey.ALIASES).asStringMap().get(serverName);
         return (alias == null) ? serverName : alias;
     }
 

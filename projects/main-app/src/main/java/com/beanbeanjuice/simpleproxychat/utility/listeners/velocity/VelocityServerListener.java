@@ -7,7 +7,7 @@ import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.MessageType;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigKey;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
@@ -50,7 +50,7 @@ public class VelocityServerListener {
         if (plugin.isVanishAPIEnabled() && VelocityVanishAPI.isInvisible(player)) {
             // If is allowed to speak in vanish, continue.
             if (!event.getMessage().endsWith("/")) {
-                String errorMessage = plugin.getConfig().getAsString(ConfigDataKey.MINECRAFT_CHAT_VANISHED_MESSAGE);
+                String errorMessage = plugin.getConfig().get(ConfigKey.MINECRAFT_CHAT_VANISHED_MESSAGE).asString();
                 player.sendMessage(Helper.stringToComponent(errorMessage));
                 return;
             }
@@ -97,8 +97,8 @@ public class VelocityServerListener {
     }
 
     private void startServerStatusDetection() {
-        this.serverStatusManager = new ServerStatusManager(plugin.getConfig());
-        int updateInterval = plugin.getConfig().getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL);
+        this.serverStatusManager = new ServerStatusManager(plugin);
+        int updateInterval = plugin.getConfig().get(ConfigKey.SERVER_UPDATE_INTERVAL).asInt();
 
         plugin.getProxyServer().getScheduler().buildTask(plugin, () -> plugin.getProxyServer().getAllServers().forEach((registeredServer) -> {
             String serverName = registeredServer.getServerInfo().getName();
@@ -116,7 +116,7 @@ public class VelocityServerListener {
     public void onPreLoginEvent(PreLoginEvent event) {
         String playerName = event.getUsername();
 
-        if (!plugin.getConfig().getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) return;
+        if (!plugin.getConfig().get(ConfigKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM).asBoolean()) return;
         if (!plugin.getBanHelper().isBanned(playerName)) return;
 
         event.setResult(PreLoginEvent.PreLoginComponentResult.denied(Helper.stringToComponent("&cYou are banned from the proxy.")));
@@ -149,7 +149,7 @@ public class VelocityServerListener {
                     previousServer.getPlayersConnected().stream()
                             .filter((streamPlayer) -> streamPlayer != event.getPlayer())
                             .filter((player) -> {
-                                if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
+                                if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean())
                                     return player.hasPermission(Permission.READ_SWITCH_MESSAGE.getPermissionNode());
                                 return true;
                             })
@@ -162,7 +162,7 @@ public class VelocityServerListener {
     private void sendToAllServers(String message, Permission permission) {
         plugin.getProxyServer().getAllPlayers().stream()
                         .filter((player) -> {
-                            if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
+                            if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean())
                                 return player.hasPermission(permission.getPermissionNode());
                             return true;
                         })

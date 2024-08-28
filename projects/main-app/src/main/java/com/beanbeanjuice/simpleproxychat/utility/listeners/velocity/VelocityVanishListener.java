@@ -1,7 +1,6 @@
 package com.beanbeanjuice.simpleproxychat.utility.listeners.velocity;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
 import com.velocitypowered.api.proxy.Player;
 import de.myzelyam.api.vanish.VelocityVanishAPI;
 

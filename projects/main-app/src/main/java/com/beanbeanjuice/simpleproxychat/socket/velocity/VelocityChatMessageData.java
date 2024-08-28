@@ -2,7 +2,7 @@ package com.beanbeanjuice.simpleproxychat.socket.velocity;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity;
 import com.beanbeanjuice.simpleproxychat.socket.ChatMessageData;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigKey;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.MessageType;
 import com.velocitypowered.api.proxy.Player;
@@ -59,7 +59,7 @@ public class VelocityChatMessageData extends ChatMessageData {
         plugin.getProxyServer().getAllPlayers().stream()
                 .filter((streamPlayer) -> !blacklistedUUIDs.contains(streamPlayer))
                 .filter((streamPlayer) -> {
-                    if (!plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS)) return true;
+                    if (!plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean()) return true;
                     return streamPlayer.hasPermission(Permission.READ_CHAT_MESSAGE.getPermissionNode());
                 })
                 .forEach((streamPlayer) -> streamPlayer.sendMessage(component));
