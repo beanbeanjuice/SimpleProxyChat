@@ -120,6 +120,7 @@ public class ChatHandler {
         replacements.add(Tuple.of("to", aliasedServerName));
         replacements.add(Tuple.of("original_to", serverName));
         replacements.add(Tuple.of("player", playerName));
+        replacements.add(Tuple.of("escaped_player", Helper.escapeString(playerName)));
         replacements.add(Tuple.of("epoch", String.valueOf(epochHelper.getEpochSecond())));
         replacements.add(Tuple.of("time", getTimeString()));
         replacements.add(Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()));
@@ -144,6 +145,7 @@ public class ChatHandler {
 
         chat(chatMessageData, minecraftMessage, discordMessage, discordEmbedTitle, discordEmbedMessage);
     }
+
     public void runProxyLeaveMessage(String playerName, UUID playerUUID, String serverName,
                                      BiConsumer<String, Permission> minecraftLogger) {
         String configString = config.get(ConfigKey.MINECRAFT_LEAVE).asString();
@@ -153,6 +155,7 @@ public class ChatHandler {
 
         List<Tuple<String, String>> replacements = new ArrayList<>();
         replacements.add(Tuple.of("player", playerName));
+        replacements.add(Tuple.of("escaped_player", Helper.escapeString(playerName)));
         replacements.add(Tuple.of("server", aliasedServerName));
         replacements.add(Tuple.of("original_server", serverName));
         replacements.add(Tuple.of("to", aliasedServerName));
@@ -191,6 +194,7 @@ public class ChatHandler {
 
         List<Tuple<String, String>> replacements = new ArrayList<>();
         replacements.add(Tuple.of("player", playerName));
+        replacements.add(Tuple.of("escaped_player", Helper.escapeString(playerName)));
         replacements.add(Tuple.of("server", Helper.convertAlias(config, serverName)));
         replacements.add(Tuple.of("to", Helper.convertAlias(config, serverName)));
         replacements.add(Tuple.of("server", aliasedServerName));
@@ -239,6 +243,7 @@ public class ChatHandler {
         replacements.add(Tuple.of("server", aliasedTo));
         replacements.add(Tuple.of("original_server", to));
         replacements.add(Tuple.of("player", playerName));
+        replacements.add(Tuple.of("escaped_player", Helper.escapeString(playerName)));
         replacements.add(Tuple.of("epoch", String.valueOf(epochHelper.getEpochSecond())));
         replacements.add(Tuple.of("time", getTimeString()));
         replacements.add(Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()));
