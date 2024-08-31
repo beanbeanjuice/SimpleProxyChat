@@ -350,6 +350,7 @@ file-version: 9
 * `%from%` - The server the player just disconnected from. Uses the alias if one is specified.
 * `%original_from%` - Same as `%from%`, but does not use the alias.
 * `%player%` - The player's Minecraft username.
+* `%escaped_player%` - The escaped player's Minecraft username. (Adds '\\' before the '_' to prevent italics.)
 * `%sender%` - The person sending the private message. **Private Messaging Only**
 * `%receiver%` - The person receiving the private message. **Private Messaging Only**
 * `%user%` - The player's Discord username.
