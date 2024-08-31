@@ -4,7 +4,7 @@ import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigKey;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -24,18 +24,17 @@ public class BungeeReloadCommand extends Command {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (!sender.hasPermission(Permission.COMMAND_RELOAD.getPermissionNode()) && sender instanceof ProxiedPlayer) {
-            String message = config.getAsString(ConfigDataKey.MINECRAFT_COMMAND_NO_PERMISSION);
+            String message = config.get(ConfigKey.MINECRAFT_COMMAND_NO_PERMISSION).asString();
             sender.sendMessage(Helper.convertToBungee(message));
             return;
         }
 
         config.reload();
-        plugin.getDiscordBot().updateActivity();
 
-        String message = config.getAsString(ConfigDataKey.MINECRAFT_COMMAND_RELOAD);
+        String message = config.get(ConfigKey.MINECRAFT_COMMAND_RELOAD).asString();
         message = Helper.replaceKeys(
                 message,
-                Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX))
+                Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString())
         );
         sender.sendMessage(Helper.convertToBungee(message));
     }
