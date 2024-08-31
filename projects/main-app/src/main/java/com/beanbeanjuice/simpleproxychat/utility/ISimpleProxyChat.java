@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface ISimpleProxyChat {
 
+    boolean isPluginStarting();
+
     boolean isLuckPermsEnabled();
     Optional<?> getLuckPerms();
 
