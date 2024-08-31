@@ -260,14 +260,20 @@ discord:
       enabled: true
       message: "%player% has joined the network. (%server%)"
       use-timestamp: true
+      # Incompatible with use-timestamp.
+      use-embed: true
    leave:
       enabled: true
       message: "%player% has left the network. (%server%)"
       use-timestamp: true
+      # Incompatible with use-timestamp.
+      use-embed: true
    switch:
       enabled: true
       message: "%player% has switched from %from% to %to%."
       use-timestamp: true
+      # Incompatible with use-timestamp.
+      use-embed: true
    chat:
       enabled: true
       minecraft-message: "&8[&bDiscord&8] %role% &f%user% &9» &7%message%"
@@ -299,7 +305,7 @@ console:
 update-message: "&7There is an update! You are on &c%old%. New version is &a%new%&7: &6%link%"
 
 # DO NOT TOUCH THIS
-file-version: 9
+file-version: 10
 ```
 
 ---
