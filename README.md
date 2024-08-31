@@ -167,13 +167,28 @@ send-previous-messages-on-switch:
 
 # These require a restart in order to take place.
 commands:
+   reload-aliases:
+      - "spcreload"
+   chat-toggle-aliases:
+      - "chattoggle"
+   ban-aliases:
+      - "spcban"
+   unban-aliases:
+      - "spcunban"
    whisper-aliases:
       - "spc-msg"
    reply-aliases:
       - "spc-r"
+   broadcast-aliases:
+      - "spc-bc"
+      - "broadcast"
+
+# Disable servers from sending/receiving proxy messages.
+disabled-servers:
+   - example1
 
 # DO NOT TOUCH THIS
-file-version: 13
+file-version: 15
 ```
 
 **messages.yml**

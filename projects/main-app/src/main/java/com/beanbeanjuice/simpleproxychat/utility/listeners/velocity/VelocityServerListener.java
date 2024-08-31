@@ -3,6 +3,7 @@ package com.beanbeanjuice.simpleproxychat.utility.listeners.velocity;
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
 import com.beanbeanjuice.simpleproxychat.socket.velocity.VelocityChatMessageData;
+import com.beanbeanjuice.simpleproxychat.utility.ISimpleProxyChat;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.MessageType;
@@ -16,7 +17,9 @@ import com.velocitypowered.api.event.player.KickedFromServerEvent;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
+import com.velocitypowered.api.proxy.server.ServerInfo;
 import de.myzelyam.api.vanish.VelocityVanishAPI;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -43,8 +46,22 @@ public class VelocityServerListener {
         this.velocityVanishListener.startVanishListener();
     }
 
+    public static boolean playerIsInDisabledServer(Player player, ISimpleProxyChat plugin) {
+        return player.getCurrentServer()
+                .map(ServerConnection::getServerInfo)
+                .map(ServerInfo::getName)
+                .map(plugin.getSPCConfig().get(ConfigKey.DISABLED_SERVERS).asList()::contains)
+                .orElse(false);
+    }
+
+    public static boolean playerIsInDisabledServer(ServerInfo serverInfo, ISimpleProxyChat plugin) {
+        return plugin.getSPCConfig().get(ConfigKey.DISABLED_SERVERS).asList().contains(serverInfo.getName());
+    }
+
     @Subscribe(order = PostOrder.LAST)
     public void onPlayerChat(PlayerChatEvent event) {
+        if (playerIsInDisabledServer(event.getPlayer(), plugin)) return;
+
         String playerMessage = event.getMessage();
         Player player = event.getPlayer();
         if (plugin.isVanishAPIEnabled() && VelocityVanishAPI.isInvisible(player)) {
@@ -67,6 +84,7 @@ public class VelocityServerListener {
 
     @Subscribe
     public void onDisconnect(DisconnectEvent event) {
+        if (playerIsInDisabledServer(event.getPlayer(), plugin)) return;
         if (plugin.isVanishAPIEnabled() && VelocityVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
 
         leave(event.getPlayer());
@@ -74,6 +92,8 @@ public class VelocityServerListener {
 
     @Subscribe
     public void kickedFromServerEvent(KickedFromServerEvent event) {
+        if (playerIsInDisabledServer(event.getPlayer(), plugin)) return;
+
         KickedFromServerEvent.ServerKickResult result = event.getResult();
         if (result.toString().contains("velocity.error.cant-connect")) return;
         if (event.getServerKickReason().isEmpty()) return;
@@ -124,10 +144,13 @@ public class VelocityServerListener {
 
     @Subscribe
     public void onServerConnected(ServerConnectedEvent event) {
+        if (playerIsInDisabledServer(event.getPlayer(), plugin)) return;
         if (plugin.isVanishAPIEnabled() && VelocityVanishAPI.isInvisible(event.getPlayer())) return;
 
         // First Join
         if (event.getPreviousServer().isEmpty()) {
+            if (playerIsInDisabledServer(event.getServer().getServerInfo(), plugin)) return;
+
             join(event.getPlayer(), event.getServer().getServerInfo().getName());
             return;
         }
@@ -166,6 +189,7 @@ public class VelocityServerListener {
                                 return player.hasPermission(permission.getPermissionNode());
                             return true;
                         })
+                        .filter((player) -> !playerIsInDisabledServer(player, plugin))
                         .forEach((player) -> player.sendMessage(MiniMessage.miniMessage().deserialize(message)));
     }
 

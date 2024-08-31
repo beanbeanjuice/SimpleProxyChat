@@ -39,6 +39,7 @@ public enum ConfigKey {
     WHISPER_ALIASES (ConfigFileType.CONFIG, "commands.whisper-aliases", List.class),
     REPLY_ALIASES (ConfigFileType.CONFIG, "commands.reply-aliases", List.class),
     BROADCAST_ALIASES (ConfigFileType.CONFIG, "commands.broadcast-aliases", List.class),
+    DISABLED_SERVERS (ConfigFileType.CONFIG, "disabled-servers", List.class),
 
     // MESSAGES
     PLUGIN_PREFIX (ConfigFileType.MESSAGES, "plugin-prefix", String.class),

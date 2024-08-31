@@ -173,7 +173,6 @@ public class ChatHandler {
         // Log to Console
         if (config.get(ConfigKey.CONSOLE_LEAVE).asBoolean()) plugin.log(message);
 
-
         // Log to Discord
         if (config.get(ConfigKey.DISCORD_LEAVE_ENABLED).asBoolean()) {
             EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.RED);
