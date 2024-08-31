@@ -174,7 +174,12 @@ public class ChatHandler {
         if (config.get(ConfigKey.CONSOLE_LEAVE).asBoolean()) plugin.log(message);
 
         // Log to Discord
-        if (config.get(ConfigKey.DISCORD_LEAVE_ENABLED).asBoolean()) {
+        DISCORD_SENT: if (config.get(ConfigKey.DISCORD_LEAVE_ENABLED).asBoolean()) {
+            if (!config.get(ConfigKey.DISCORD_LEAVE_USE_EMBED).asBoolean()) {
+                discordBot.sendMessage(discordMessage);
+                break DISCORD_SENT;
+            }
+
             EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.RED);
             if (config.get(ConfigKey.DISCORD_LEAVE_USE_TIMESTAMP).asBoolean()) embedBuilder.setTimestamp(epochHelper.getEpochInstant());
             discordBot.sendMessageEmbed(embedBuilder.build());
@@ -214,7 +219,12 @@ public class ChatHandler {
         if (config.get(ConfigKey.CONSOLE_JOIN).asBoolean()) plugin.log(message);
 
         // Log to Discord
-        if (config.get(ConfigKey.DISCORD_JOIN_ENABLED).asBoolean()) {
+        DISCORD_SENT: if (config.get(ConfigKey.DISCORD_JOIN_ENABLED).asBoolean()) {
+            if (!config.get(ConfigKey.DISCORD_JOIN_USE_EMBED).asBoolean()) {
+                discordBot.sendMessage(discordMessage);
+                break DISCORD_SENT;
+            }
+
             EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.GREEN);
             if (config.get(ConfigKey.DISCORD_JOIN_USE_TIMESTAMP).asBoolean()) embedBuilder.setTimestamp(epochHelper.getEpochInstant());
             discordBot.sendMessageEmbed(embedBuilder.build());
@@ -259,7 +269,12 @@ public class ChatHandler {
         if (config.get(ConfigKey.CONSOLE_SWITCH).asBoolean()) plugin.log(consoleMessage);
 
         // Log to Discord
-        if (config.get(ConfigKey.DISCORD_SWITCH_ENABLED).asBoolean()) {
+        DISCORD_SENT: if (config.get(ConfigKey.DISCORD_SWITCH_ENABLED).asBoolean()) {
+            if (!config.get(ConfigKey.DISCORD_SWITCH_USE_EMBED).asBoolean()) {
+                discordBot.sendMessage(discordMessage);
+                break DISCORD_SENT;
+            }
+
             EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.YELLOW);
             if (config.get(ConfigKey.DISCORD_SWITCH_USE_TIMESTAMP).asBoolean()) embedBuilder.setTimestamp(epochHelper.getEpochInstant());
             discordBot.sendMessageEmbed(embedBuilder.build());
