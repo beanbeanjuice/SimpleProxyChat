@@ -3,7 +3,7 @@ package com.beanbeanjuice.simpleproxychat.commands.velocity.ban;
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigKey;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.velocitypowered.api.command.SimpleCommand;
@@ -23,13 +23,13 @@ public class VelocityBanCommand implements SimpleCommand {
 
     @Override
     public void execute(Invocation invocation) {
-        if (!config.getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) {
+        if (!config.get(ConfigKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM).asBoolean()) {
             invocation.source().sendMessage(Helper.stringToComponent("&cThe banning system is disabled..."));
             return;
         }
 
         if (invocation.arguments().length != 1) {
-            String errorMessage = config.getAsString(ConfigDataKey.MINECRAFT_COMMAND_PROXY_BAN_USAGE);
+            String errorMessage = config.get(ConfigKey.MINECRAFT_COMMAND_PROXY_BAN_USAGE).asString();
             invocation.source().sendMessage(Helper.stringToComponent(errorMessage));
             return;
         }
@@ -38,10 +38,10 @@ public class VelocityBanCommand implements SimpleCommand {
         plugin.getBanHelper().addBan(playerName);
         plugin.getProxyServer().getPlayer(playerName).ifPresent(player -> player.disconnect(Helper.stringToComponent("&cYou have been banned from the proxy.")));
 
-        String bannedMessage = config.getAsString(ConfigDataKey.MINECRAFT_COMMAND_PROXY_BAN_BANNED);
+        String bannedMessage = config.get(ConfigKey.MINECRAFT_COMMAND_PROXY_BAN_BANNED).asString();
         bannedMessage = Helper.replaceKeys(
                 bannedMessage,
-                Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)),
+                Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()),
                 Tuple.of("player", playerName)
         );
 

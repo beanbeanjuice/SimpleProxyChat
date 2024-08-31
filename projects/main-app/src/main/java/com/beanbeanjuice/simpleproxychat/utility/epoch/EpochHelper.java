@@ -1,7 +1,7 @@
 package com.beanbeanjuice.simpleproxychat.utility.epoch;
 
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigKey;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +24,7 @@ public class EpochHelper {
     }
 
     public long getEpochMillisecond() {
-        if (!config.getAsBoolean(ConfigDataKey.TIMESTAMP_USE_API)) return System.currentTimeMillis();
+        if (!config.get(ConfigKey.TIMESTAMP_USE_API).asBoolean()) return System.currentTimeMillis();
 
         Optional<Long> optionalEpochLong = getEpochFromAPI();
         if (optionalEpochLong.isEmpty()) return epochCache;
@@ -40,6 +40,10 @@ public class EpochHelper {
         return getEpochMillisecond() / 1000;
     }
 
+    /**
+     * @deprecated Since 0.5.3
+     */
+    @Deprecated
     private Optional<Long> getEpochFromAPI() {
         if (System.currentTimeMillis() - timeAtLastRefresh < 15000) return Optional.of(epochCache);
 

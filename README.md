@@ -167,13 +167,28 @@ send-previous-messages-on-switch:
 
 # These require a restart in order to take place.
 commands:
+   reload-aliases:
+      - "spcreload"
+   chat-toggle-aliases:
+      - "chattoggle"
+   ban-aliases:
+      - "spcban"
+   unban-aliases:
+      - "spcunban"
    whisper-aliases:
       - "spc-msg"
    reply-aliases:
       - "spc-r"
+   broadcast-aliases:
+      - "spc-bc"
+      - "broadcast"
+
+# Disable servers from sending/receiving proxy messages.
+disabled-servers:
+   - example1
 
 # DO NOT TOUCH THIS
-file-version: 13
+file-version: 15
 ```
 
 **messages.yml**
@@ -245,14 +260,20 @@ discord:
       enabled: true
       message: "%player% has joined the network. (%server%)"
       use-timestamp: true
+      # Incompatible with use-timestamp.
+      use-embed: true
    leave:
       enabled: true
       message: "%player% has left the network. (%server%)"
       use-timestamp: true
+      # Incompatible with use-timestamp.
+      use-embed: true
    switch:
       enabled: true
       message: "%player% has switched from %from% to %to%."
       use-timestamp: true
+      # Incompatible with use-timestamp.
+      use-embed: true
    chat:
       enabled: true
       minecraft-message: "&8[&bDiscord&8] %role% &f%user% &9» &7%message%"
@@ -284,7 +305,7 @@ console:
 update-message: "&7There is an update! You are on &c%old%. New version is &a%new%&7: &6%link%"
 
 # DO NOT TOUCH THIS
-file-version: 9
+file-version: 10
 ```
 
 ---
@@ -335,6 +356,7 @@ file-version: 9
 * `%from%` - The server the player just disconnected from. Uses the alias if one is specified.
 * `%original_from%` - Same as `%from%`, but does not use the alias.
 * `%player%` - The player's Minecraft username.
+* `%escaped_player%` - The escaped player's Minecraft username. (Adds '\\' before the '_' to prevent italics.)
 * `%sender%` - The person sending the private message. **Private Messaging Only**
 * `%receiver%` - The person receiving the private message. **Private Messaging Only**
 * `%user%` - The player's Discord username.

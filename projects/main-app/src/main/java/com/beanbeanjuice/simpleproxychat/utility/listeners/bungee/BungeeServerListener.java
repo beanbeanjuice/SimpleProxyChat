@@ -3,11 +3,12 @@ package com.beanbeanjuice.simpleproxychat.utility.listeners.bungee;
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
 import com.beanbeanjuice.simpleproxychat.chat.ChatHandler;
 import com.beanbeanjuice.simpleproxychat.socket.bungee.BungeeChatMessageData;
+import com.beanbeanjuice.simpleproxychat.utility.ISimpleProxyChat;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.MessageType;
 import com.beanbeanjuice.simpleproxychat.utility.status.ServerStatusManager;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigKey;
 import de.myzelyam.api.vanish.*;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatMessageType;
@@ -37,16 +38,21 @@ public class BungeeServerListener implements Listener {
         startServerStatusDetection();
     }
 
+    public static boolean playerIsInDisabledServer(ProxiedPlayer player, ISimpleProxyChat plugin) {
+        return plugin.getSPCConfig().get(ConfigKey.DISABLED_SERVERS).asList().contains(player.getServer().getInfo().getName());
+    }
+
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onProxyChatEvent(ChatEvent event) {
         if (event.isCancelled()) return;
         if (event.isCommand() || event.isProxyCommand()) return;
-
         ProxiedPlayer player = (ProxiedPlayer) event.getSender();
+        if (playerIsInDisabledServer(player, plugin)) return;
+
         if (plugin.isVanishAPIEnabled() && BungeeVanishAPI.isInvisible(player)) {
             // TODO: If is allowed to speak in vanish then continue.
             if (!event.getMessage().endsWith("/")) {
-                String errorMessage = plugin.getConfig().getAsString(ConfigDataKey.MINECRAFT_CHAT_VANISHED_MESSAGE);
+                String errorMessage = plugin.getConfig().get(ConfigKey.MINECRAFT_CHAT_VANISHED_MESSAGE).asString();
                 player.sendMessage(ChatMessageType.SYSTEM, Helper.convertToBungee(errorMessage));
                 return;
             }
@@ -67,6 +73,7 @@ public class BungeeServerListener implements Listener {
     */
     @EventHandler
     public void onPlayerLeaveServer(ServerDisconnectEvent event) {
+        if (playerIsInDisabledServer(event.getPlayer(), plugin)) return;
         previousServerHandler.put(event.getPlayer().getName(), event.getTarget());
     }
 
@@ -76,6 +83,7 @@ public class BungeeServerListener implements Listener {
     */
     @EventHandler
     public void onPlayerKick(ServerKickEvent event) {
+        if (playerIsInDisabledServer(event.getPlayer(), plugin)) return;
         if (event.getState() == ServerKickEvent.State.CONNECTING) return;
         if (!event.getPlayer().getGroups().contains("successful-connection")) return;
         previousServerHandler.put(event.getPlayer().getName(), event.getKickedFrom());
@@ -83,6 +91,7 @@ public class BungeeServerListener implements Listener {
 
     @EventHandler
     public void onPlayerLeaveProxy(PlayerDisconnectEvent event) {
+        if (playerIsInDisabledServer(event.getPlayer(), plugin)) return;
         if (!event.getPlayer().getGroups().contains("successful-connection")) return;
         if (!event.getPlayer().getGroups().contains("not-first-join")) return;
         if (plugin.isVanishAPIEnabled() && BungeeVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.
@@ -111,7 +120,7 @@ public class BungeeServerListener implements Listener {
     public void onPreLogin(PreLoginEvent event) {
         String playerName = event.getConnection().getName();
 
-        if (!plugin.getConfig().getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) return;
+        if (!plugin.getConfig().get(ConfigKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM).asBoolean()) return;
         if (!plugin.getBanHelper().isBanned(playerName)) return;
 
         event.setCancelled(true);
@@ -125,6 +134,8 @@ public class BungeeServerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoinProxy(ServerConnectedEvent event) {
+        if (playerIsInDisabledServer(event.getPlayer(), plugin)) return;
+
         if (event.getPlayer().getGroups().contains("not-first-join")) return;  // If not first join, don't do anything.
         if (!event.getPlayer().getGroups().contains("successful-connection")) return;
         event.getPlayer().addGroups("not-first-join");
@@ -157,6 +168,8 @@ public class BungeeServerListener implements Listener {
     public void onPlayerServerSwitch(ServerSwitchEvent event) {
         ProxiedPlayer player = event.getPlayer();
 
+        if (playerIsInDisabledServer(player, plugin)) return;
+
         if (plugin.isVanishAPIEnabled() && BungeeVanishAPI.isInvisible(player)) return;  // Ignore if player is invisible.
         if (event.getFrom() == null) return;  // This means the player just joined the network.
 
@@ -171,7 +184,7 @@ public class BungeeServerListener implements Listener {
                 (message) -> from.getPlayers().stream()
                         .filter((streamPlayer) -> streamPlayer != player)
                         .filter((streamPlayer) -> {
-                            if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
+                            if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean())
                                 return streamPlayer.hasPermission(Permission.READ_SWITCH_MESSAGE.getPermissionNode());
                             return true;
                         })
@@ -181,8 +194,8 @@ public class BungeeServerListener implements Listener {
     }
 
     private void startServerStatusDetection() {
-        this.serverStatusManager = new ServerStatusManager(plugin.getConfig());
-        int updateInterval = plugin.getConfig().getAsInteger(ConfigDataKey.SERVER_UPDATE_INTERVAL);
+        this.serverStatusManager = new ServerStatusManager(plugin);
+        int updateInterval = plugin.getConfig().get(ConfigKey.SERVER_UPDATE_INTERVAL).asInt();
 
         plugin.getProxy().getScheduler().schedule(plugin, () -> plugin.getProxy().getServers().forEach((serverName, serverInfo) -> {
             serverInfo.ping((result, error) -> {
@@ -195,7 +208,7 @@ public class BungeeServerListener implements Listener {
     private void sendToAllServers(String parsedMessage, Permission permission) {
         plugin.getProxy().getPlayers().stream()
                 .filter((player) -> {
-                    if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
+                    if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean())
                         return player.hasPermission(permission.getPermissionNode());
                     return true;
                 })
@@ -203,18 +216,21 @@ public class BungeeServerListener implements Listener {
                     if (player.getServer() == null || player.getServer().getInfo() == null) return false;
                     return !Helper.serverHasChatLocked(plugin, player.getServer().getInfo().getName());
                 })
+                .filter((player) -> {  // Players IN the server will not receive the message.
+                    return !playerIsInDisabledServer(player, plugin);
+                })
                 .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, Helper.convertToBungee(parsedMessage)));
     }
 
     private void sendToAllServersVanish(String parsedMessage, Permission permission) {
         plugin.getProxy().getPlayers().stream()
                 .filter((player) -> {
-                    if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
+                    if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean())
                         return player.hasPermission(permission.getPermissionNode());
                     return true;
                 })
                 .filter((player) -> {
-                    if (plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS))
+                    if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean())
                         return player.hasPermission(Permission.READ_FAKE_MESSAGE.getPermissionNode());
                     return true;
                 })

@@ -108,5 +108,9 @@ commands:
     - "spc-bc"
     - "broadcast"
 
+# Disable servers from sending/receiving proxy messages.
+disabled-servers:
+  - example1
+
 # DO NOT TOUCH THIS
-file-version: 14
+file-version: 15

@@ -2,9 +2,10 @@ package com.beanbeanjuice.simpleproxychat.socket.bungee;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
 import com.beanbeanjuice.simpleproxychat.socket.ChatMessageData;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigKey;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.MessageType;
+import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeServerListener;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -66,9 +67,10 @@ public class BungeeChatMessageData extends ChatMessageData {
                     return true;
                 })
                 .filter((streamPlayer) -> {
-                    if (!plugin.getConfig().getAsBoolean(ConfigDataKey.USE_PERMISSIONS)) return true;
+                    if (!plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean()) return true;
                     return streamPlayer.hasPermission(Permission.READ_CHAT_MESSAGE.getPermissionNode());
                 })
+                .filter((streamPlayer) -> !BungeeServerListener.playerIsInDisabledServer(streamPlayer, plugin))
                 .forEach((streamPlayer) -> streamPlayer.sendMessage(ChatMessageType.CHAT, convertToBungee(parsedMessage)));
     }
 
