@@ -4,7 +4,7 @@ import com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigKey;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
@@ -28,14 +28,14 @@ public class VelocityReplyCommand implements SimpleCommand {
                 (receiver) -> {
                     String message = Helper.translateLegacyCodes(String.join(" ", invocation.arguments()));
 
-                    String senderString = config.getAsString(ConfigDataKey.MINECRAFT_WHISPER_SEND);
-                    String receiverString = config.getAsString(ConfigDataKey.MINECRAFT_WHISPER_RECEIVE);
+                    String senderString = config.get(ConfigKey.MINECRAFT_WHISPER_SEND).asString();
+                    String receiverString = config.get(ConfigKey.MINECRAFT_WHISPER_RECEIVE).asString();
 
                     List<Tuple<String, String>> replacements = new ArrayList<>();
                     replacements.add(Tuple.of("sender", ((Player) invocation.source()).getUsername()));
                     replacements.add(Tuple.of("receiver", receiver.getUsername()));
                     replacements.add(Tuple.of("message", message));
-                    replacements.add(Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
+                    replacements.add(Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()));
 
                     senderString = Helper.replaceKeys(senderString, replacements);
                     receiverString = Helper.replaceKeys(receiverString, replacements);
@@ -45,7 +45,7 @@ public class VelocityReplyCommand implements SimpleCommand {
 
                     plugin.getWhisperHandler().set(((Player) invocation.source()).getUsername(), receiver.getUsername());
                 },
-                () -> invocation.source().sendMessage(Helper.stringToComponent(config.getAsString(ConfigDataKey.MINECRAFT_WHISPER_ERROR)))
+                () -> invocation.source().sendMessage(Helper.stringToComponent(config.get(ConfigKey.MINECRAFT_WHISPER_ERROR).asString()))
         );
     }
 

@@ -3,7 +3,7 @@ package com.beanbeanjuice.simpleproxychat.commands.bungee.ban;
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigKey;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import net.md_5.bungee.api.CommandSender;
@@ -25,13 +25,13 @@ public class BungeeBanCommand extends Command implements TabExecutor {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if (!config.getAsBoolean(ConfigDataKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM)) {
+        if (!config.get(ConfigKey.USE_SIMPLE_PROXY_CHAT_BANNING_SYSTEM).asBoolean()) {
             sender.sendMessage(Helper.convertToBungee("&cThe banning system is disabled..."));
             return;
         }
 
         if (args.length != 1) {
-            String errorMessage = config.getAsString(ConfigDataKey.MINECRAFT_COMMAND_PROXY_BAN_USAGE);
+            String errorMessage = config.get(ConfigKey.MINECRAFT_COMMAND_PROXY_BAN_USAGE).asString();
             sender.sendMessage(Helper.convertToBungee(errorMessage));
             return;
         }
@@ -40,10 +40,10 @@ public class BungeeBanCommand extends Command implements TabExecutor {
         plugin.getBanHelper().addBan(playerName);
         plugin.getProxy().getPlayer(playerName).disconnect(Helper.convertToBungee("&cYou have been banned from the proxy."));
 
-        String bannedMessage = config.getAsString(ConfigDataKey.MINECRAFT_COMMAND_PROXY_BAN_BANNED);
+        String bannedMessage = config.get(ConfigKey.MINECRAFT_COMMAND_PROXY_BAN_BANNED).asString();
         bannedMessage = Helper.replaceKeys(
                 bannedMessage,
-                Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)),
+                Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()),
                 Tuple.of("player", playerName)
         );
 

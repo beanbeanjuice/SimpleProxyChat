@@ -4,7 +4,7 @@ import com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigKey;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
@@ -56,10 +56,10 @@ public class VelocityChatToggleCommand implements SimpleCommand {
 
     private void executeAll(CommandSource sender, String type) {
         if (!sender.hasPermission(Permission.COMMAND_TOGGLE_CHAT_ALL.getPermissionNode()) && sender instanceof Player) {
-            String message = config.getAsString(ConfigDataKey.MINECRAFT_COMMAND_NO_PERMISSION);
+            String message = config.get(ConfigKey.MINECRAFT_COMMAND_NO_PERMISSION).asString();
             message = Helper.replaceKeys(
                     message,
-                    Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX))
+                    Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString())
             );
             sender.sendMessage(Helper.stringToComponent(message));
             return;
@@ -71,19 +71,19 @@ public class VelocityChatToggleCommand implements SimpleCommand {
         switch (type.toLowerCase()) {
             case "lock" -> {
                 servers.forEach((serverName) -> config.getServerChatLockHelper().addServer(serverName));
-                String message = config.getAsString(ConfigDataKey.MINECRAFT_COMMAND_CHAT_LOCK_ALL_LOCKED);
+                String message = config.get(ConfigKey.MINECRAFT_COMMAND_CHAT_LOCK_ALL_LOCKED).asString();
                 message = Helper.replaceKeys(
                         message,
-                        Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX))
+                        Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString())
                 );
                 sender.sendMessage(Helper.stringToComponent(message));
             }
             case "unlock" -> {
                 servers.forEach((serverName) -> config.getServerChatLockHelper().removeServer(serverName));
-                String message = config.getAsString(ConfigDataKey.MINECRAFT_COMMAND_CHAT_LOCK_ALL_UNLOCKED);
+                String message = config.get(ConfigKey.MINECRAFT_COMMAND_CHAT_LOCK_ALL_UNLOCKED).asString();
                 message = Helper.replaceKeys(
                         message,
-                        Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX))
+                        Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString())
                 );
                 sender.sendMessage(Helper.stringToComponent(message));
             }
@@ -93,20 +93,20 @@ public class VelocityChatToggleCommand implements SimpleCommand {
 
     private void executeSingle(CommandSource sender, String type) {
         if (!sender.hasPermission(Permission.COMMAND_TOGGLE_CHAT.getPermissionNode()) && sender instanceof Player) {
-            String message = config.getAsString(ConfigDataKey.MINECRAFT_COMMAND_NO_PERMISSION);
+            String message = config.get(ConfigKey.MINECRAFT_COMMAND_NO_PERMISSION).asString();
             message = Helper.replaceKeys(
                     message,
-                    Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX))
+                    Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString())
             );
             sender.sendMessage(Helper.stringToComponent(message));
             return;
         }
 
         if (!(sender instanceof Player player)) {
-            String message = config.getAsString(ConfigDataKey.MINECRAFT_COMMAND_MUST_BE_PLAYER);
+            String message = config.get(ConfigKey.MINECRAFT_COMMAND_MUST_BE_PLAYER).asString();
             message = Helper.replaceKeys(
                     message,
-                    Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX))
+                    Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString())
             );
             sender.sendMessage(Helper.stringToComponent(message));
             return;
@@ -122,20 +122,20 @@ public class VelocityChatToggleCommand implements SimpleCommand {
             switch (type.toLowerCase()) {
                 case "lock" -> {
                     servers.forEach((serverName) -> config.getServerChatLockHelper().addServer(serverName));
-                    String message = config.getAsString(ConfigDataKey.MINECRAFT_COMMAND_CHAT_LOCK_SINGLE_LOCKED);
+                    String message = config.get(ConfigKey.MINECRAFT_COMMAND_CHAT_LOCK_SINGLE_LOCKED).asString();
                     message = Helper.replaceKeys(
                             message,
-                            Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)),
+                            Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()),
                             Tuple.of("server", currentServerName)
                     );
                     sender.sendMessage(Helper.stringToComponent(message));
                 }
                 case "unlock" -> {
                     servers.forEach((serverName) -> config.getServerChatLockHelper().removeServer(serverName));
-                    String message = config.getAsString(ConfigDataKey.MINECRAFT_COMMAND_CHAT_LOCK_SINGLE_UNLOCKED);
+                    String message = config.get(ConfigKey.MINECRAFT_COMMAND_CHAT_LOCK_SINGLE_UNLOCKED).asString();
                     message = Helper.replaceKeys(
                             message,
-                            Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)),
+                            Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()),
                             Tuple.of("server", currentServerName)
                     );
                     sender.sendMessage(Helper.stringToComponent(message));
@@ -148,10 +148,10 @@ public class VelocityChatToggleCommand implements SimpleCommand {
     }
 
     private void executeError(CommandSource sender) {
-        String message = config.getAsString(ConfigDataKey.MINECRAFT_COMMAND_CHAT_LOCK_USAGE);
+        String message = config.get(ConfigKey.MINECRAFT_COMMAND_CHAT_LOCK_USAGE).asString();
         message = Helper.replaceKeys(
                 message,
-                Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX))
+                Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString())
         );
         sender.sendMessage(Helper.stringToComponent(message));
     }

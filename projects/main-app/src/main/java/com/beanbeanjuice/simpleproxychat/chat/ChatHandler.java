@@ -7,7 +7,7 @@ import com.beanbeanjuice.simpleproxychat.utility.ISimpleProxyChat;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigKey;
 import com.beanbeanjuice.simpleproxychat.utility.config.Permission;
 import com.beanbeanjuice.simpleproxychat.utility.epoch.EpochHelper;
 import com.beanbeanjuice.simpleproxychat.utility.helper.LastMessagesHelper;
@@ -15,7 +15,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.luckperms.api.LuckPerms;
-import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.Node;
 import net.luckperms.api.node.NodeType;
@@ -55,7 +54,7 @@ public class ChatHandler {
     }
 
     private Optional<String> getValidMessage(String message) {
-        String messagePrefix = config.getAsString(ConfigDataKey.PROXY_MESSAGE_PREFIX);
+        String messagePrefix = config.get(ConfigKey.PROXY_MESSAGE_PREFIX).asString();
 
         if (messagePrefix.isEmpty()) return Optional.of(message);
         if (!message.startsWith(messagePrefix)) return Optional.empty();
@@ -67,20 +66,20 @@ public class ChatHandler {
 
     public void chat(ChatMessageData chatMessageData, String minecraftMessage, String discordMessage, String discordEmbedTitle, String discordEmbedMessage) {
         // Log to Console
-        if (config.getAsBoolean(ConfigDataKey.CONSOLE_CHAT)) plugin.log(minecraftMessage);
+        if (config.get(ConfigKey.CONSOLE_CHAT).asBoolean()) plugin.log(minecraftMessage);
 
         // Log to Discord
-        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_ENABLED)) {
-            if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE)) {
+        if (config.get(ConfigKey.MINECRAFT_DISCORD_ENABLED).asBoolean()) {
+            if (config.get(ConfigKey.MINECRAFT_DISCORD_EMBED_USE).asBoolean()) {
 
-                Color color = config.getAsColor(ConfigDataKey.MINECRAFT_DISCORD_EMBED_COLOR).orElse(Color.RED);
+                Color color = config.get(ConfigKey.MINECRAFT_DISCORD_EMBED_COLOR).asColor();
 
                 EmbedBuilder embedBuilder = new EmbedBuilder()
                         .setAuthor(discordEmbedTitle, null, getPlayerHeadURL(chatMessageData.getPlayerUUID()))
                         .setDescription(discordEmbedMessage)
                         .setColor(color);
 
-                if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_EMBED_USE_TIMESTAMP))
+                if (config.get(ConfigKey.MINECRAFT_DISCORD_EMBED_USE_TIMESTAMP).asBoolean())
                     embedBuilder.setTimestamp(epochHelper.getEpochInstant());
 
                 discordBot.sendMessageEmbed(embedBuilder.build());
@@ -90,7 +89,7 @@ public class ChatHandler {
         }
 
         // Log to Minecraft
-        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_CHAT_ENABLED)) {
+        if (config.get(ConfigKey.MINECRAFT_CHAT_ENABLED).asBoolean()) {
             chatMessageData.chatSendToAllOtherPlayers(minecraftMessage);
             lastMessagesHelper.addMessage(minecraftMessage);
         }
@@ -109,8 +108,8 @@ public class ChatHandler {
         if (optionalPlayerMessage.isEmpty()) return;
         playerMessage = optionalPlayerMessage.get();
 
-        String minecraftConfigString = config.getAsString(ConfigDataKey.MINECRAFT_CHAT_MESSAGE);
-        String discordConfigString = config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_MESSAGE);
+        String minecraftConfigString = config.get(ConfigKey.MINECRAFT_CHAT_MESSAGE).asString();
+        String discordConfigString = config.get(ConfigKey.MINECRAFT_DISCORD_MESSAGE).asString();
 
         String aliasedServerName = Helper.convertAlias(config, serverName);
 
@@ -121,20 +120,21 @@ public class ChatHandler {
         replacements.add(Tuple.of("to", aliasedServerName));
         replacements.add(Tuple.of("original_to", serverName));
         replacements.add(Tuple.of("player", playerName));
+        replacements.add(Tuple.of("escaped_player", Helper.escapeString(playerName)));
         replacements.add(Tuple.of("epoch", String.valueOf(epochHelper.getEpochSecond())));
         replacements.add(Tuple.of("time", getTimeString()));
-        replacements.add(Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
+        replacements.add(Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()));
 
         String minecraftMessage = Helper.replaceKeys(minecraftConfigString, replacements);
         String discordMessage = Helper.replaceKeys(discordConfigString, replacements);
-        String discordEmbedTitle = Helper.replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_TITLE), replacements);
-        String discordEmbedMessage = Helper.replaceKeys(config.getAsString(ConfigDataKey.MINECRAFT_DISCORD_EMBED_MESSAGE), replacements);
+        String discordEmbedTitle = Helper.replaceKeys(config.get(ConfigKey.MINECRAFT_DISCORD_EMBED_TITLE).asString(), replacements);
+        String discordEmbedMessage = Helper.replaceKeys(config.get(ConfigKey.MINECRAFT_DISCORD_EMBED_MESSAGE).asString(), replacements);
 
         minecraftMessage = replacePrefixSuffix(minecraftMessage, playerUUID, aliasedServerName, serverName);
         discordMessage = replacePrefixSuffix(discordMessage, playerUUID, aliasedServerName, serverName);
         discordEmbedTitle = replacePrefixSuffix(discordEmbedTitle, chatMessageData.getPlayerUUID(), aliasedServerName, chatMessageData.getServername());
 
-        if (config.getAsBoolean(ConfigDataKey.USE_HELPER)) {
+        if (config.get(ConfigKey.USE_HELPER).asBoolean()) {
             chatMessageData.setMinecraftMessage(minecraftMessage);
             chatMessageData.setDiscordMessage(discordMessage);
             chatMessageData.setDiscordEmbedTitle(discordEmbedTitle);
@@ -145,22 +145,24 @@ public class ChatHandler {
 
         chat(chatMessageData, minecraftMessage, discordMessage, discordEmbedTitle, discordEmbedMessage);
     }
+
     public void runProxyLeaveMessage(String playerName, UUID playerUUID, String serverName,
                                      BiConsumer<String, Permission> minecraftLogger) {
-        String configString = config.getAsString(ConfigDataKey.MINECRAFT_LEAVE);
-        String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_LEAVE_MESSAGE);
+        String configString = config.get(ConfigKey.MINECRAFT_LEAVE).asString();
+        String discordConfigString = config.get(ConfigKey.DISCORD_LEAVE_MESSAGE).asString();
 
         String aliasedServerName = Helper.convertAlias(config, serverName);
 
         List<Tuple<String, String>> replacements = new ArrayList<>();
         replacements.add(Tuple.of("player", playerName));
+        replacements.add(Tuple.of("escaped_player", Helper.escapeString(playerName)));
         replacements.add(Tuple.of("server", aliasedServerName));
         replacements.add(Tuple.of("original_server", serverName));
         replacements.add(Tuple.of("to", aliasedServerName));
         replacements.add(Tuple.of("original_to", serverName));
         replacements.add(Tuple.of("epoch", String.valueOf(epochHelper.getEpochSecond())));
         replacements.add(Tuple.of("time", getTimeString()));
-        replacements.add(Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
+        replacements.add(Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()));
 
         String message = Helper.replaceKeys(configString, replacements);
         String discordMessage = Helper.replaceKeys(discordConfigString, replacements);
@@ -169,29 +171,34 @@ public class ChatHandler {
         discordMessage = replacePrefixSuffix(discordMessage, playerUUID, aliasedServerName, serverName);
 
         // Log to Console
-        if (config.getAsBoolean(ConfigDataKey.CONSOLE_LEAVE)) plugin.log(message);
-
+        if (config.get(ConfigKey.CONSOLE_LEAVE).asBoolean()) plugin.log(message);
 
         // Log to Discord
-        if (config.getAsBoolean(ConfigDataKey.DISCORD_LEAVE_ENABLED)) {
+        DISCORD_SENT: if (config.get(ConfigKey.DISCORD_LEAVE_ENABLED).asBoolean()) {
+            if (!config.get(ConfigKey.DISCORD_LEAVE_USE_EMBED).asBoolean()) {
+                discordBot.sendMessage(discordMessage);
+                break DISCORD_SENT;
+            }
+
             EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.RED);
-            if (config.getAsBoolean(ConfigDataKey.DISCORD_LEAVE_USE_TIMESTAMP)) embedBuilder.setTimestamp(epochHelper.getEpochInstant());
+            if (config.get(ConfigKey.DISCORD_LEAVE_USE_TIMESTAMP).asBoolean()) embedBuilder.setTimestamp(epochHelper.getEpochInstant());
             discordBot.sendMessageEmbed(embedBuilder.build());
         }
 
         // Log to Minecraft
-        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_LEAVE_ENABLED)) minecraftLogger.accept(message, Permission.READ_LEAVE_MESSAGE);
+        if (config.get(ConfigKey.MINECRAFT_LEAVE_ENABLED).asBoolean()) minecraftLogger.accept(message, Permission.READ_LEAVE_MESSAGE);
     }
 
     public void runProxyJoinMessage(String playerName, UUID playerUUID, String serverName,
                                     BiConsumer<String, Permission> minecraftLogger) {
-        String configString = config.getAsString(ConfigDataKey.MINECRAFT_JOIN);
-        String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_JOIN_MESSAGE);
+        String configString = config.get(ConfigKey.MINECRAFT_JOIN).asString();
+        String discordConfigString = config.get(ConfigKey.DISCORD_JOIN_MESSAGE).asString();
 
         String aliasedServerName = Helper.convertAlias(config, serverName);
 
         List<Tuple<String, String>> replacements = new ArrayList<>();
         replacements.add(Tuple.of("player", playerName));
+        replacements.add(Tuple.of("escaped_player", Helper.escapeString(playerName)));
         replacements.add(Tuple.of("server", Helper.convertAlias(config, serverName)));
         replacements.add(Tuple.of("to", Helper.convertAlias(config, serverName)));
         replacements.add(Tuple.of("server", aliasedServerName));
@@ -200,7 +207,7 @@ public class ChatHandler {
         replacements.add(Tuple.of("original_to", serverName));
         replacements.add(Tuple.of("epoch", String.valueOf(epochHelper.getEpochSecond())));
         replacements.add(Tuple.of("time", getTimeString()));
-        replacements.add(Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
+        replacements.add(Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()));
 
         String message = Helper.replaceKeys(configString, replacements);
         String discordMessage = Helper.replaceKeys(discordConfigString, replacements);
@@ -209,25 +216,30 @@ public class ChatHandler {
         discordMessage = replacePrefixSuffix(discordMessage, playerUUID, aliasedServerName, serverName);
 
         // Log to Console
-        if (config.getAsBoolean(ConfigDataKey.CONSOLE_JOIN)) plugin.log(message);
+        if (config.get(ConfigKey.CONSOLE_JOIN).asBoolean()) plugin.log(message);
 
         // Log to Discord
-        if (config.getAsBoolean(ConfigDataKey.DISCORD_JOIN_ENABLED)) {
+        DISCORD_SENT: if (config.get(ConfigKey.DISCORD_JOIN_ENABLED).asBoolean()) {
+            if (!config.get(ConfigKey.DISCORD_JOIN_USE_EMBED).asBoolean()) {
+                discordBot.sendMessage(discordMessage);
+                break DISCORD_SENT;
+            }
+
             EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.GREEN);
-            if (config.getAsBoolean(ConfigDataKey.DISCORD_JOIN_USE_TIMESTAMP)) embedBuilder.setTimestamp(epochHelper.getEpochInstant());
+            if (config.get(ConfigKey.DISCORD_JOIN_USE_TIMESTAMP).asBoolean()) embedBuilder.setTimestamp(epochHelper.getEpochInstant());
             discordBot.sendMessageEmbed(embedBuilder.build());
         }
 
         // Log to Minecraft
-        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_JOIN_ENABLED))
+        if (config.get(ConfigKey.MINECRAFT_JOIN_ENABLED).asBoolean())
             minecraftLogger.accept(message, Permission.READ_JOIN_MESSAGE);
     }
 
     public void runProxySwitchMessage(String from, String to, String playerName, UUID playerUUID,
                                       Consumer<String> minecraftLogger, Consumer<String> playerLogger) {
-        String consoleConfigString = config.getAsString(ConfigDataKey.MINECRAFT_SWITCH_DEFAULT);
-        String discordConfigString = config.getAsString(ConfigDataKey.DISCORD_SWITCH_MESSAGE);
-        String minecraftConfigString = config.getAsString(ConfigDataKey.MINECRAFT_SWITCH_SHORT);
+        String consoleConfigString = config.get(ConfigKey.MINECRAFT_SWITCH_DEFAULT).asString();
+        String discordConfigString = config.get(ConfigKey.DISCORD_SWITCH_MESSAGE).asString();
+        String minecraftConfigString = config.get(ConfigKey.MINECRAFT_SWITCH_SHORT).asString();
 
         String aliasedFrom = Helper.convertAlias(config, from);
         String aliasedTo = Helper.convertAlias(config, to);
@@ -240,9 +252,10 @@ public class ChatHandler {
         replacements.add(Tuple.of("server", aliasedTo));
         replacements.add(Tuple.of("original_server", to));
         replacements.add(Tuple.of("player", playerName));
+        replacements.add(Tuple.of("escaped_player", Helper.escapeString(playerName)));
         replacements.add(Tuple.of("epoch", String.valueOf(epochHelper.getEpochSecond())));
         replacements.add(Tuple.of("time", getTimeString()));
-        replacements.add(Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)));
+        replacements.add(Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()));
 
         String consoleMessage = Helper.replaceKeys(consoleConfigString, replacements);
         String discordMessage = Helper.replaceKeys(discordConfigString, replacements);
@@ -253,17 +266,22 @@ public class ChatHandler {
         discordMessage = replacePrefixSuffix(discordMessage, playerUUID, aliasedTo, to);
 
         // Log to Console
-        if (config.getAsBoolean(ConfigDataKey.CONSOLE_SWITCH)) plugin.log(consoleMessage);
+        if (config.get(ConfigKey.CONSOLE_SWITCH).asBoolean()) plugin.log(consoleMessage);
 
         // Log to Discord
-        if (config.getAsBoolean(ConfigDataKey.DISCORD_SWITCH_ENABLED)) {
+        DISCORD_SENT: if (config.get(ConfigKey.DISCORD_SWITCH_ENABLED).asBoolean()) {
+            if (!config.get(ConfigKey.DISCORD_SWITCH_USE_EMBED).asBoolean()) {
+                discordBot.sendMessage(discordMessage);
+                break DISCORD_SENT;
+            }
+
             EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.YELLOW);
-            if (config.getAsBoolean(ConfigDataKey.DISCORD_SWITCH_USE_TIMESTAMP)) embedBuilder.setTimestamp(epochHelper.getEpochInstant());
+            if (config.get(ConfigKey.DISCORD_SWITCH_USE_TIMESTAMP).asBoolean()) embedBuilder.setTimestamp(epochHelper.getEpochInstant());
             discordBot.sendMessageEmbed(embedBuilder.build());
         }
 
         // Log to Minecraft
-        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_SWITCH_ENABLED)) {
+        if (config.get(ConfigKey.MINECRAFT_SWITCH_ENABLED).asBoolean()) {
             minecraftLogger.accept(minecraftMessage);
             lastMessagesHelper.getBoundedArrayList().forEach(playerLogger);
         }
@@ -286,7 +304,7 @@ public class ChatHandler {
     }
 
     public void sendFromDiscord(MessageReceivedEvent event) {
-        String message = config.getAsString(ConfigDataKey.DISCORD_CHAT_MINECRAFT_MESSAGE);
+        String message = config.get(ConfigKey.DISCORD_CHAT_MINECRAFT_MESSAGE).asString();
 
         if (event.getMember() == null) return;
 
@@ -316,10 +334,10 @@ public class ChatHandler {
                 Tuple.of("message", discordMessage),
                 Tuple.of("epoch", String.valueOf(epochHelper.getEpochSecond())),
                 Tuple.of("time", getTimeString()),
-                Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX))
+                Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString())
         );
 
-        if (config.getAsBoolean(ConfigDataKey.MINECRAFT_DISCORD_ENABLED)) plugin.sendAll(message);
+        if (config.get(ConfigKey.MINECRAFT_DISCORD_ENABLED).asBoolean()) plugin.sendAll(message);
     }
 
     private List<String> getPrefixBasedOnServerContext(User user, String... serverKeys) {
@@ -401,8 +419,8 @@ public class ChatHandler {
      * @see <a href="https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html">Format</a>
      */
     private String getTimeString() {
-        DateTimeZone zone = DateTimeZone.forID(config.getAsString(ConfigDataKey.TIMESTAMP_TIMEZONE));
-        DateTimeFormatter format = DateTimeFormat.forPattern(config.getAsString(ConfigDataKey.TIMESTAMP_FORMAT));
+        DateTimeZone zone = config.get(ConfigKey.TIMESTAMP_TIMEZONE).asDateTimeZone();
+        DateTimeFormatter format = DateTimeFormat.forPattern(config.get(ConfigKey.TIMESTAMP_FORMAT).asString());
 
         long timeInMillis = epochHelper.getEpochMillisecond();
         DateTime time = new DateTime(timeInMillis).withZone(zone);

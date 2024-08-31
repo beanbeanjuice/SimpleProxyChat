@@ -1,7 +1,7 @@
 package com.beanbeanjuice.simpleproxychat.utility;
 
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
-import com.beanbeanjuice.simpleproxychat.utility.config.ConfigDataKey;
+import com.beanbeanjuice.simpleproxychat.utility.config.ConfigKey;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
@@ -37,8 +37,8 @@ public class UpdateChecker {
             if (compare(currentVersion, spigotVersion) >= 0) return;
 
             String message = Helper.replaceKeys(
-                    config.getAsString(ConfigDataKey.UPDATE_MESSAGE),
-                    Tuple.of("plugin-prefix", config.getAsString(ConfigDataKey.PLUGIN_PREFIX)),
+                    config.get(ConfigKey.UPDATE_MESSAGE).asString(),
+                    Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()),
                     Tuple.of("old", currentVersion),
                     Tuple.of("new", spigotVersion),
                     Tuple.of("link", "https://www.spigotmc.org/resources/115305/")
