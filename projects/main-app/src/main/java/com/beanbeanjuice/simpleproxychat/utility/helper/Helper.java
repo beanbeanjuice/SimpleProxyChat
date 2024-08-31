@@ -142,4 +142,8 @@ public class Helper {
         return string;
     }
 
+    public static String escapeString(String string) {
+        return string.replaceAll("_", "\\_");
+    }
+
 }
