@@ -104,6 +104,12 @@ public class ChatHandler {
         String playerName = chatMessageData.getPlayerName();
         UUID playerUUID = chatMessageData.getPlayerUUID();
 
+        // Проверяем, начинается ли сообщение с '!'
+        if (!playerMessage.startsWith("!")) return;
+
+        // Удаляем '!' из начала сообщения
+        playerMessage = playerMessage.substring(1).trim();
+
         Optional<String> optionalPlayerMessage = getValidMessage(playerMessage);
         if (optionalPlayerMessage.isEmpty()) return;
         playerMessage = optionalPlayerMessage.get();
@@ -145,6 +151,7 @@ public class ChatHandler {
 
         chat(chatMessageData, minecraftMessage, discordMessage, discordEmbedTitle, discordEmbedMessage);
     }
+
 
     public void runProxyLeaveMessage(String playerName, UUID playerUUID, String serverName,
                                      BiConsumer<String, Permission> minecraftLogger) {

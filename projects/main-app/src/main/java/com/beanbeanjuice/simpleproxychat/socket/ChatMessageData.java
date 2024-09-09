@@ -5,6 +5,7 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import lombok.Getter;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public abstract class ChatMessageData extends MessageData {
@@ -59,4 +60,18 @@ public abstract class ChatMessageData extends MessageData {
 
     public abstract void chatSendToAllOtherPlayers(String parsedMessage);
 
+    // Метод для фильтрации и подготовки сообщения
+    public String filterAndPrepareMessage() {
+        if (isGlobalMessage()) {
+            // Удаляем '!' из начала сообщения
+            return this.message.substring(1).trim();
+        }
+        // Возвращаем пустую строку, если сообщение не глобальное
+        return "";
+    }
+
+    // Метод для проверки, является ли сообщение глобальным
+    public boolean isGlobalMessage() {
+        return this.message.startsWith("!");
+    }
 }
