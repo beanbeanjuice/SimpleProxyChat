@@ -22,6 +22,7 @@ public enum ConfigKey {
     ALIASES (ConfigFileType.CONFIG, "aliases", Map.class),
     USE_PERMISSIONS (ConfigFileType.CONFIG, "use-permissions", Boolean.class),
     PROXY_MESSAGE_PREFIX (ConfigFileType.CONFIG, "proxy-message-prefix", String.class),
+    PROXY_MESSAGE_PREFIX_BLACKLIST (ConfigFileType.CONFIG, "proxy-message-prefix-blacklist", String.class),
     USE_INITIAL_SERVER_STATUS (ConfigFileType.CONFIG, "use-initial-server-status", Boolean.class),
     USE_FAKE_MESSAGES (ConfigFileType.CONFIG, "use-fake-messages", Boolean.class),
     TIMESTAMP_USE_API (ConfigFileType.CONFIG, "timestamp.use-api", Boolean.class),

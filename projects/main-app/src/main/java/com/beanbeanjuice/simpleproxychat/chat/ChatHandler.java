@@ -55,6 +55,9 @@ public class ChatHandler {
 
     private Optional<String> getValidMessage(String message) {
         String messagePrefix = config.get(ConfigKey.PROXY_MESSAGE_PREFIX).asString();
+        String messagePrefixBlacklist = config.get(ConfigKey.PROXY_MESSAGE_PREFIX_BLACKLIST).asString();
+
+        if (!messagePrefixBlacklist.isEmpty() && message.startsWith(messagePrefixBlacklist)) return Optional.empty();
 
         if (messagePrefix.isEmpty()) return Optional.of(message);
         if (!message.startsWith(messagePrefix)) return Optional.empty();
