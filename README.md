@@ -131,6 +131,11 @@ use-permissions: false
 # Example: If it is set to '$', then when a player sends $hello, it will be sent through the proxy.
 proxy-message-prefix: ''
 
+# Messages that start with this character will not be sent through the plugin.
+# Set to '' to disable.
+# Example: If it is set to '#', then when a player sends #hello, it will not be sent through the proxy.
+proxy-message-prefix-blacklist: ''
+
 # Whether to send if the statuses of the servers connected to the proxy when the proxy starts up.
 # THIS IS FOR DISCORD MESSAGES ONLY.
 use-initial-server-status: true
