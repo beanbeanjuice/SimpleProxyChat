@@ -17,6 +17,6 @@ Related PRs: #...
 * The code follows the style [guidelines](https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/CONTRIBUTING.md). 
 * A self-review of the code was performed on GitHub.
 * Appropriate comments and javadocs were added in your code.
-*  Appropriate changes have been made to the documentation.
-*  Appropriate changes have been made to the `README.md` file.
-*  Appropriate tests exist for this pull request.
+* Appropriate changes have been made to the documentation.
+* Appropriate changes have been made to the `README.md` file.
+* Appropriate tests exist for this pull request.
