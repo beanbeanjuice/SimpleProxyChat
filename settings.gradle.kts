@@ -1,9 +1,9 @@
 rootProject.name = "SimpleProxyChat"
 
 include(
-    "projects/main-app",
-    "projects/helper-app"
+    "projects/SimpleProxyChat",
+    "projects/SimpleProxyChatHelper"
 )
 
-project(":projects/main-app").name = "SimpleProxyChat"
-project(":projects/helper-app").name = "SimpleProxyChatHelper"
+project(":projects/SimpleProxyChat").name = "SimpleProxyChat"
+project(":projects/SimpleProxyChatHelper").name = "SimpleProxyChatHelper"
