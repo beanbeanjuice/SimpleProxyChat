@@ -1,0 +1,38 @@
+name: Test PR
+
+on: [ pull_request ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gradle-build:
+    strategy:
+      matrix:
+        jdk-version: [17, 21]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    name: Gradle JDK ${{ matrix.jdk-version }} Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    steps:
+      -
+        name: Checkout Code
+        uses: actions/checkout@v4
+      -
+        name: Validate Gradle Wrapper
+        uses: gradle/actions/wrapper-validation@v3
+      -
+        name: Set Up JDK ${{ matrix.jdk-version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: '${{ matrix.jdk-version }}'
+          distribution: 'adopt'
+      -
+        name: Set Up Gradle
+        uses: gradle/actions/setup-gradle@v3
+      -
+        name: Change gradlew Permissions
+        run: chmod u+rwx gradlew
+      -
+        name: Build and Test with Gradle
+        run: ./gradlew test

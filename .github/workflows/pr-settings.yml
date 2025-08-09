@@ -1,0 +1,50 @@
+name: Check PR Settings
+
+on:
+  pull_request:
+    types: [ opened, edited, reopened, synchronize ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-pr-title:
+    if: ${{ !startsWith(github.head_ref, 'dependabot/') && !startsWith(github.head_ref, 'release-please') }}
+    runs-on: ubuntu-latest
+    name: Ensure Conventional Commits
+    permissions:
+      pull-requests: read
+    steps:
+      -
+        uses: amannn/action-semantic-pull-request@v5
+        with:
+          types: |
+            feat
+            fix
+            chore
+            docs
+            style
+            refactor
+            revert
+            perf
+            test
+            build
+            ci
+          subjectPattern: '^\[GH-\d{2,5}\].+'
+          subjectPatternError: 'Subject must start with a Jira-style ticket like [GH-509]'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  check-linked-issues:
+    if: ${{ !startsWith(github.head_ref, 'dependabot/') && !startsWith(github.head_ref, 'release-please') }}
+    runs-on: ubuntu-latest
+    name: Check Linked Issues
+    permissions:
+      issues: read
+      pull-requests: write
+    steps:
+      -
+        uses: nearform-actions/github-action-check-linked-issues@v1
+        with:
+          custom-body-comment: "Please make sure this PR has a linked issue! Use [this](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword) for reference."
