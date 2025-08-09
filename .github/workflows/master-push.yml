@@ -1,0 +1,61 @@
+name: Master Branch Push
+
+on:
+  push:
+    branches: [ master ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  gradle-build:
+    strategy:
+      matrix:
+        jdk-version: [17, 21]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    name: Gradle JDK ${{ matrix.jdk-version }} Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    steps:
+      -
+        name: Checkout Code
+        uses: actions/checkout@v4
+      -
+        name: Validate Gradle Wrapper
+        uses: gradle/actions/wrapper-validation@v3
+      -
+        name: Set Up JDK ${{ matrix.jdk-version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: '${{ matrix.jdk-version }}'
+          distribution: 'adopt'
+      -
+        name: Set Up Gradle
+        uses: gradle/actions/setup-gradle@v3
+      -
+        name: Change gradlew Permissions
+        run: chmod u+rwx gradlew
+      -
+        name: Build and Test with Gradle
+        run: ./gradlew test
+
+  release-please:
+    name: Update Changelog
+    needs: [ gradle-build ]
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      -
+        name: Update Version Number and Release to GitHub
+        uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.PERSONAL_PAT }}
+          config-file: .release-please-config.json
+          manifest-file: .release-please-manifest.json
