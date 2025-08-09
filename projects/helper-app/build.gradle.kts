@@ -1,6 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-version = "0.0.4"
+version = project.property("version") as String
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17

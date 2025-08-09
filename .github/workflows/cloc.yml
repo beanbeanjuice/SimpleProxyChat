@@ -1,0 +1,22 @@
+name: Count Lines of Code
+
+on:
+  pull_request:
+  push:
+    branches: [ 'master' ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cloc:
+    runs-on: ubuntu-latest
+
+    steps:
+      -
+        name: Checkout Code
+        uses: actions/checkout@v4
+      -
+        name: Count Lines of Code
+        uses: djdefi/cloc-action@6

@@ -1,0 +1,20 @@
+{
+  "packages": {
+    "projects/helper-app": {
+      "release-type": "simple",
+      "package-name": "helper-app",
+      "bump-minor-pre-major": true,
+      "extra-files": [
+        "projects/helper-app/gradle.properties"
+      ]
+    },
+    "projects/main-app": {
+      "release-type": "simple",
+      "package-name": "main-app",
+      "bump-minor-pre-major": true,
+      "extra-files": [
+        "projects/main-app/gradle.properties"
+      ]
+    }
+  }
+}
