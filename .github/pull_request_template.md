@@ -4,11 +4,18 @@
 
 ## Description
 
-*Please include a summary of the change and which issue is fixed. Please also include relevant motivation and context. List any dependencies that are required for this change.*
+[//]: # (Please include a summary of the changes you have made.)
 
-Closes #...
+[//]: # (Make sure you link the correct GitHub Issue. E.g. Closes #44)
+[//]: # (Please use N/A if not applicable.)
+Closes 
 
-Related PRs: #...
+[//]: # (Please include any PRs that are related. E.g. Related PRs: Blocks #99)
+[//]: # (Please use N/A if not applicable.)
+Related PRs: N/A
+
+[//]: # (Please include any pre-requisites you needed to get this running. E.g. Prerequisites: Velocity v1.0.0)
+Prerequisites: N/A
 
 ---
 
