@@ -9,16 +9,17 @@ java {
 
 dependencies {
     // Spigot. Duh.
-    compileOnly("org.spigotmc", "spigot-api", "1.21.1-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc", "spigot-api", "1.21.8-R0.1-SNAPSHOT")
 
     // PlaceholderAPI
     compileOnly("me.clip", "placeholderapi", "2.11.6")
 
     // bStats
-    implementation("org.bstats", "bstats-bukkit", "3.0.2")
+    implementation("org.bstats", "bstats-bukkit", "3.1.0")
 
     // Artifact Version Comparison
-    implementation("org.apache.maven", "maven-artifact", "3.9.7")
+    // TODO: Eventually remove this.
+    implementation("org.apache.maven", "maven-artifact", "3.9.11")
 }
 
 configure<ProcessResources>("processResources") {

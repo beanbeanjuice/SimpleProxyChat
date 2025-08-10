@@ -1,0 +1,14 @@
+version: 2
+updates:
+  - package-ecosystem: "gradle"
+    directories:
+      - "/"
+      - "/projects/SimpleProxyChat"
+      - "/projects/SimpleProxyChatHelper"
+    target-branch: "master"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: fix
+      prefix-development: fix
+      include: scope
