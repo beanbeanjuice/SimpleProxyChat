@@ -7,19 +7,12 @@ Please note we have a code of conduct, please follow it in all your interactions
 
 ## Branching
 
-Now, make sure you are forking off of/branching off of the `development` branch located [here](https://github.com/beanbeanjuice/SimpleProxyChat/tree/development). This allows new and upcoming changes to be pushed to a "working" directory rather than straight to the main, production directory. For example, this is how you may contribute.
+In this repository, we will use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/). This makes sure everything is correctly following convention.
 
-Create a fork of the repository, and run the following commands in git CLI.
+For example, if you were fixing a bug, you would do something like the following;
 
-```
-git switch development
-git checkout -b (issue-number)-(issue-name)
-```
-
-The above code switches to the `development` branch, and creates a new branch based on the current `development` branch. Then, you can create a pull request on GitHub with your forked repository, pushing the new branch onto the development branch. So an example would be below;
-
-```
-git checkout -b 525-slash-commands-notification-spam
+```shell
+git checkout -b fix/441-fix-some-bug
 ```
 
 ## Code Formatting
@@ -101,9 +94,7 @@ public class ExampleClass extends AnotherClass {
    build.
 2. Update the README.md with details of changes to the interface, this includes new environment 
    variables, exposed ports, useful file locations and container parameters.
-3. Increase the version numbers in any examples files and the README.md to the new version that this
-   Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
-4. You may merge the Pull Request in once you have the sign-off of two other developers, or if you 
+3. You may merge the Pull Request in once you have the sign-off of two other developers, or if you 
    do not have permission to do that, you may request the second reviewer to merge it for you.
 
 ## Code of Conduct
