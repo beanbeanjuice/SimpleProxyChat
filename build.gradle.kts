@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    id("io.github.goooler.shadow") version("8.1.7")
+    id("com.gradleup.shadow") version("9.0.1")
     id("java")
 }
 
@@ -56,13 +56,13 @@ allprojects {
 
     dependencies {
         // Lombok
-        compileOnly("org.projectlombok", "lombok", "1.18.32")
-        annotationProcessor("org.projectlombok", "lombok", "1.18.32")
+        compileOnly("org.projectlombok", "lombok", "1.18.38")
+        annotationProcessor("org.projectlombok", "lombok", "1.18.38")
     }
 }
 
 subprojects {
-    apply(plugin = "io.github.goooler.shadow")
+    apply(plugin = "com.gradleup.shadow")
 
     tasks.withType<ShadowJar> {
         minimize()
