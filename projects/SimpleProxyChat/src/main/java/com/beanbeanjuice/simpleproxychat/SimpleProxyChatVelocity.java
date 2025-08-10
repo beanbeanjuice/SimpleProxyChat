@@ -57,7 +57,6 @@ public class SimpleProxyChatVelocity implements ISimpleProxyChat {
     @Getter private final ProxyServer proxyServer;
     @Getter private final Logger logger;
     @Getter private final Config config;
-    @Getter private final EpochHelper epochHelper;
     @Getter private Bot discordBot;
     @Getter private WhisperHandler whisperHandler;
     @Getter private BanHelper banHelper;
@@ -78,8 +77,6 @@ public class SimpleProxyChatVelocity implements ISimpleProxyChat {
         this.dataDirectory = dataDirectory.toFile();
         this.config = new Config(dataDirectory.toFile());
         this.config.initialize();
-
-        epochHelper = new EpochHelper(config);
 
         // Plugin enabled.
         this.getLogger().info("Plugin has been initialized.");
@@ -196,7 +193,7 @@ public class SimpleProxyChatVelocity implements ISimpleProxyChat {
 
     private void registerListeners() {
         // Register chat listener.
-        ChatHandler chatHandler = new ChatHandler(this, epochHelper);
+        ChatHandler chatHandler = new ChatHandler(this);
         serverListener = new VelocityServerListener(this, chatHandler);
         serverListener.initializeVelocityVanishListener();
         this.proxyServer.getEventManager().register(this, serverListener);
