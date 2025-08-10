@@ -43,7 +43,6 @@ public final class SimpleProxyChatBungee extends Plugin implements ISimpleProxyC
 
     @Getter private boolean pluginStarting = true;
     @Getter private Config config;
-    @Getter private EpochHelper epochHelper;
     @Getter private Bot discordBot;
     @Getter private Metrics metrics;
     @Getter private BungeeServerListener serverListener;
@@ -57,8 +56,6 @@ public final class SimpleProxyChatBungee extends Plugin implements ISimpleProxyC
 
         this.config = new Config(this.getDataFolder());
         this.config.initialize();
-
-        epochHelper = new EpochHelper(config);
 
         this.getLogger().info("Attempting to initialize Discord bot... (IF ENABLED)");
         discordBot = new Bot(this.config, this.getLogger()::warning, this::getOnlinePlayers, this::getMaxPlayers);
@@ -166,7 +163,7 @@ public final class SimpleProxyChatBungee extends Plugin implements ISimpleProxyC
 
     private void registerListeners() {
         // Register Discord Listener
-        ChatHandler chatHandler = new ChatHandler(this, epochHelper);
+        ChatHandler chatHandler = new ChatHandler(this);
 
         serverListener = new BungeeServerListener(this, chatHandler);
         this.getProxy().getPluginManager().registerListener(this, serverListener);

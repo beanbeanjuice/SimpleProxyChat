@@ -40,14 +40,12 @@ public class ChatHandler {
     private final ISimpleProxyChat plugin;
     private final Config config;
     private final Bot discordBot;
-    private final EpochHelper epochHelper;
     private final LastMessagesHelper lastMessagesHelper;
 
-    public ChatHandler(ISimpleProxyChat plugin, EpochHelper epochHelper) {
+    public ChatHandler(ISimpleProxyChat plugin) {
         this.plugin = plugin;
         this.config = plugin.getSPCConfig();
         this.discordBot = plugin.getDiscordBot();
-        this.epochHelper = epochHelper;
         this.lastMessagesHelper = new LastMessagesHelper(plugin.getSPCConfig());
 
         plugin.getDiscordBot().addRunnableToQueue(() -> plugin.getDiscordBot().getJDA().ifPresent((jda) -> jda.addEventListener(new DiscordChatHandler(config, this::sendFromDiscord))));
@@ -80,7 +78,7 @@ public class ChatHandler {
                         .setColor(color);
 
                 if (config.get(ConfigKey.MINECRAFT_DISCORD_EMBED_USE_TIMESTAMP).asBoolean())
-                    embedBuilder.setTimestamp(epochHelper.getEpochInstant());
+                    embedBuilder.setTimestamp(EpochHelper.getEpochInstant());
 
                 discordBot.sendMessageEmbed(embedBuilder.build());
             } else {
@@ -121,7 +119,7 @@ public class ChatHandler {
         replacements.add(Tuple.of("original_to", serverName));
         replacements.add(Tuple.of("player", playerName));
         replacements.add(Tuple.of("escaped_player", Helper.escapeString(playerName)));
-        replacements.add(Tuple.of("epoch", String.valueOf(epochHelper.getEpochSecond())));
+        replacements.add(Tuple.of("epoch", String.valueOf(EpochHelper.getEpochSecond())));
         replacements.add(Tuple.of("time", getTimeString()));
         replacements.add(Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()));
 
@@ -160,7 +158,7 @@ public class ChatHandler {
         replacements.add(Tuple.of("original_server", serverName));
         replacements.add(Tuple.of("to", aliasedServerName));
         replacements.add(Tuple.of("original_to", serverName));
-        replacements.add(Tuple.of("epoch", String.valueOf(epochHelper.getEpochSecond())));
+        replacements.add(Tuple.of("epoch", String.valueOf(EpochHelper.getEpochSecond())));
         replacements.add(Tuple.of("time", getTimeString()));
         replacements.add(Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()));
 
@@ -181,7 +179,7 @@ public class ChatHandler {
             }
 
             EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.RED);
-            if (config.get(ConfigKey.DISCORD_LEAVE_USE_TIMESTAMP).asBoolean()) embedBuilder.setTimestamp(epochHelper.getEpochInstant());
+            if (config.get(ConfigKey.DISCORD_LEAVE_USE_TIMESTAMP).asBoolean()) embedBuilder.setTimestamp(EpochHelper.getEpochInstant());
             discordBot.sendMessageEmbed(embedBuilder.build());
         }
 
@@ -205,7 +203,7 @@ public class ChatHandler {
         replacements.add(Tuple.of("original_server", serverName));
         replacements.add(Tuple.of("to", aliasedServerName));
         replacements.add(Tuple.of("original_to", serverName));
-        replacements.add(Tuple.of("epoch", String.valueOf(epochHelper.getEpochSecond())));
+        replacements.add(Tuple.of("epoch", String.valueOf(EpochHelper.getEpochSecond())));
         replacements.add(Tuple.of("time", getTimeString()));
         replacements.add(Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()));
 
@@ -226,7 +224,7 @@ public class ChatHandler {
             }
 
             EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.GREEN);
-            if (config.get(ConfigKey.DISCORD_JOIN_USE_TIMESTAMP).asBoolean()) embedBuilder.setTimestamp(epochHelper.getEpochInstant());
+            if (config.get(ConfigKey.DISCORD_JOIN_USE_TIMESTAMP).asBoolean()) embedBuilder.setTimestamp(EpochHelper.getEpochInstant());
             discordBot.sendMessageEmbed(embedBuilder.build());
         }
 
@@ -253,7 +251,7 @@ public class ChatHandler {
         replacements.add(Tuple.of("original_server", to));
         replacements.add(Tuple.of("player", playerName));
         replacements.add(Tuple.of("escaped_player", Helper.escapeString(playerName)));
-        replacements.add(Tuple.of("epoch", String.valueOf(epochHelper.getEpochSecond())));
+        replacements.add(Tuple.of("epoch", String.valueOf(EpochHelper.getEpochSecond())));
         replacements.add(Tuple.of("time", getTimeString()));
         replacements.add(Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()));
 
@@ -276,7 +274,7 @@ public class ChatHandler {
             }
 
             EmbedBuilder embedBuilder = simpleAuthorEmbedBuilder(playerUUID, discordMessage).setColor(Color.YELLOW);
-            if (config.get(ConfigKey.DISCORD_SWITCH_USE_TIMESTAMP).asBoolean()) embedBuilder.setTimestamp(epochHelper.getEpochInstant());
+            if (config.get(ConfigKey.DISCORD_SWITCH_USE_TIMESTAMP).asBoolean()) embedBuilder.setTimestamp(EpochHelper.getEpochInstant());
             discordBot.sendMessageEmbed(embedBuilder.build());
         }
 
@@ -332,7 +330,7 @@ public class ChatHandler {
                 Tuple.of("user", username),
                 Tuple.of("nick", nickname),
                 Tuple.of("message", discordMessage),
-                Tuple.of("epoch", String.valueOf(epochHelper.getEpochSecond())),
+                Tuple.of("epoch", String.valueOf(EpochHelper.getEpochSecond())),
                 Tuple.of("time", getTimeString()),
                 Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString())
         );
@@ -422,7 +420,7 @@ public class ChatHandler {
         DateTimeZone zone = config.get(ConfigKey.TIMESTAMP_TIMEZONE).asDateTimeZone();
         DateTimeFormatter format = DateTimeFormat.forPattern(config.get(ConfigKey.TIMESTAMP_FORMAT).asString());
 
-        long timeInMillis = epochHelper.getEpochMillisecond();
+        long timeInMillis = EpochHelper.getEpochMillisecond();
         DateTime time = new DateTime(timeInMillis).withZone(zone);
 
         return time.toString(format);
