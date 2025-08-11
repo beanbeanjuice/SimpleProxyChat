@@ -16,8 +16,9 @@ permissions:
 jobs:
   gradle-build:
     strategy:
+      fail-fast: false
       matrix:
-        jdk-version: [17, 21]
+        jdk-version: [21, 24]
         os: [ubuntu-latest, windows-latest, macos-latest]
     name: Gradle JDK ${{ matrix.jdk-version }} Build (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
@@ -38,11 +39,8 @@ jobs:
         name: Set Up Gradle
         uses: gradle/actions/setup-gradle@v3
       -
-        name: Change gradlew Permissions
-        run: chmod u+rwx gradlew
-      -
         name: Build and Test with Gradle
-        run: ./gradlew test
+        run: gradle test
 
   release-please:
     name: Update Changelog

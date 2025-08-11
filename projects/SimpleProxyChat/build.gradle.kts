@@ -10,10 +10,12 @@ java {
 dependencies {
     // Velocity
     compileOnly("com.velocitypowered", "velocity-api", "3.4.0-SNAPSHOT")
+    testImplementation("com.velocitypowered", "velocity-api", "3.4.0-SNAPSHOT")
     annotationProcessor("com.velocitypowered", "velocity-api", "3.4.0-SNAPSHOT")
 
     // Bungee
     compileOnly("net.md-5", "bungeecord-api", "1.21-R0.3") // https://javadoc.io/doc/net.md-5/bungeecord-api/latest/index.html
+    testImplementation("net.md-5", "bungeecord-api", "1.21-R0.3") // https://javadoc.io/doc/net.md-5/bungeecord-api/latest/index.html
     implementation("net.kyori", "adventure-api", "4.24.0")  // Convert Velocity -> Bungee https://mvnrepository.com/artifact/net.kyori/adventure-api
     implementation("net.kyori", "adventure-text-minimessage", "4.24.0")  // Convert Velocity -> Bungee https://mvnrepository.com/artifact/net.kyori/adventure-text-minimessage
     implementation("net.kyori", "adventure-text-serializer-plain", "4.24.0")  // Convert Velocity -> Bungee https://mvnrepository.com/artifact/net.kyori/adventure-text-serializer-plain

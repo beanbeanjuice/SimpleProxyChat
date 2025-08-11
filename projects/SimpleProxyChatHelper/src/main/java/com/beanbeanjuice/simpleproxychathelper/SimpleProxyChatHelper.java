@@ -9,7 +9,7 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class SimpleProxyChatHelper extends JavaPlugin {
+public class SimpleProxyChatHelper extends JavaPlugin {
 
     private Metrics metrics;
     @Getter private Config options;

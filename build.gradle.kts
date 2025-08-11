@@ -1,13 +1,18 @@
+import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
     id("com.gradleup.shadow") version("9.0.1")
+    id("com.adarshr.test-logger") version("4.0.0")
     id("java")
 }
 
 allprojects {
     group = "com.beanbeanjuice"
+    val mockitoAgent by configurations.creating
 
+    apply(plugin = "com.adarshr.test-logger")
     apply(plugin = "java")
 
     repositories {
@@ -58,6 +63,31 @@ allprojects {
         // Lombok
         compileOnly("org.projectlombok", "lombok", "1.18.38")
         annotationProcessor("org.projectlombok", "lombok", "1.18.38")
+
+        // Unit Testing
+        testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.13.4") // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+        testImplementation("org.junit.jupiter", "junit-jupiter", "5.13.4") // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.4")
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+        // Mockito
+        testImplementation("org.mockito", "mockito-core", "5.18.0") // https://mvnrepository.com/artifact/org.mockito/mockito-core
+        testImplementation("org.mockito", "mockito-inline", "+") // https://mvnrepository.com/artifact/org.mockito/mockito-core
+
+        mockitoAgent("org.mockito:mockito-core:5.18.0") {
+            isTransitive = false
+        }
+    }
+
+    tasks.withType<Test> {
+        // Always re-run tests.
+        outputs.upToDateWhen { false }
+        outputs.cacheIf { false }
+
+        useJUnitPlatform()
+
+        // Add the mockito agent as a javaagent JVM argument
+        jvmArgs("-javaagent:${mockitoAgent.singleFile.absolutePath}")
     }
 }
 
@@ -78,6 +108,12 @@ subprojects {
 
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
+    }
+
+    tasks.withType<Test> {
+        // Run tests on shadowJar
+        dependsOn(tasks.shadowJar)
+        classpath = files(tasks.shadowJar.get().archiveFile) + sourceSets.test.get().runtimeClasspath
     }
 }
 
