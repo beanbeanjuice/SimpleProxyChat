@@ -1,6 +1,7 @@
 package com.beanbeanjuice.simpleproxychat.commands.velocity;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity;
+import com.beanbeanjuice.simpleproxychat.common.CommonHelper;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigKey;
@@ -33,7 +34,7 @@ public class VelocityBroadcastCommand implements SimpleCommand {
         broadcastString = Helper.replaceKeys(
                 broadcastString,
                 Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()),
-                Tuple.of("message", Helper.translateLegacyCodes(broadcastMessage))
+                Tuple.of("message", CommonHelper.translateLegacyCodes(broadcastMessage))
         );
 
         for (Player player : plugin.getProxyServer().getAllPlayers())

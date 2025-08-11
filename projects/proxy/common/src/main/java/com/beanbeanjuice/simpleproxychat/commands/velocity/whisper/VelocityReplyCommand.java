@@ -1,6 +1,7 @@
 package com.beanbeanjuice.simpleproxychat.commands.velocity.whisper;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatVelocity;
+import com.beanbeanjuice.simpleproxychat.common.CommonHelper;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
@@ -26,7 +27,7 @@ public class VelocityReplyCommand implements SimpleCommand {
     public void execute(Invocation invocation) {
         plugin.getProxyServer().getPlayer(plugin.getWhisperHandler().getLink(((Player) invocation.source()).getUsername()).orElse("")).ifPresentOrElse(
                 (receiver) -> {
-                    String message = Helper.translateLegacyCodes(String.join(" ", invocation.arguments()));
+                    String message = CommonHelper.translateLegacyCodes(String.join(" ", invocation.arguments()));
 
                     String senderString = config.get(ConfigKey.MINECRAFT_WHISPER_SEND).asString();
                     String receiverString = config.get(ConfigKey.MINECRAFT_WHISPER_RECEIVE).asString();

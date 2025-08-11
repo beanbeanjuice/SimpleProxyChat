@@ -131,7 +131,8 @@ tasks.register("cleanProxyJars") {
             include(
                 "proxy*.jar",
                 "server*.jar",
-                "projects.jar"
+                "projects.jar",
+                "common.jar"
             )
         }.files
 

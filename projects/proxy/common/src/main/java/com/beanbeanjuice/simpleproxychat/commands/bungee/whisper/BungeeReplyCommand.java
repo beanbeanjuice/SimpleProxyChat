@@ -1,6 +1,7 @@
 package com.beanbeanjuice.simpleproxychat.commands.bungee.whisper;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
+import com.beanbeanjuice.simpleproxychat.common.CommonHelper;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
@@ -27,7 +28,7 @@ public class BungeeReplyCommand extends Command {
     public void execute(CommandSender sender, String[] args) {
         plugin.getWhisperHandler().getLink(sender.getName()).map((playerName) -> plugin.getProxy().getPlayer(playerName)).ifPresentOrElse(
                 (receiver) -> {
-                    String message = Helper.translateLegacyCodes(String.join(" ", args));
+                    String message = CommonHelper.translateLegacyCodes(String.join(" ", args));
 
                     String senderString = config.get(ConfigKey.MINECRAFT_WHISPER_SEND).asString();
                     String receiverString = config.get(ConfigKey.MINECRAFT_WHISPER_RECEIVE).asString();

@@ -1,6 +1,7 @@
 package com.beanbeanjuice.simpleproxychat.commands.bungee;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
+import com.beanbeanjuice.simpleproxychat.common.CommonHelper;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
 import com.beanbeanjuice.simpleproxychat.utility.config.ConfigKey;
@@ -35,7 +36,7 @@ public class BungeeBroadcastCommand extends Command {
         broadcastString = Helper.replaceKeys(
                 broadcastString,
                 Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()),
-                Tuple.of("message", Helper.translateLegacyCodes(broadcastMessage))
+                Tuple.of("message", CommonHelper.translateLegacyCodes(broadcastMessage))
         );
 
         for (ProxiedPlayer player : plugin.getProxy().getPlayers())

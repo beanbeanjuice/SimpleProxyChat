@@ -19,6 +19,8 @@ allprojects {
     }
 
     dependencies {
+        implementation(project(":projects:common"))
+
         // Spigot. Duh.
         compileOnly("org.spigotmc", "spigot-api", "1.21.8-R0.1-SNAPSHOT")
 

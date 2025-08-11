@@ -1,5 +1,6 @@
 package com.beanbeanjuice.simpleproxychat.utility.config;
 
+import com.beanbeanjuice.simpleproxychat.common.CommonHelper;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.helper.ServerChatLockHelper;
@@ -71,7 +72,7 @@ public class Config {
             String route = key.getKey();
 
             if (key.getClassType() == String.class) {
-                String message = Helper.translateLegacyCodes(document.getString(route));
+                String message = CommonHelper.translateLegacyCodes(document.getString(route));
                 this.config.put(key, new ConfigValueWrapper(message));
                 return;
             }
@@ -92,7 +93,7 @@ public class Config {
                 mapSection.getKeys().stream()
                         .map((mapKey) -> (String) mapKey)
                         .map((mapKey) -> Tuple.of(mapKey, mapSection.getString(mapKey)))
-                        .forEach((pair) -> map.put(pair.getKey(), Helper.translateLegacyCodes(pair.getValue())));
+                        .forEach((pair) -> map.put(pair.getKey(), CommonHelper.translateLegacyCodes(pair.getValue())));
 
                 this.config.put(key, new ConfigValueWrapper(map));
                 return;
@@ -100,7 +101,7 @@ public class Config {
 
             if (key.getClassType() == List.class) {
                 List<String> list = document.getStringList(route);
-                this.config.put(key, new ConfigValueWrapper(list.stream().map(Helper::translateLegacyCodes).toList()));
+                this.config.put(key, new ConfigValueWrapper(list.stream().map(CommonHelper::translateLegacyCodes).toList()));
                 return;
             }
 

@@ -1,6 +1,7 @@
 rootProject.name = "SimpleProxyChat"
 
 include(
+    "projects:common",
     "projects:proxy:common",
     "projects:server:common"
 )

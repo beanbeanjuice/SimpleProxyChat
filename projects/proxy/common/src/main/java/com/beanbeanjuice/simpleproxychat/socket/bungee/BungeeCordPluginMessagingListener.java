@@ -1,6 +1,7 @@
 package com.beanbeanjuice.simpleproxychat.socket.bungee;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
+import com.beanbeanjuice.simpleproxychat.common.CommonHelper;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.MessageType;
 import com.beanbeanjuice.simpleproxychat.utility.listeners.bungee.BungeeServerListener;
@@ -55,10 +56,10 @@ public class BungeeCordPluginMessagingListener implements Listener {
 
         this.listener.getChatHandler().chat(
                 messageData,
-                Helper.translateLegacyCodes(parsedMinecraftString),
-                Helper.translateLegacyCodes(parsedDiscordString),
-                Helper.translateLegacyCodes(parsedDiscordEmbedTitle),
-                Helper.translateLegacyCodes(parsedDiscordEmbedMessage)
+                CommonHelper.translateLegacyCodes(parsedMinecraftString),
+                CommonHelper.translateLegacyCodes(parsedDiscordString),
+                CommonHelper.translateLegacyCodes(parsedDiscordEmbedTitle),
+                CommonHelper.translateLegacyCodes(parsedDiscordEmbedMessage)
         );
     }
 

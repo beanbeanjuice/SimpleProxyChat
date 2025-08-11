@@ -1,6 +1,7 @@
 package com.beanbeanjuice.simpleproxychat.commands.bungee.whisper;
 
 import com.beanbeanjuice.simpleproxychat.SimpleProxyChatBungee;
+import com.beanbeanjuice.simpleproxychat.common.CommonHelper;
 import com.beanbeanjuice.simpleproxychat.utility.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.utility.Tuple;
 import com.beanbeanjuice.simpleproxychat.utility.config.Config;
@@ -40,7 +41,7 @@ public class BungeeWhisperCommand extends Command implements TabExecutor {
             return;
         }
 
-        String message = Helper.translateLegacyCodes(Arrays.stream(args).skip(1).collect(Collectors.joining(" ")));
+        String message = CommonHelper.translateLegacyCodes(Arrays.stream(args).skip(1).collect(Collectors.joining(" ")));
 
         String senderString = config.get(ConfigKey.MINECRAFT_WHISPER_SEND).asString();
         String receiverString = config.get(ConfigKey.MINECRAFT_WHISPER_RECEIVE).asString();

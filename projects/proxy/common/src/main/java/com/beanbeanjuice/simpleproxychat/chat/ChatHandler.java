@@ -1,5 +1,6 @@
 package com.beanbeanjuice.simpleproxychat.chat;
 
+import com.beanbeanjuice.simpleproxychat.common.CommonHelper;
 import com.beanbeanjuice.simpleproxychat.discord.Bot;
 import com.beanbeanjuice.simpleproxychat.discord.DiscordChatHandler;
 import com.beanbeanjuice.simpleproxychat.socket.ChatMessageData;
@@ -406,8 +407,8 @@ public class ChatHandler {
             List<String> prefixList = getPrefixBasedOnServerContext(user, serverName, aliasedServerName, "");
             List<String> suffixList = getSuffixBasedOnServerContext(user, serverName, aliasedServerName, "");
 
-            String prefix = prefixList.isEmpty() ? "" : Helper.translateLegacyCodes(prefixList.get(0));
-            String suffix = suffixList.isEmpty() ? "" : Helper.translateLegacyCodes(suffixList.get(0));
+            String prefix = prefixList.isEmpty() ? "" : CommonHelper.translateLegacyCodes(prefixList.get(0));
+            String suffix = suffixList.isEmpty() ? "" : CommonHelper.translateLegacyCodes(suffixList.get(0));
 
             return message.replace("%prefix%", prefix).replace("%suffix%", suffix);
         }).orElse(message);
