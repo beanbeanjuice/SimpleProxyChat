@@ -1,0 +1,47 @@
+name: Create Release
+
+on:
+  release:
+    types: [ released ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gradle-build:
+    name: Gradle JDK 17 Build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      -
+        name: Checkout Code
+        uses: actions/checkout@v4
+      -
+        name: Validate Gradle Wrapper
+        uses: gradle/actions/wrapper-validation@v3
+      -
+        name: Set Up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+      -
+        name: Set Up Gradle
+        uses: gradle/actions/setup-gradle@v3
+      -
+        name: Change gradlew Permissions
+        run: chmod u+rwx gradlew
+      -
+        name: Build with Gradle
+        run: ./gradlew shadowJar
+      -
+        name: Upload JARs to Release
+        run: |
+          for file in libs/*.jar; do
+            echo "Uploading $file"
+            gh release upload "${{ github.event.release.tag_name }}" "$file"
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
