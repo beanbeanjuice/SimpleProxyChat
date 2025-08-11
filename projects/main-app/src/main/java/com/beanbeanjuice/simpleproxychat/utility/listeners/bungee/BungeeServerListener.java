@@ -106,8 +106,20 @@ public class BungeeServerListener implements Listener {
                     plugin,
                     () -> {
                         previousServerHandler.get(player.getName()).ifPresent((serverInfo) -> {
-                            if (isFake) chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), serverInfo.getName(), this::sendToAllServersVanish);
-                            else chatHandler.runProxyLeaveMessage(player.getName(), player.getUniqueId(), serverInfo.getName(), this::sendToAllServers);
+                            if (isFake)
+                                chatHandler.runProxyLeaveMessage(
+                                        player.getName(),
+                                        player.getUniqueId(),
+                                        serverInfo.getName(),
+                                        (message, permission) -> sendToAllServersLeaveFilteredVanish(message, permission, player.getUniqueId(), serverInfo.getName())
+                                );
+                            else
+                                chatHandler.runProxyLeaveMessage(
+                                        player.getName(),
+                                        player.getUniqueId(),
+                                        serverInfo.getName(),
+                                        (message, permission) -> sendToAllServersLeaveFiltered(message, permission, player.getUniqueId(), serverInfo.getName())
+                                );
                         });
                     },
                     50L, TimeUnit.MILLISECONDS);  // 50ms is 1 tick
@@ -155,8 +167,20 @@ public class BungeeServerListener implements Listener {
 
                         previousServerHandler.put(player.getName(), server.getInfo());
 
-                        if (isFake) chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), server.getInfo().getName(), this::sendToAllServersVanish);
-                        else chatHandler.runProxyJoinMessage(player.getName(), player.getUniqueId(), server.getInfo().getName(), this::sendToAllServers);
+                        if (isFake)
+                            chatHandler.runProxyJoinMessage(
+                                    player.getName(),
+                                    player.getUniqueId(),
+                                    server.getInfo().getName(),
+                                    (message, permission) -> sendToAllServersJoinFilteredVanish(message, permission, player.getUniqueId(), server.getInfo().getName())
+                            );
+                        else
+                            chatHandler.runProxyJoinMessage(
+                                    player.getName(),
+                                    player.getUniqueId(),
+                                    server.getInfo().getName(),
+                                    (message, permission) -> sendToAllServersJoinFiltered(message, permission, player.getUniqueId(), server.getInfo().getName())
+                            );
                     },
                     50L * 2, TimeUnit.MILLISECONDS);  // 50ms is 1 tick
         } catch (Exception e) {
@@ -235,6 +259,140 @@ public class BungeeServerListener implements Listener {
                     return true;
                 })
                 .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, Helper.convertToBungee(parsedMessage)));
+    }
+
+    private void sendToAllServersJoinFiltered(String parsedMessage, Permission permission, java.util.UUID subjectUUID, String subjectServerName) {
+        boolean excludeSelf = plugin.getConfig().get(ConfigKey.MINECRAFT_JOIN_RECIPIENTS_EXCLUDE_SELF).asBoolean();
+        boolean excludeServer = plugin.getConfig().get(ConfigKey.MINECRAFT_JOIN_RECIPIENTS_EXCLUDE_SERVER).asBoolean();
+
+        plugin.getProxy().getPlayers().stream()
+                .filter((player) -> {
+                    if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean())
+                        return player.hasPermission(permission.getPermissionNode());
+                    return true;
+                })
+                .filter((player) -> {
+                    if (player.getServer() == null || player.getServer().getInfo() == null) return false;
+                    return !Helper.serverHasChatLocked(plugin, player.getServer().getInfo().getName());
+                })
+                .filter((player) -> !playerIsInDisabledServer(player, plugin))
+                .filter((player) -> !excludeSelf || !player.getUniqueId().equals(subjectUUID))
+                // Ensure the subject is not included in the stream when excluding the server to avoid duplicates
+                .filter((player) -> !(excludeServer && player.getUniqueId().equals(subjectUUID)))
+                .filter((player) -> !excludeServer || (player.getServer() == null || player.getServer().getInfo() == null) || !player.getServer().getInfo().getName().equalsIgnoreCase(subjectServerName))
+                .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, Helper.convertToBungee(parsedMessage)));
+
+        // If excluding the server but not the subject, explicitly send to the subject to keep behavior consistent
+        if (excludeServer && !excludeSelf) {
+            ProxiedPlayer subject = plugin.getProxy().getPlayer(subjectUUID);
+            if (subject != null) {
+                if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean()
+                        && !subject.hasPermission(permission.getPermissionNode())) return;
+                if (subject.getServer() == null || subject.getServer().getInfo() == null) return;
+                if (Helper.serverHasChatLocked(plugin, subject.getServer().getInfo().getName())) return;
+                if (playerIsInDisabledServer(subject, plugin)) return;
+                subject.sendMessage(ChatMessageType.CHAT, Helper.convertToBungee(parsedMessage));
+            }
+        }
+    }
+
+    private void sendToAllServersLeaveFiltered(String parsedMessage, Permission permission, java.util.UUID subjectUUID, String subjectServerName) {
+        boolean excludeSelf = plugin.getConfig().get(ConfigKey.MINECRAFT_LEAVE_RECIPIENTS_EXCLUDE_SELF).asBoolean();
+        boolean excludeServer = plugin.getConfig().get(ConfigKey.MINECRAFT_LEAVE_RECIPIENTS_EXCLUDE_SERVER).asBoolean();
+
+        plugin.getProxy().getPlayers().stream()
+                .filter((player) -> {
+                    if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean())
+                        return player.hasPermission(permission.getPermissionNode());
+                    return true;
+                })
+                .filter((player) -> {
+                    if (player.getServer() == null || player.getServer().getInfo() == null) return false;
+                    return !Helper.serverHasChatLocked(plugin, player.getServer().getInfo().getName());
+                })
+                .filter((player) -> !playerIsInDisabledServer(player, plugin))
+                .filter((player) -> !excludeSelf || !player.getUniqueId().equals(subjectUUID))
+                // Ensure the subject is not included in the stream when excluding the server to avoid duplicates
+                .filter((player) -> !(excludeServer && player.getUniqueId().equals(subjectUUID)))
+                .filter((player) -> !excludeServer || (player.getServer() == null || player.getServer().getInfo() == null) || !player.getServer().getInfo().getName().equalsIgnoreCase(subjectServerName))
+                .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, Helper.convertToBungee(parsedMessage)));
+
+        // If excluding the server but not the subject, explicitly send to the subject to keep behavior consistent
+        if (excludeServer && !excludeSelf) {
+            ProxiedPlayer subject = plugin.getProxy().getPlayer(subjectUUID);
+            if (subject != null) {
+                if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean()
+                        && !subject.hasPermission(permission.getPermissionNode())) return;
+                if (subject.getServer() == null || subject.getServer().getInfo() == null) return;
+                if (Helper.serverHasChatLocked(plugin, subject.getServer().getInfo().getName())) return;
+                if (playerIsInDisabledServer(subject, plugin)) return;
+                subject.sendMessage(ChatMessageType.CHAT, Helper.convertToBungee(parsedMessage));
+            }
+        }
+    }
+
+    private void sendToAllServersJoinFilteredVanish(String parsedMessage, Permission permission, java.util.UUID subjectUUID, String subjectServerName) {
+        boolean excludeSelf = plugin.getConfig().get(ConfigKey.MINECRAFT_JOIN_RECIPIENTS_EXCLUDE_SELF).asBoolean();
+        boolean excludeServer = plugin.getConfig().get(ConfigKey.MINECRAFT_JOIN_RECIPIENTS_EXCLUDE_SERVER).asBoolean();
+
+        plugin.getProxy().getPlayers().stream()
+                .filter((player) -> {
+                    if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean())
+                        return player.hasPermission(permission.getPermissionNode());
+                    return true;
+                })
+                .filter((player) -> {
+                    if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean())
+                        return player.hasPermission(Permission.READ_FAKE_MESSAGE.getPermissionNode());
+                    return true;
+                })
+                .filter((player) -> !excludeSelf || !player.getUniqueId().equals(subjectUUID))
+                // Ensure the subject is not included in the stream when excluding the server to avoid duplicates
+                .filter((player) -> !(excludeServer && player.getUniqueId().equals(subjectUUID)))
+                .filter((player) -> !excludeServer || (player.getServer() == null || player.getServer().getInfo() == null) || !player.getServer().getInfo().getName().equalsIgnoreCase(subjectServerName))
+                .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, Helper.convertToBungee(parsedMessage)));
+
+        // If excluding the server but not the subject, explicitly send to the subject to keep behavior consistent
+        if (excludeServer && !excludeSelf) {
+            ProxiedPlayer subject = plugin.getProxy().getPlayer(subjectUUID);
+            if (subject != null) {
+                if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean()
+                        && !subject.hasPermission(permission.getPermissionNode())) return;
+                subject.sendMessage(ChatMessageType.CHAT, Helper.convertToBungee(parsedMessage));
+            }
+        }
+    }
+
+    private void sendToAllServersLeaveFilteredVanish(String parsedMessage, Permission permission, java.util.UUID subjectUUID, String subjectServerName) {
+        boolean excludeSelf = plugin.getConfig().get(ConfigKey.MINECRAFT_LEAVE_RECIPIENTS_EXCLUDE_SELF).asBoolean();
+        boolean excludeServer = plugin.getConfig().get(ConfigKey.MINECRAFT_LEAVE_RECIPIENTS_EXCLUDE_SERVER).asBoolean();
+
+        plugin.getProxy().getPlayers().stream()
+                .filter((player) -> {
+                    if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean())
+                        return player.hasPermission(permission.getPermissionNode());
+                    return true;
+                })
+                .filter((player) -> {
+                    if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean())
+                        return player.hasPermission(Permission.READ_FAKE_MESSAGE.getPermissionNode());
+                    return true;
+                })
+                .filter((player) -> !excludeSelf || !player.getUniqueId().equals(subjectUUID))
+                // Ensure the subject is not included in the stream when excluding the server to avoid duplicates
+                .filter((player) -> !(excludeServer && player.getUniqueId().equals(subjectUUID)))
+                .filter((player) -> !excludeServer || (player.getServer() == null || player.getServer().getInfo() == null) || !player.getServer().getInfo().getName().equalsIgnoreCase(subjectServerName))
+                .forEach((player) -> player.sendMessage(ChatMessageType.CHAT, Helper.convertToBungee(parsedMessage)));
+
+        // If excluding the server but not the subject, explicitly send to the subject to keep behavior consistent
+        if (excludeServer && !excludeSelf) {
+            ProxiedPlayer subject = plugin.getProxy().getPlayer(subjectUUID);
+            if (subject != null) {
+                if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean()
+                        && !subject.hasPermission(permission.getPermissionNode())) return;
+                subject.sendMessage(ChatMessageType.CHAT, Helper.convertToBungee(parsedMessage));
+            }
+        }
     }
 
 }
