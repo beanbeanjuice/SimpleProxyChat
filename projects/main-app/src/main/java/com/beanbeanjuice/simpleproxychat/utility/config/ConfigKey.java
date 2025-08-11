@@ -47,8 +47,12 @@ public enum ConfigKey {
 
     MINECRAFT_JOIN_ENABLED (ConfigFileType.MESSAGES, "minecraft.join.enabled", Boolean.class),
     MINECRAFT_JOIN (ConfigFileType.MESSAGES, "minecraft.join.message", String.class),
+    MINECRAFT_JOIN_RECIPIENTS_EXCLUDE_SELF (ConfigFileType.MESSAGES, "minecraft.join.recipients.exclude-self", Boolean.class),
+    MINECRAFT_JOIN_RECIPIENTS_EXCLUDE_SERVER (ConfigFileType.MESSAGES, "minecraft.join.recipients.exclude-server", Boolean.class),
     MINECRAFT_LEAVE_ENABLED (ConfigFileType.MESSAGES, "minecraft.leave.enabled", Boolean.class),
     MINECRAFT_LEAVE (ConfigFileType.MESSAGES, "minecraft.leave.message", String.class),
+    MINECRAFT_LEAVE_RECIPIENTS_EXCLUDE_SELF (ConfigFileType.MESSAGES, "minecraft.leave.recipients.exclude-self", Boolean.class),
+    MINECRAFT_LEAVE_RECIPIENTS_EXCLUDE_SERVER (ConfigFileType.MESSAGES, "minecraft.leave.recipients.exclude-server", Boolean.class),
     MINECRAFT_CHAT_ENABLED (ConfigFileType.MESSAGES, "minecraft.chat.enabled", Boolean.class),
     MINECRAFT_CHAT_MESSAGE (ConfigFileType.MESSAGES, "minecraft.chat.message", String.class),
     MINECRAFT_CHAT_VANISHED_MESSAGE (ConfigFileType.MESSAGES, "minecraft.chat.vanished", String.class),

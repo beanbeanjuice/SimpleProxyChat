@@ -213,9 +213,15 @@ minecraft:
    join:
       enabled: true
       message: "&e%player% &ahas joined the network. (%server%)"
+      recipients:
+         exclude-self: false
+         exclude-server: false # excludes every player but the sender
    leave:
       enabled: true
       message: "&e%player% &chas left the network. (%server%)"
+      recipients:
+         exclude-self: false
+         exclude-server: false # excludes every player but the sender
    chat:
       enabled: true
       message: "&8[&3%server%&8] &e%player% &9» &7%message%"
@@ -310,7 +316,7 @@ console:
 update-message: "&7There is an update! You are on &c%old%. New version is &a%new%&7: &6%link%"
 
 # DO NOT TOUCH THIS
-file-version: 10
+file-version: 11
 ```
 
 ---
