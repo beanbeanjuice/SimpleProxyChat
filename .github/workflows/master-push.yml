@@ -18,9 +18,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        jdk-version: [21, latest]
+        jdk-version: [21, 24]
         os: [ubuntu-latest, windows-latest, macos-latest]
-    name: Gradle JDK (${{ matrix.jdk-version }}) Build (${{ matrix.os }})
+    name: Gradle JDK ${{ matrix.jdk-version }} Build (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     steps:
       -
