@@ -3,8 +3,16 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 version = project.property("version") as String
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "JCenter"
+        url = uri("https://repo.papermc.io/repository/maven-public/")
+    }
 }
 
 dependencies {
@@ -16,6 +24,9 @@ dependencies {
 
     // bStats
     implementation("org.bstats", "bstats-bukkit", "3.1.0")
+
+    // Mock Testing
+    testImplementation("org.mockbukkit.mockbukkit", "mockbukkit-v1.21", "4.72.6")
 
     // Artifact Version Comparison
     // TODO: Eventually remove this.

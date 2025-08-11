@@ -1,7 +1,10 @@
+import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
     id("com.gradleup.shadow") version("9.0.1")
+    id("com.adarshr.test-logger") version("4.0.0")
     id("java")
 }
 
@@ -9,6 +12,7 @@ allprojects {
     group = "com.beanbeanjuice"
     val mockitoAgent by configurations.creating
 
+    apply(plugin = "com.adarshr.test-logger")
     apply(plugin = "java")
 
     repositories {
@@ -76,14 +80,15 @@ allprojects {
     }
 
     tasks.withType<Test> {
+        // Always re-run tests.
+        outputs.upToDateWhen { false }
+        outputs.cacheIf { false }
+
         useJUnitPlatform()
 
         // Add the mockito agent as a javaagent JVM argument
         jvmArgs("-javaagent:${mockitoAgent.singleFile.absolutePath}")
     }
-//    tasks.withType<Test> {
-//        useJUnitPlatform()
-//    }
 }
 
 subprojects {
@@ -103,6 +108,12 @@ subprojects {
 
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
+    }
+
+    tasks.withType<Test> {
+        // Run tests on shadowJar
+        dependsOn(tasks.shadowJar)
+        classpath = files(tasks.shadowJar.get().archiveFile) + sourceSets.test.get().runtimeClasspath
     }
 }
 

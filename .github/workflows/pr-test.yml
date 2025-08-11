@@ -31,8 +31,5 @@ jobs:
         name: Set Up Gradle
         uses: gradle/actions/setup-gradle@v3
       -
-        name: Change gradlew Permissions
-        run: chmod u+rwx gradlew
-      -
         name: Build and Test with Gradle
-        run: ./gradlew test
+        run: gradle test

@@ -31,11 +31,8 @@ jobs:
         name: Set Up Gradle
         uses: gradle/actions/setup-gradle@v3
       -
-        name: Change gradlew Permissions
-        run: chmod u+rwx gradlew
-      -
         name: Build with Gradle
-        run: ./gradlew shadowJar
+        run: gradle shadowJar
       -
         name: Upload JARs to Release
         run: |
