@@ -5,7 +5,10 @@
       "package-name": "SimpleProxyChat",
       "bump-minor-pre-major": true,
       "extra-files": [
-        "projects/proxy/gradle.properties"
+        {
+          "type": "generic",
+          "path": "projects/proxy/gradle.properties"
+        }
       ]
     },
     "projects/server": {
@@ -13,7 +16,10 @@
       "package-name": "SimpleProxyChatHelper",
       "bump-minor-pre-major": true,
       "extra-files": [
-        "projects/server/gradle.properties"
+        {
+          "type": "generic",
+          "path": "projects/server/gradle.properties"
+        }
       ]
     }
   }
