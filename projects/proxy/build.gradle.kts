@@ -13,11 +13,6 @@ allprojects {
     dependencies {
         implementation(project(":projects:common"))
 
-        // Velocity
-        compileOnly("com.velocitypowered", "velocity-api", "3.4.0-SNAPSHOT")
-        testImplementation("com.velocitypowered", "velocity-api", "3.4.0-SNAPSHOT")
-        annotationProcessor("com.velocitypowered", "velocity-api", "3.4.0-SNAPSHOT")
-
         // Bungee
         compileOnly("net.md-5", "bungeecord-api", "1.21-R0.3") // https://javadoc.io/doc/net.md-5/bungeecord-api/latest/index.html
         testImplementation("net.md-5", "bungeecord-api", "1.21-R0.3") // https://javadoc.io/doc/net.md-5/bungeecord-api/latest/index.html
@@ -28,20 +23,11 @@ allprojects {
         implementation("net.kyori", "adventure-text-serializer-gson", "4.24.0")  // Convert Velocity -> Bungee https://mvnrepository.com/artifact/net.kyori/adventure-text-serializer-gson
         implementation("net.kyori", "adventure-text-serializer-bungeecord", "4.4.1")  // Convert Velocity -> Bungee https://mvnrepository.com/artifact/net.kyori/adventure-platform-bungeecord
 
-        // Discord Support
-        implementation("net.dv8tion", "JDA", "5.6.1") {
-            exclude(module = "opus-java")
-        }
-
         // PremiumVanish/SuperVanish Support
         compileOnly("com.github.LeonMangler", "PremiumVanishAPI", "2.9.18-2")
 
         // Better YAML Support
         implementation("dev.dejvokep", "boosted-yaml", "1.3.7")
-
-        // bStats
-        implementation("org.bstats", "bstats-velocity", "3.1.0")
-        implementation("org.bstats", "bstats-bungeecord", "3.1.0")
 
         // LuckPerms Support
         compileOnly("net.luckperms", "api", "5.4")
@@ -58,16 +44,18 @@ allprojects {
         // Spicord Support
         compileOnly("org.spicord", "spicord-common", "5.7.2")
 
-        // Timestamp
-        implementation("joda-time", "joda-time", "2.14.0")
+        // bStats
+        implementation("org.bstats", "bstats-bungeecord", "3.1.0")
+        implementation("org.bstats", "bstats-velocity", "3.1.0")
+
+        // Discord Support
+        implementation("net.dv8tion", "JDA", "5.6.1") {
+            exclude(module = "opus-java")
+        }
     }
 
     tasks.withType<ShadowJar> {
-        relocate("net.dv8tion", "com.beanbeanjuice.simpleproxychat.libs.net.dv8tion")
         relocate("dev.dejvokep", "com.beanbeanjuice.simpleproxychat.libs.dev.dejvokep")
-        relocate("org.bstats", "com.beanbeanjuice.simpleproxychat.libs.org.bstats")
-        relocate("joda-time", "com.beanbeanjuice.simpleproxychat.libs.joda-time")  // check
-        relocate("org.apache.maven", "com.beanbeanjuice.simpleproxychat.libs.org.apache.maven")  // check
     }
 
 }

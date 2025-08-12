@@ -1,3 +1,6 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.kotlin.dsl.withType
+
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
@@ -14,4 +17,8 @@ dependencies {
     // Artifact Version Comparison
     // TODO: Eventually remove this.
     implementation("org.apache.maven", "maven-artifact", "3.9.11")
+}
+
+tasks.withType<ShadowJar> {
+    relocate("org.apache.maven", "com.beanbeanjuice.simpleproxychat.libs.org.apache.maven")  // check
 }
