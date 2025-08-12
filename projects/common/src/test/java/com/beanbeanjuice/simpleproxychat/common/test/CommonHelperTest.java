@@ -45,15 +45,6 @@ public class CommonHelperTest {
     }
 
     @Test
-    @DisplayName("Essentials Symbol Codes Are Converted to Hex")
-    public void testEssentialsSymbolCOdesAreConvertedToHex() {
-        String originalText = "§x§f§b§6§3§f§5Hello!";
-        String expectedText = "&#fb63f5Hello!";
-
-        Assertions.assertEquals(expectedText, CommonHelper.replaceEssentialsColorCodes(originalText));
-    }
-
-    @Test
     @DisplayName("Essentials Symbol Codes Are Converted Properly")
     public void testEssentialsSymbolCOdesAreConvertedProperly() {
         String originalText = "§x§f§b§6§3§f§5Hello!";

@@ -10,4 +10,8 @@ dependencies {
     implementation("net.kyori", "adventure-text-serializer-legacy", "4.24.0")  // Convert Velocity -> Bungee https://mvnrepository.com/artifact/net.kyori/adventure-text-serializer-legacy
     implementation("net.kyori", "adventure-text-serializer-gson", "4.24.0")  // Convert Velocity -> Bungee https://mvnrepository.com/artifact/net.kyori/adventure-text-serializer-gson
     implementation("net.kyori", "adventure-text-serializer-bungeecord", "4.4.1")  // Convert Velocity -> Bungee https://mvnrepository.com/artifact/net.kyori/adventure-platform-bungeecord
+
+    // Artifact Version Comparison
+    // TODO: Eventually remove this.
+    implementation("org.apache.maven", "maven-artifact", "3.9.11")
 }
