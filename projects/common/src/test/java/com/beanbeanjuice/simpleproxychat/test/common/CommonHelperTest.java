@@ -1,4 +1,4 @@
-package com.beanbeanjuice.simpleproxychat.common.test;
+package com.beanbeanjuice.simpleproxychat.test.common;
 
 import com.beanbeanjuice.simpleproxychat.common.CommonHelper;
 import net.kyori.adventure.text.format.NamedTextColor;

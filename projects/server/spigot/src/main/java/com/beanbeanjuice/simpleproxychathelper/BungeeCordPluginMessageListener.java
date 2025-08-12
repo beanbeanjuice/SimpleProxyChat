@@ -1,6 +1,6 @@
 package com.beanbeanjuice.simpleproxychathelper;
 
-import com.beanbeanjuice.simpleproxychathelper.config.ConfigKey;
+import com.beanbeanjuice.simpleproxychathelper.shared.config.ConfigKey;
 import com.google.common.collect.Iterables;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;

@@ -1,10 +1,8 @@
 package com.beanbeanjuice.simpleproxychathelper;
 
-import com.beanbeanjuice.simpleproxychat.common.CommonHelper;
 import com.beanbeanjuice.simpleproxychat.common.CommonUpdateChecker;
-import com.beanbeanjuice.simpleproxychat.common.Tuple;
-import com.beanbeanjuice.simpleproxychathelper.config.Config;
-import com.beanbeanjuice.simpleproxychathelper.config.ConfigKey;
+import com.beanbeanjuice.simpleproxychathelper.shared.config.Config;
+import com.beanbeanjuice.simpleproxychathelper.shared.config.ConfigKey;
 import lombok.Getter;
 
 import org.bstats.bukkit.Metrics;

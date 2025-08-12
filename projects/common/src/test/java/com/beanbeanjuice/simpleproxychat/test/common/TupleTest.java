@@ -1,4 +1,4 @@
-package com.beanbeanjuice.simpleproxychat.common.test;
+package com.beanbeanjuice.simpleproxychat.test.common;
 
 import com.beanbeanjuice.simpleproxychat.common.Tuple;
 import org.junit.jupiter.api.Assertions;

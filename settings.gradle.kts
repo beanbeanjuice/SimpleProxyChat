@@ -5,6 +5,7 @@ include(
 
     "projects:proxy:velocity",
 
+    "projects:server:shared",
     "projects:server:spigot"
 )
 
