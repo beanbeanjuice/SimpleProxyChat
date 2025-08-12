@@ -1,6 +1,10 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import groovy.json.JsonSlurper
+import java.nio.file.Paths
 
-var rootVersion = project.property("version") as String
+val manifestFile = Paths.get(rootDir.path, ".release-please-manifest.json").toFile()
+val manifestJson = JsonSlurper().parse(manifestFile) as Map<*, *>
+val rootVersion = manifestJson["projects/server"] as String
 
 allprojects {
     version = rootVersion

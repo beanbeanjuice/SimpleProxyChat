@@ -3,24 +3,12 @@
     "projects/proxy": {
       "release-type": "simple",
       "package-name": "SimpleProxyChat",
-      "bump-minor-pre-major": true,
-      "extra-files": [
-        {
-          "type": "generic",
-          "path": "projects/proxy/gradle.properties"
-        }
-      ]
+      "bump-minor-pre-major": true
     },
     "projects/server": {
       "release-type": "simple",
       "package-name": "SimpleProxyChatHelper",
-      "bump-minor-pre-major": true,
-      "extra-files": [
-        {
-          "type": "generic",
-          "path": "projects/server/gradle.properties"
-        }
-      ]
+      "bump-minor-pre-major": true
     }
   }
 }

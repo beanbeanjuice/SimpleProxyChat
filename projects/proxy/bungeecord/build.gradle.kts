@@ -3,8 +3,6 @@ import org.gradle.kotlin.dsl.withType
 
 dependencies {
     implementation(project(":projects:proxy:shared"))
-
-
 }
 
 tasks.withType<ShadowJar> {
