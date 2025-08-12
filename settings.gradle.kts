@@ -1,9 +1,16 @@
 rootProject.name = "SimpleProxyChat"
 
 include(
-    "projects/SimpleProxyChat",
-    "projects/SimpleProxyChatHelper"
+    "projects:common",
+
+    "projects:proxy:shared",
+    "projects:proxy:velocity",
+    "projects:proxy:bungeecord",
+
+    "projects:server:shared",
+    "projects:server:spigot"
 )
 
-project(":projects/SimpleProxyChat").name = "SimpleProxyChat"
-project(":projects/SimpleProxyChatHelper").name = "SimpleProxyChatHelper"
+project(":projects:proxy:velocity").name = "SimpleProxyChat-Velocity"
+project(":projects:proxy:bungeecord").name = "SimpleProxyChat-BungeeCord"
+project(":projects:server:spigot").name = "SimpleProxyChatHelper-Spigot"

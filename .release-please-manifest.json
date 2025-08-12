@@ -1,4 +1,4 @@
 {
-  "projects/SimpleProxyChatHelper": "0.0.4",
-  "projects/SimpleProxyChat": "0.5.7"
+  "projects/proxy": "0.5.7",
+  "projects/server": "0.0.4"
 }

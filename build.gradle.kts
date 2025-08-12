@@ -117,8 +117,39 @@ subprojects {
     }
 }
 
+// DELETING FILES AFTER BUILD
+
 tasks.clean {
     doLast {
         file("libs").deleteRecursively()
+    }
+}
+
+tasks.register("cleanProxyJars") {
+    doLast {
+        val filesToDelete = fileTree("libs") {
+            include(
+                "proxy*.jar",
+                "server*.jar",
+                "shared*.jar",
+                "projects.jar",
+                "common.jar"
+            )
+        }.files
+
+        if (filesToDelete.isEmpty()) {
+            println("No proxy jars found to delete.")
+        } else {
+            filesToDelete.forEach {
+                println("Deleting ${it.name}")
+                it.delete()
+            }
+        }
+    }
+}
+
+subprojects {
+    tasks.named("shadowJar") {
+        finalizedBy(rootProject.tasks.named("cleanProxyJars"))
     }
 }
