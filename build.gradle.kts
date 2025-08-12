@@ -1,11 +1,17 @@
-import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
     id("com.gradleup.shadow") version("9.0.1")
     id("com.adarshr.test-logger") version("4.0.0")
     id("java")
+    id("org.sonarqube") version "6.2.0.5505"
+}
+
+sonar {
+    properties {
+        property("sonar.projectKey", "SimpleProxyChat")
+        property("sonar.projectName", "SimpleProxyChat")
+    }
 }
 
 allprojects {
