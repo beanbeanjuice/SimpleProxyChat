@@ -11,6 +11,9 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class VelocityBroadcastCommand implements SimpleCommand {
 
     private final SimpleProxyChatVelocity plugin;
@@ -29,13 +32,14 @@ public class VelocityBroadcastCommand implements SimpleCommand {
         }
 
         String broadcastMessage = String.join(" ", invocation.arguments());
-        String broadcastString = config.get(ConfigKey.MINECRAFT_COMMAND_BROADCAST_MESSAGE).asString();
 
-        broadcastString = CommonHelper.replaceKeys(
-                broadcastString,
-                Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()),
-                Tuple.of("message", CommonHelper.translateLegacyCodes(broadcastMessage))
-        );
+        HashMap<String, String> replacements = new HashMap<>(Map.of(
+                "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString(),
+                "message", CommonHelper.translateLegacyCodes(broadcastMessage)
+        ));
+
+        String broadcastString = config.get(ConfigKey.MINECRAFT_COMMAND_BROADCAST_MESSAGE).asString();
+        broadcastString = CommonHelper.replaceKeys(broadcastString, replacements);
 
         for (Player player : plugin.getProxyServer().getAllPlayers())
             player.sendMessage(Helper.stringToComponent(broadcastString));
@@ -43,7 +47,7 @@ public class VelocityBroadcastCommand implements SimpleCommand {
 
     private void sendError(final CommandSource sender) {
         String errorString = config.get(ConfigKey.MINECRAFT_COMMAND_BROADCAST_USAGE).asString();
-        errorString = CommonHelper.replaceKeys(errorString, Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()));
+        errorString = CommonHelper.replaceKey(errorString, "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString());
 
         sender.sendMessage(Helper.stringToComponent(errorString));
     }

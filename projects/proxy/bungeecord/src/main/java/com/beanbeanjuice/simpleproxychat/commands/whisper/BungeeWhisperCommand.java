@@ -12,9 +12,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class BungeeWhisperCommand extends Command implements TabExecutor {
@@ -46,11 +44,12 @@ public class BungeeWhisperCommand extends Command implements TabExecutor {
         String senderString = config.get(ConfigKey.MINECRAFT_WHISPER_SEND).asString();
         String receiverString = config.get(ConfigKey.MINECRAFT_WHISPER_RECEIVE).asString();
 
-        List<Tuple<String, String>> replacements = new ArrayList<>();
-        replacements.add(Tuple.of("sender", sender.getName()));
-        replacements.add(Tuple.of("receiver", receiver.getName()));
-        replacements.add(Tuple.of("message", message));
-        replacements.add(Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()));
+        HashMap<String, String> replacements = new HashMap<>(Map.of(
+                "sender", sender.getName(),
+                "receiver", receiver.getName(),
+                "message", message,
+                "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()
+        ));
 
         senderString = CommonHelper.replaceKeys(senderString, replacements);
         receiverString = CommonHelper.replaceKeys(receiverString, replacements);

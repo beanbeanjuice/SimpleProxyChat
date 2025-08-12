@@ -33,10 +33,7 @@ public class BungeeReloadCommand extends Command {
         config.reload();
 
         String message = config.get(ConfigKey.MINECRAFT_COMMAND_RELOAD).asString();
-        message = CommonHelper.replaceKeys(
-                message,
-                Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString())
-        );
+        message = CommonHelper.replaceKey(message, "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString());
         sender.sendMessage(Helper.convertToBungee(message));
     }
 }

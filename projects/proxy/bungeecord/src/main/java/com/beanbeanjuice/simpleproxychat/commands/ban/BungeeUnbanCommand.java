@@ -11,7 +11,9 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BungeeUnbanCommand extends Command implements TabExecutor {
 
@@ -40,12 +42,13 @@ public class BungeeUnbanCommand extends Command implements TabExecutor {
         String playerName = args[0];
         plugin.getBanHelper().removeBan(playerName);
 
+        HashMap<String, String> replacements = new HashMap<>(Map.of(
+                "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString(),
+                "player", playerName
+        ));
+
         String unbannedMessage = config.get(ConfigKey.MINECRAFT_COMMAND_PROXY_BAN_UNBANNED).asString();
-        unbannedMessage = CommonHelper.replaceKeys(
-                unbannedMessage,
-                Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()),
-                Tuple.of("player", playerName)
-        );
+        unbannedMessage = CommonHelper.replaceKeys(unbannedMessage, replacements);
 
         sender.sendMessage(Helper.convertToBungee(unbannedMessage));
     }

@@ -13,6 +13,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -51,10 +52,7 @@ public class BungeeChatToggleCommand extends Command implements TabExecutor {
     private void executeAll(CommandSender sender, String type) {
         if (!sender.hasPermission(Permission.COMMAND_TOGGLE_CHAT_ALL.getPermissionNode()) && sender instanceof ProxiedPlayer) {
             String message = config.get(ConfigKey.MINECRAFT_COMMAND_NO_PERMISSION).asString();
-            message = CommonHelper.replaceKeys(
-                    message,
-                    Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString())
-            );
+            message = CommonHelper.replaceKey(message, "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString());
             sender.sendMessage(Helper.convertToBungee(message));
             return;
         }
@@ -64,20 +62,14 @@ public class BungeeChatToggleCommand extends Command implements TabExecutor {
             case "lock" -> {
                 serverMap.forEach((serverName, serverInfo) -> config.getServerChatLockHelper().addServer(serverName));
                 String message = config.get(ConfigKey.MINECRAFT_COMMAND_CHAT_LOCK_ALL_LOCKED).asString();
-                message = CommonHelper.replaceKeys(
-                        message,
-                        Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString())
-                );
+                message = CommonHelper.replaceKey(message, "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString());
                 sender.sendMessage(Helper.convertToBungee(message));
             }
 
             case "unlock" -> {
                 serverMap.forEach((serverName, serverInfo) -> config.getServerChatLockHelper().removeServer(serverName));
                 String message = config.get(ConfigKey.MINECRAFT_COMMAND_CHAT_LOCK_ALL_UNLOCKED).asString();
-                message = CommonHelper.replaceKeys(
-                        message,
-                        Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString())
-                );
+                message = CommonHelper.replaceKey(message, "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString());
                 sender.sendMessage(Helper.convertToBungee(message));
             }
 
@@ -89,20 +81,14 @@ public class BungeeChatToggleCommand extends Command implements TabExecutor {
     private void executeSingle(CommandSender sender, String type) {
         if (!sender.hasPermission(Permission.COMMAND_TOGGLE_CHAT.getPermissionNode()) && sender instanceof ProxiedPlayer) {
             String message = config.get(ConfigKey.MINECRAFT_COMMAND_NO_PERMISSION).asString();
-            message = CommonHelper.replaceKeys(
-                    message,
-                    Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString())
-            );
+            message = CommonHelper.replaceKey(message, "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString());
             sender.sendMessage(Helper.convertToBungee(message));
             return;
         }
 
         if (!(sender instanceof ProxiedPlayer player)) {
             String message = config.get(ConfigKey.MINECRAFT_COMMAND_MUST_BE_PLAYER).asString();
-            message = CommonHelper.replaceKeys(
-                    message,
-                    Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString())
-            );
+            message = CommonHelper.replaceKey(message, "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString());
             sender.sendMessage(Helper.convertToBungee(message));
             return;
         }
@@ -114,22 +100,26 @@ public class BungeeChatToggleCommand extends Command implements TabExecutor {
         switch (type.toLowerCase()) {
             case "lock" -> {
                 servers.forEach((serverName) -> config.getServerChatLockHelper().addServer(serverName));
+
+                HashMap<String, String> replacements = new HashMap<>(Map.of(
+                        "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString(),
+                        "server", currentServerName
+                ));
+
                 String message = config.get(ConfigKey.MINECRAFT_COMMAND_CHAT_LOCK_SINGLE_LOCKED).asString();
-                message = CommonHelper.replaceKeys(
-                        message,
-                        Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()),
-                        Tuple.of("server", currentServerName)
-                );
+                message = CommonHelper.replaceKeys(message, replacements);
                 sender.sendMessage(Helper.convertToBungee(message));
             }
             case "unlock" -> {
                 servers.forEach((serverName) -> config.getServerChatLockHelper().removeServer(serverName));
+
+                HashMap<String, String> replacements = new HashMap<>(Map.of(
+                        "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString(),
+                        "server", currentServerName
+                ));
+
                 String message = config.get(ConfigKey.MINECRAFT_COMMAND_CHAT_LOCK_SINGLE_UNLOCKED).asString();
-                message = CommonHelper.replaceKeys(
-                        message,
-                        Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()),
-                        Tuple.of("server", currentServerName)
-                );
+                message = CommonHelper.replaceKeys(message, replacements);
                 sender.sendMessage(Helper.convertToBungee(message));
             }
             default -> executeError(sender);
@@ -138,10 +128,7 @@ public class BungeeChatToggleCommand extends Command implements TabExecutor {
 
     private void executeError(CommandSender sender) {
         String message = config.get(ConfigKey.MINECRAFT_COMMAND_CHAT_LOCK_USAGE).asString();
-        message = CommonHelper.replaceKeys(
-                message,
-                Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString())
-        );
+        message = CommonHelper.replaceKey(message, "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString());
         sender.sendMessage(Helper.convertToBungee(message));
     }
 

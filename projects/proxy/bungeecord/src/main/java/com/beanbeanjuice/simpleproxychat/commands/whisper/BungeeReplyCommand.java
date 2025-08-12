@@ -11,7 +11,9 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BungeeReplyCommand extends Command {
 
@@ -33,11 +35,12 @@ public class BungeeReplyCommand extends Command {
                     String senderString = config.get(ConfigKey.MINECRAFT_WHISPER_SEND).asString();
                     String receiverString = config.get(ConfigKey.MINECRAFT_WHISPER_RECEIVE).asString();
 
-                    List<Tuple<String, String>> replacements = new ArrayList<>();
-                    replacements.add(Tuple.of("sender", sender.getName()));
-                    replacements.add(Tuple.of("receiver", receiver.getName()));
-                    replacements.add(Tuple.of("message", message));
-                    replacements.add(Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()));
+                    HashMap<String, String> replacements = new HashMap<>(Map.of(
+                            "sender", sender.getName(),
+                            "receiver", receiver.getName(),
+                            "message", message,
+                            "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()
+                    ));
 
                     senderString = CommonHelper.replaceKeys(senderString, replacements);
                     receiverString = CommonHelper.replaceKeys(receiverString, replacements);

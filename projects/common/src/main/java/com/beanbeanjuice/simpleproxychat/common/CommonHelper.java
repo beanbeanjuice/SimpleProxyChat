@@ -1,6 +1,8 @@
 package com.beanbeanjuice.simpleproxychat.common;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,25 +74,32 @@ public final class CommonHelper {
      * @param entries The key-value pair of {@link String} to do the replacements for.
      * @return The new {@link String} with replaced values.
      */
-    public static String replaceKeys(String string, List<Tuple<String, String>> entries) {
-        for (Tuple<String, String> entry : entries)
-            string = string.replace(String.format("%%%s%%", entry.getKey()), entry.getValue());
+    public static String replaceKeys(String string, HashMap<String, String> entries) {
+        if (string == null || entries == null) return string;
 
-        return string;
+        Pattern pattern = Pattern.compile("%(.*?)%");
+        Matcher matcher = pattern.matcher(string);
+        StringBuilder sb = new StringBuilder();
+
+        while (matcher.find()) {
+            String key = matcher.group(1);
+            String replacement = entries.getOrDefault(key, matcher.group(0)); // keep raw if not found
+            matcher.appendReplacement(sb, Matcher.quoteReplacement(replacement));
+        }
+        matcher.appendTail(sb);
+
+        return sb.toString();
     }
 
     /**
-     * Replaces keys with the entries. Essentially a glorified String.format()
-     * @param string The {@link String} message you want to have replacements done on.
-     * @param entries The key-value pair of {@link String} to do the replacements for.
-     * @return The new {@link String} with replaced values.
+     * Replaces a single key with the value.
+     * @param string The {@link String string} you want to parse.
+     * @param key The {@link String key} that you want to replace.
+     * @param value The {@link String value} you want to replace it with.
+     * @return The parsed {@link String}.
      */
-    @SafeVarargs
-    public static String replaceKeys(String string, Tuple<String, String>... entries) {
-        for (Tuple<String, String> entry : entries)
-            string = string.replace(String.format("%%%s%%", entry.getKey()), entry.getValue());
-
-        return string;
+    public static String replaceKey(String string, String key, String value) {
+        return replaceKeys(string, new HashMap<>(Map.of(key, value)));
     }
 
 }

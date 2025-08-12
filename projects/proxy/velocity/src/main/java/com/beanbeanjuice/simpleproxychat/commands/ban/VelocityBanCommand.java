@@ -10,7 +10,9 @@ import com.beanbeanjuice.simpleproxychat.shared.helper.Helper;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class VelocityBanCommand implements SimpleCommand {
 
@@ -39,12 +41,13 @@ public class VelocityBanCommand implements SimpleCommand {
         plugin.getBanHelper().addBan(playerName);
         plugin.getProxyServer().getPlayer(playerName).ifPresent(player -> player.disconnect(Helper.stringToComponent("&cYou have been banned from the proxy.")));
 
+        HashMap<String, String> replacements = new HashMap<>(Map.of(
+                "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString(),
+                "player", playerName
+        ));
+
         String bannedMessage = config.get(ConfigKey.MINECRAFT_COMMAND_PROXY_BAN_BANNED).asString();
-        bannedMessage = CommonHelper.replaceKeys(
-                bannedMessage,
-                Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()),
-                Tuple.of("player", playerName)
-        );
+        bannedMessage = CommonHelper.replaceKeys(bannedMessage,  replacements);
 
         invocation.source().sendMessage(Helper.stringToComponent(bannedMessage));
     }

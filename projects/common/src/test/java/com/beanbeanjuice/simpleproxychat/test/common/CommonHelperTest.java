@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+
 public class CommonHelperTest {
 
     @Test
@@ -59,5 +61,35 @@ public class CommonHelperTest {
         String originalText = "<#FFC0CB><underlined>Hello, world!";
 
         Assertions.assertEquals(originalText, CommonHelper.translateLegacyCodes(originalText));
+    }
+
+    @Test
+    @DisplayName("Keys Get Successfully Replaced")
+    public void testKeyGetSuccessfullyReplaced() {
+        String stringToReplace = "%prefix% %user% >> %message%";
+        HashMap<String, String> replacements = new HashMap<>();
+
+        replacements.put("message", "Hello, world!");
+        replacements.put("prefix", "[SPC]");
+        replacements.put("user", "beanbeanjuice");
+
+        String expectedText = "[SPC] beanbeanjuice >> Hello, world!";
+
+        Assertions.assertEquals(expectedText, CommonHelper.replaceKeys(stringToReplace, replacements));
+    }
+
+    @Test
+    @DisplayName("Nested Replacement Values Are Not Replaced")
+    public void testNestedReplacementValuesAreNotReplaced() {
+        String stringToReplace = "%prefix% %user% >> %message%";
+        HashMap<String, String> replacements = new HashMap<>();
+
+        replacements.put("message", "%message% : %user%, %prefix%!");
+        replacements.put("prefix", "[SPC]");
+        replacements.put("user", "beanbeanjuice");
+
+        String expectedText = "[SPC] beanbeanjuice >> %message% : %user%, %prefix%!";
+
+        Assertions.assertEquals(expectedText, CommonHelper.replaceKeys(stringToReplace, replacements));
     }
 }
