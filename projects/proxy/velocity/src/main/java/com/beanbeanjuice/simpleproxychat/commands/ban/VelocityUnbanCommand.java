@@ -9,7 +9,9 @@ import com.beanbeanjuice.simpleproxychat.shared.config.Permission;
 import com.beanbeanjuice.simpleproxychat.shared.helper.Helper;
 import com.velocitypowered.api.command.SimpleCommand;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class VelocityUnbanCommand implements SimpleCommand {
 
@@ -37,12 +39,13 @@ public class VelocityUnbanCommand implements SimpleCommand {
         String playerName = invocation.arguments()[0];
         plugin.getBanHelper().removeBan(playerName);
 
+        HashMap<String, String> replacements = new HashMap<>(Map.of(
+                "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString(),
+                "player", playerName
+        ));
+
         String unbannedMessage = config.get(ConfigKey.MINECRAFT_COMMAND_PROXY_BAN_UNBANNED).asString();
-        unbannedMessage = CommonHelper.replaceKeys(
-                unbannedMessage,
-                Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()),
-                Tuple.of("player", playerName)
-        );
+        unbannedMessage = CommonHelper.replaceKeys(unbannedMessage, replacements);
 
         invocation.source().sendMessage(Helper.stringToComponent(unbannedMessage));
     }

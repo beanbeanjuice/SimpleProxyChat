@@ -38,6 +38,8 @@ import net.md_5.bungee.api.plugin.PluginManager;
 import nl.chimpgamer.networkmanager.api.NetworkManagerProvider;
 import org.bstats.bungeecord.Metrics;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -112,13 +114,15 @@ public final class SimpleProxyChatBungee extends Plugin implements ISimpleProxyC
                 this,
                 () -> {
                     updateChecker.getUpdate().ifPresent((version) -> {
-                        String message = CommonHelper.replaceKeys(
-                                config.get(ConfigKey.UPDATE_MESSAGE).asString(),
-                                Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()),
-                                Tuple.of("old", currentVersion),
-                                Tuple.of("new", version),
-                                Tuple.of("link", "https://www.spigotmc.org/resources/115305/")
-                        );
+                        HashMap<String, String> replacements = new HashMap<>(Map.of(
+                                "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString(),
+                                "old", currentVersion,
+                                "new", version,
+                                "link", "https://www.spigotmc.org/resources/115305/"
+                        ));
+
+                        String message = CommonHelper
+                                .replaceKeys(config.get(ConfigKey.UPDATE_MESSAGE).asString(), replacements);
 
                         if (!config.get(ConfigKey.UPDATE_NOTIFICATIONS).asBoolean()) return;
 

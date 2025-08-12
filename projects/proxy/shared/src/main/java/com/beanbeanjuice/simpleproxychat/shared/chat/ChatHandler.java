@@ -1,7 +1,6 @@
 package com.beanbeanjuice.simpleproxychat.shared.chat;
 
 import com.beanbeanjuice.simpleproxychat.common.CommonHelper;
-import com.beanbeanjuice.simpleproxychat.common.Tuple;
 import com.beanbeanjuice.simpleproxychat.shared.discord.Bot;
 import com.beanbeanjuice.simpleproxychat.shared.discord.DiscordChatHandler;
 import com.beanbeanjuice.simpleproxychat.shared.socket.ChatMessageData;
@@ -112,26 +111,25 @@ public class ChatHandler {
 
         String aliasedServerName = Helper.convertAlias(config, serverName);
 
-        List<Tuple<String, String>> replacements = new ArrayList<>();
-        replacements.add(Tuple.of("message", playerMessage));
-        replacements.add(Tuple.of("server", aliasedServerName));
-        replacements.add(Tuple.of("original_server", serverName));
-        replacements.add(Tuple.of("to", aliasedServerName));
-        replacements.add(Tuple.of("original_to", serverName));
-        replacements.add(Tuple.of("player", playerName));
-        replacements.add(Tuple.of("escaped_player", Helper.escapeString(playerName)));
-        replacements.add(Tuple.of("epoch", String.valueOf(EpochHelper.getEpochSecond())));
-        replacements.add(Tuple.of("time", getTimeString()));
-        replacements.add(Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()));
+        HashMap<String, String> replacements = new HashMap<>(Map.ofEntries(
+                Map.entry("message", playerMessage),
+                Map.entry("server", aliasedServerName),
+                Map.entry("original_server", serverName),
+                Map.entry("to", aliasedServerName),
+                Map.entry("original_to", serverName),
+                Map.entry("player", playerName),
+                Map.entry("escaped_player", Helper.escapeString(playerName)),
+                Map.entry("epoch", String.valueOf(EpochHelper.getEpochSecond())),
+                Map.entry("time", getTimeString()),
+                Map.entry("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()),
+                Map.entry("prefix", getPrefix(playerUUID, aliasedServerName, serverName)),
+                Map.entry("suffix", getSuffix(playerUUID, aliasedServerName, serverName))
+        ));
 
         String minecraftMessage = CommonHelper.replaceKeys(minecraftConfigString, replacements);
         String discordMessage = CommonHelper.replaceKeys(discordConfigString, replacements);
         String discordEmbedTitle = CommonHelper.replaceKeys(config.get(ConfigKey.MINECRAFT_DISCORD_EMBED_TITLE).asString(), replacements);
         String discordEmbedMessage = CommonHelper.replaceKeys(config.get(ConfigKey.MINECRAFT_DISCORD_EMBED_MESSAGE).asString(), replacements);
-
-        minecraftMessage = replacePrefixSuffix(minecraftMessage, playerUUID, aliasedServerName, serverName);
-        discordMessage = replacePrefixSuffix(discordMessage, playerUUID, aliasedServerName, serverName);
-        discordEmbedTitle = replacePrefixSuffix(discordEmbedTitle, chatMessageData.getPlayerUUID(), aliasedServerName, chatMessageData.getServername());
 
         if (config.get(ConfigKey.USE_HELPER).asBoolean()) {
             chatMessageData.setMinecraftMessage(minecraftMessage);
@@ -152,22 +150,22 @@ public class ChatHandler {
 
         String aliasedServerName = Helper.convertAlias(config, serverName);
 
-        List<Tuple<String, String>> replacements = new ArrayList<>();
-        replacements.add(Tuple.of("player", playerName));
-        replacements.add(Tuple.of("escaped_player", Helper.escapeString(playerName)));
-        replacements.add(Tuple.of("server", aliasedServerName));
-        replacements.add(Tuple.of("original_server", serverName));
-        replacements.add(Tuple.of("to", aliasedServerName));
-        replacements.add(Tuple.of("original_to", serverName));
-        replacements.add(Tuple.of("epoch", String.valueOf(EpochHelper.getEpochSecond())));
-        replacements.add(Tuple.of("time", getTimeString()));
-        replacements.add(Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()));
+        HashMap<String, String> replacements = new HashMap<>(Map.ofEntries(
+                Map.entry("player", playerName),
+                Map.entry("escaped_player", Helper.escapeString(playerName)),
+                Map.entry("server", aliasedServerName),
+                Map.entry("original_server", serverName),
+                Map.entry("to", aliasedServerName),
+                Map.entry("original_to", serverName),
+                Map.entry("epoch", String.valueOf(EpochHelper.getEpochSecond())),
+                Map.entry("time", getTimeString()),
+                Map.entry("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()),
+                Map.entry("prefix", getPrefix(playerUUID, aliasedServerName, serverName)),
+                Map.entry("suffix", getSuffix(playerUUID, aliasedServerName, serverName))
+        ));
 
         String message = CommonHelper.replaceKeys(configString, replacements);
         String discordMessage = CommonHelper.replaceKeys(discordConfigString, replacements);
-
-        message = replacePrefixSuffix(message, playerUUID, aliasedServerName, serverName);
-        discordMessage = replacePrefixSuffix(discordMessage, playerUUID, aliasedServerName, serverName);
 
         // Log to Console
         if (config.get(ConfigKey.CONSOLE_LEAVE).asBoolean()) plugin.log(message);
@@ -195,24 +193,20 @@ public class ChatHandler {
 
         String aliasedServerName = Helper.convertAlias(config, serverName);
 
-        List<Tuple<String, String>> replacements = new ArrayList<>();
-        replacements.add(Tuple.of("player", playerName));
-        replacements.add(Tuple.of("escaped_player", Helper.escapeString(playerName)));
-        replacements.add(Tuple.of("server", Helper.convertAlias(config, serverName)));
-        replacements.add(Tuple.of("to", Helper.convertAlias(config, serverName)));
-        replacements.add(Tuple.of("server", aliasedServerName));
-        replacements.add(Tuple.of("original_server", serverName));
-        replacements.add(Tuple.of("to", aliasedServerName));
-        replacements.add(Tuple.of("original_to", serverName));
-        replacements.add(Tuple.of("epoch", String.valueOf(EpochHelper.getEpochSecond())));
-        replacements.add(Tuple.of("time", getTimeString()));
-        replacements.add(Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()));
+        HashMap<String, String> replacements = new HashMap<>(Map.ofEntries(
+                Map.entry("player", playerName),
+                Map.entry("escaped_player", Helper.escapeString(playerName)),
+                Map.entry("server", aliasedServerName),
+                Map.entry("to", aliasedServerName),
+                Map.entry("original_server", serverName),
+                Map.entry("original_to", serverName),
+                Map.entry("epoch", String.valueOf(EpochHelper.getEpochSecond())),
+                Map.entry("time", getTimeString()),
+                Map.entry("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString())
+        ));
 
         String message = CommonHelper.replaceKeys(configString, replacements);
         String discordMessage = CommonHelper.replaceKeys(discordConfigString, replacements);
-
-        message = replacePrefixSuffix(message, playerUUID, aliasedServerName, serverName);
-        discordMessage = replacePrefixSuffix(discordMessage, playerUUID, aliasedServerName, serverName);
 
         // Log to Console
         if (config.get(ConfigKey.CONSOLE_JOIN).asBoolean()) plugin.log(message);
@@ -243,26 +237,25 @@ public class ChatHandler {
         String aliasedFrom = Helper.convertAlias(config, from);
         String aliasedTo = Helper.convertAlias(config, to);
 
-        List<Tuple<String, String>> replacements = new ArrayList<>();
-        replacements.add(Tuple.of("from", aliasedFrom));
-        replacements.add(Tuple.of("original_from", from));
-        replacements.add(Tuple.of("to", aliasedTo));
-        replacements.add(Tuple.of("original_to", to));
-        replacements.add(Tuple.of("server", aliasedTo));
-        replacements.add(Tuple.of("original_server", to));
-        replacements.add(Tuple.of("player", playerName));
-        replacements.add(Tuple.of("escaped_player", Helper.escapeString(playerName)));
-        replacements.add(Tuple.of("epoch", String.valueOf(EpochHelper.getEpochSecond())));
-        replacements.add(Tuple.of("time", getTimeString()));
-        replacements.add(Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()));
+        HashMap<String, String> replacements = new HashMap<>(Map.ofEntries(
+                Map.entry("from", aliasedFrom),
+                Map.entry("original_from", from),
+                Map.entry("to", aliasedTo),
+                Map.entry("original_to", to),
+                Map.entry("server", aliasedTo),
+                Map.entry("original_server", to),
+                Map.entry("player", playerName),
+                Map.entry("escaped_player", Helper.escapeString(playerName)),
+                Map.entry("epoch", String.valueOf(EpochHelper.getEpochSecond())),
+                Map.entry("time", getTimeString()),
+                Map.entry("prefix", getPrefix(playerUUID, aliasedTo, to)),
+                Map.entry("suffix", getSuffix(playerUUID, aliasedTo, to))
+        ));
+        replacements.put("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()); // need this here because Map#of is limited to 10 entries.
 
         String consoleMessage = CommonHelper.replaceKeys(consoleConfigString, replacements);
         String discordMessage = CommonHelper.replaceKeys(discordConfigString, replacements);
         String minecraftMessage = CommonHelper.replaceKeys(minecraftConfigString, replacements);
-
-        consoleMessage = replacePrefixSuffix(consoleMessage, playerUUID, aliasedTo, to);
-        minecraftMessage = replacePrefixSuffix(minecraftMessage, playerUUID, aliasedTo, to);
-        discordMessage = replacePrefixSuffix(discordMessage, playerUUID, aliasedTo, to);
 
         // Log to Console
         if (config.get(ConfigKey.CONSOLE_SWITCH).asBoolean()) plugin.log(consoleMessage);
@@ -325,16 +318,16 @@ public class ChatHandler {
 
         String hex = "#" + Integer.toHexString(roleColor.getRGB()).substring(2);
 
-        message = CommonHelper.replaceKeys(
-                message,
-                Tuple.of("role", String.format("<%s>%s</%s>", hex, roleName, hex)),
-                Tuple.of("user", username),
-                Tuple.of("nick", nickname),
-                Tuple.of("message", discordMessage),
-                Tuple.of("epoch", String.valueOf(EpochHelper.getEpochSecond())),
-                Tuple.of("time", getTimeString()),
-                Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString())
-        );
+        HashMap<String, String> replacements = new HashMap<>(Map.of(
+                "role", String.format("<%s>%s</%s>", hex, roleName, hex),
+                "user", username,
+                "nick", nickname,
+                "message", discordMessage,
+                "epoch", String.valueOf(EpochHelper.getEpochSecond()),
+                "time", getTimeString(),
+                "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()
+        ));
+        message = CommonHelper.replaceKeys(message, replacements);
 
         if (config.get(ConfigKey.MINECRAFT_DISCORD_ENABLED).asBoolean()) plugin.sendAll(message);
     }
@@ -391,27 +384,47 @@ public class ChatHandler {
                 .toList();
     }
 
-    private String replacePrefixSuffix(String message, UUID playerUUID, String aliasedServerName, String serverName) {
-        if (!this.plugin.isLuckPermsEnabled()) return message;
+    private String getPrefix(UUID playerUUID, String aliasedServerName, String serverName) {
+        if (!this.plugin.isLuckPermsEnabled()) return "";
 
-        return this.plugin.getLuckPerms().map(LuckPerms.class::cast).map((luckPerms) -> {
-            User user = null;
-            try {
-                user = luckPerms.getUserManager().loadUser(playerUUID).get();
-            } catch (Exception e) {
-                plugin.log("Error contacting the LuckPerms API: " + e.getMessage());
-                return message;
-            }
+        return this.plugin.getLuckPerms()
+                .map(LuckPerms.class::cast)
+                .map((luckPerms) -> {
+                    User user = null;
+                    try {
+                        user = luckPerms.getUserManager().loadUser(playerUUID).get();
+                    } catch (Exception e) {
+                        plugin.log("Error contacting the LuckPerms API: " + e.getMessage());
+                        return "";
+                    }
 
-            // Get prefix based on aliased name. If none show up, use original name. If none show up, use top prefix.
-            List<String> prefixList = getPrefixBasedOnServerContext(user, serverName, aliasedServerName, "");
-            List<String> suffixList = getSuffixBasedOnServerContext(user, serverName, aliasedServerName, "");
+                    // Get prefix based on aliased name. If none show up, use original name. If none show up, use top prefix.
+                    List<String> prefixList = getPrefixBasedOnServerContext(user, serverName, aliasedServerName, "");
 
-            String prefix = prefixList.isEmpty() ? "" : CommonHelper.translateLegacyCodes(prefixList.get(0));
-            String suffix = suffixList.isEmpty() ? "" : CommonHelper.translateLegacyCodes(suffixList.get(0));
+                    return prefixList.isEmpty() ? "" : CommonHelper.translateLegacyCodes(prefixList.get(0));
+                })
+                .orElse("");
+    }
 
-            return message.replace("%prefix%", prefix).replace("%suffix%", suffix);
-        }).orElse(message);
+    private String getSuffix(UUID playerUUID, String aliasedServerName, String serverName) {
+        if (!this.plugin.isLuckPermsEnabled()) return "";
+
+        return this.plugin.getLuckPerms()
+                .map(LuckPerms.class::cast)
+                .map(luckPerms -> {
+                    User user;
+                    try {
+                        user = luckPerms.getUserManager().loadUser(playerUUID).get();
+                    } catch (Exception e) {
+                        plugin.log("Error contacting the LuckPerms API: " + e.getMessage());
+                        return "";
+                    }
+
+                    List<String> suffixList = getSuffixBasedOnServerContext(user, serverName, aliasedServerName, "");
+
+                    return suffixList.isEmpty() ? "" : CommonHelper.translateLegacyCodes(suffixList.get(0));
+                })
+                .orElse("");
     }
 
     /**

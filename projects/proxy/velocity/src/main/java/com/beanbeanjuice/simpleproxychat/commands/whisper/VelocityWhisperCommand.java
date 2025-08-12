@@ -10,9 +10,7 @@ import com.beanbeanjuice.simpleproxychat.shared.config.Permission;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class VelocityWhisperCommand implements SimpleCommand {
@@ -39,11 +37,12 @@ public class VelocityWhisperCommand implements SimpleCommand {
                     String senderString = config.get(ConfigKey.MINECRAFT_WHISPER_SEND).asString();
                     String receiverString = config.get(ConfigKey.MINECRAFT_WHISPER_RECEIVE).asString();
 
-                    List<Tuple<String, String>> replacements = new ArrayList<>();
-                    replacements.add(Tuple.of("sender", ((Player) invocation.source()).getUsername()));
-                    replacements.add(Tuple.of("receiver", receiver.getUsername()));
-                    replacements.add(Tuple.of("message", message));
-                    replacements.add(Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()));
+                    HashMap<String, String> replacements = new HashMap<>(Map.of(
+                            "sender", ((Player) invocation.source()).getUsername(),
+                            "receiver", receiver.getUsername(),
+                            "message", message,
+                            "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()
+                    ));
 
                     senderString = CommonHelper.replaceKeys(senderString, replacements);
                     receiverString = CommonHelper.replaceKeys(receiverString, replacements);

@@ -46,6 +46,8 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -142,13 +144,13 @@ public class SimpleProxyChatVelocity implements ISimpleProxyChat {
 
         this.proxyServer.getScheduler().buildTask(this, () -> {
                     updateChecker.getUpdate().ifPresent((latestVersion) -> {
-                        String message = CommonHelper.replaceKeys(
-                                config.get(ConfigKey.UPDATE_MESSAGE).asString(),
-                                Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()),
-                                Tuple.of("old", currentVersion),
-                                Tuple.of("new", latestVersion),
-                                Tuple.of("link", "https://www.spigotmc.org/resources/115305/")
-                        );
+                        HashMap<String, String> replacements = new HashMap<>(Map.of(
+                                "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString(),
+                                "old", currentVersion,
+                                "new", latestVersion,
+                                "link", "https://www.spigotmc.org/resources/115305/"
+                        ));
+                        String message = CommonHelper.replaceKeys(config.get(ConfigKey.UPDATE_MESSAGE).asString(), replacements);
 
                         if (!config.get(ConfigKey.UPDATE_NOTIFICATIONS).asBoolean()) return;
                         this.getLogger().info(Helper.sanitize(message));

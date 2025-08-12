@@ -28,10 +28,7 @@ public class VelocityReloadCommand implements SimpleCommand {
         plugin.getDiscordBot().updateActivity();
 
         String message = config.get(ConfigKey.MINECRAFT_COMMAND_RELOAD).asString();
-        message = CommonHelper.replaceKeys(
-                message,
-                Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString())
-        );
+        message = CommonHelper.replaceKey(message, "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString());
         source.sendMessage(Helper.stringToComponent(message));
     }
 

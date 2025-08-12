@@ -11,6 +11,9 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class BungeeBroadcastCommand extends Command {
 
     private final SimpleProxyChatBungee plugin;
@@ -31,13 +34,15 @@ public class BungeeBroadcastCommand extends Command {
         }
 
         String broadcastMessage = String.join(" ", strings);
+
+        HashMap<String, String> replacements = new HashMap<>(Map.of(
+                "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString(),
+                "message", CommonHelper.translateLegacyCodes(broadcastMessage)
+        ));
+
         String broadcastString = config.get(ConfigKey.MINECRAFT_COMMAND_BROADCAST_MESSAGE).asString();
 
-        broadcastString = CommonHelper.replaceKeys(
-                broadcastString,
-                Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()),
-                Tuple.of("message", CommonHelper.translateLegacyCodes(broadcastMessage))
-        );
+        broadcastString = CommonHelper.replaceKeys(broadcastString, replacements);
 
         for (ProxiedPlayer player : plugin.getProxy().getPlayers())
             player.sendMessage(Helper.convertToBungee(broadcastString));
@@ -45,7 +50,7 @@ public class BungeeBroadcastCommand extends Command {
 
     private void sendError(final CommandSender sender) {
         String errorString = config.get(ConfigKey.MINECRAFT_COMMAND_BROADCAST_USAGE).asString();
-        errorString = CommonHelper.replaceKeys(errorString, Tuple.of("plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString()));
+        errorString = CommonHelper.replaceKey(errorString, "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString());
 
         sender.sendMessage(Helper.convertToBungee(errorString));
     }
