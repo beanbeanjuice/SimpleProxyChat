@@ -9,7 +9,7 @@ plugins {
 
 sonar {
     properties {
-        property("sonar.projectKey", "SimpleProxyChat")
+        property("sonar.projectKey", "beanbeanjuice_SimpleProxyChat_bfdced85-f7af-4c3b-b826-007a5e968233")
         property("sonar.projectName", "SimpleProxyChat")
     }
 }
