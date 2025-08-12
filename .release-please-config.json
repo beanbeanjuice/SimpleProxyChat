@@ -1,7 +1,7 @@
 {
   "packages": {
     "projects/proxy": {
-      "release-type": "gradle",
+      "release-type": "simple",
       "package-name": "SimpleProxyChat",
       "bump-minor-pre-major": true,
       "extra-files": [
@@ -9,7 +9,7 @@
       ]
     },
     "projects/server": {
-      "release-type": "gradle",
+      "release-type": "simple",
       "package-name": "SimpleProxyChatHelper",
       "bump-minor-pre-major": true,
       "extra-files": [
