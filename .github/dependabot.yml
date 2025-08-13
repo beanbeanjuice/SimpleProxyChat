@@ -3,8 +3,14 @@ updates:
   - package-ecosystem: "gradle"
     directories:
       - ""
-      - "projects/SimpleProxyChat"
-      - "projects/SimpleProxyChatHelper"
+      - "projects/common"
+      - "projects/proxy"
+      - "projects/proxy/shared"
+      - "projects/proxy/velocity"
+      - "projects/proxy/bungeecord"
+      - "projects/server"
+      - "projects/server/shared"
+      - "projects/server/spigot"
     target-branch: "master"
     schedule:
       interval: "daily"
