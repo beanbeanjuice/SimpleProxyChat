@@ -1,4 +1,4 @@
 {
-  "projects/proxy": "0.5.7",
-  "projects/server": "0.0.4"
+  "projects/proxy": "0.6.0",
+  "projects/server": "0.1.0"
 }
