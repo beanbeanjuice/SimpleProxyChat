@@ -4,7 +4,7 @@ plugins {
     id("com.gradleup.shadow") version("9.0.1")
     id("com.adarshr.test-logger") version("4.0.0")
     id("java")
-    id("org.sonarqube") version "6.2.0.5505"
+    id("org.sonarqube") version "7.2.0.6526"
 }
 
 sonar {
