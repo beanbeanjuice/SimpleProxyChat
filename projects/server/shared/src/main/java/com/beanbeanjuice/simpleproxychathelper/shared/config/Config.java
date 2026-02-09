@@ -13,6 +13,8 @@ public class Config {
 
     private void setup() {
         this.options.put(ConfigKey.PLACEHOLDER_API_SUPPORT, false);
+        this.options.put(ConfigKey.SILENT_JOIN, true);
+        this.options.put(ConfigKey.SILENT_QUIT, true);
     }
 
     public boolean getOption(ConfigKey key) {

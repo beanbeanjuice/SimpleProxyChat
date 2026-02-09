@@ -14,28 +14,9 @@ allprojects {
         targetCompatibility = JavaVersion.VERSION_21
     }
 
-    repositories {
-        mavenCentral()
-        maven {
-            name = "JCenter"
-            url = uri("https://repo.papermc.io/repository/maven-public/")
-        }
-    }
 
     dependencies {
         implementation(project(":projects:common"))
-
-        // Spigot. Duh.
-        compileOnly("org.spigotmc", "spigot-api", "1.21.8-R0.1-SNAPSHOT")
-
-        // PlaceholderAPI
-        compileOnly("me.clip", "placeholderapi", "2.11.6")
-
-        // bStats
-        implementation("org.bstats", "bstats-bukkit", "3.1.0")
-
-        // Mock Testing
-        testImplementation("org.mockbukkit.mockbukkit", "mockbukkit-v1.21", "4.72.6")
 
         // Artifact Version Comparison
         // TODO: Eventually remove this.

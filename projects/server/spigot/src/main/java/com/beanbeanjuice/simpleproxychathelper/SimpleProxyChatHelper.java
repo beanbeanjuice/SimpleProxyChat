@@ -17,13 +17,21 @@ public class SimpleProxyChatHelper extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        this.saveDefaultConfig();
         options = new Config();
+
+        // Load values from config.yml
+        options.setOption(ConfigKey.SILENT_JOIN, this.getConfig().getBoolean("silentJoin", true));
+        options.setOption(ConfigKey.SILENT_QUIT, this.getConfig().getBoolean("silentQuit", true));
 
         this.getLogger().info("Casting hooks...");
         setupPlaceholderAPI();
 
         this.getLogger().info("Setting up plugin-messaging...");
         setupPluginMessaging();
+
+        this.getLogger().info("Registering events...");
+        this.getServer().getPluginManager().registerEvents(new ConnectionListener(this), this);
 
         this.getLogger().info("The plugin has been enabled!");
 
