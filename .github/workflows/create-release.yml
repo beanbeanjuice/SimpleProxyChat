@@ -17,19 +17,19 @@ jobs:
     steps:
       -
         name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       -
         name: Validate Gradle Wrapper
-        uses: gradle/actions/wrapper-validation@v3
+        uses: gradle/actions/wrapper-validation@v6
       -
         name: Set Up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '21'
           distribution: 'adopt'
       -
         name: Set Up Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v6
       -
         name: Build with Gradle
         run: gradle shadowJar

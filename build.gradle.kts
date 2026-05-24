@@ -1,17 +1,9 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    id("com.gradleup.shadow") version("9.0.1")
-    id("com.adarshr.test-logger") version("4.0.0")
     id("java")
-    id("org.sonarqube") version "6.2.0.5505"
-}
-
-sonar {
-    properties {
-        property("sonar.projectKey", "beanbeanjuice_SimpleProxyChat_bfdced85-f7af-4c3b-b826-007a5e968233")
-        property("sonar.projectName", "SimpleProxyChat")
-    }
+    id("com.gradleup.shadow") version("9.4.1")
+    id("com.adarshr.test-logger") version("4.0.0")
 }
 
 allprojects {
@@ -67,20 +59,20 @@ allprojects {
 
     dependencies {
         // Lombok
-        compileOnly("org.projectlombok", "lombok", "1.18.38")
-        annotationProcessor("org.projectlombok", "lombok", "1.18.38")
+        compileOnly("org.projectlombok:lombok:1.18.46") // https://mvnrepository.com/artifact/org.projectlombok/lombok
+        annotationProcessor("org.projectlombok:lombok:1.18.46")
 
         // Unit Testing
-        testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.13.4") // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
-        testImplementation("org.junit.jupiter", "junit-jupiter", "5.13.4") // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.4")
+        testImplementation("org.junit.jupiter:junit-jupiter-api:6.1.0") // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+        testImplementation("org.junit.jupiter:junit-jupiter:6.1.0") // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.1.0")
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
         // Mockito
-        testImplementation("org.mockito", "mockito-core", "5.19.0") // https://mvnrepository.com/artifact/org.mockito/mockito-core
-        testImplementation("org.mockito", "mockito-inline", "+") // https://mvnrepository.com/artifact/org.mockito/mockito-core
+        testImplementation("org.mockito:mockito-core:5.23.0") // https://mvnrepository.com/artifact/org.mockito/mockito-core
+        testImplementation("org.mockito:mockito-inline:+") // https://mvnrepository.com/artifact/org.mockito/mockito-core
 
-        mockitoAgent("org.mockito:mockito-core:5.19.0") {
+        mockitoAgent("org.mockito:mockito-core:5.23.0") {
             isTransitive = false
         }
     }
