@@ -40,6 +40,7 @@ public enum ConfigKey {
     REPLY_ALIASES (ConfigFileType.CONFIG, "commands.reply-aliases", List.class),
     BROADCAST_ALIASES (ConfigFileType.CONFIG, "commands.broadcast-aliases", List.class),
     DISABLED_SERVERS (ConfigFileType.CONFIG, "disabled-servers", List.class),
+    PROXY_SWITCH (ConfigFileType.CONFIG, "proxy-switch", Boolean.class),
 
     // MESSAGES
     PLUGIN_PREFIX (ConfigFileType.MESSAGES, "plugin-prefix", String.class),

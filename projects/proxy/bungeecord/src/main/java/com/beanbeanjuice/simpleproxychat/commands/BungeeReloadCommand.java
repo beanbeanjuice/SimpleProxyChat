@@ -26,6 +26,7 @@ public class BungeeReloadCommand extends Command {
     public void execute(CommandSender sender, String[] args) {
         if (!sender.hasPermission(Permission.COMMAND_RELOAD.getPermissionNode()) && sender instanceof ProxiedPlayer) {
             String message = config.get(ConfigKey.MINECRAFT_COMMAND_NO_PERMISSION).asString();
+            message = CommonHelper.replaceKey(message, "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString());
             sender.sendMessage(Helper.convertToBungee(message));
             return;
         }

@@ -43,6 +43,10 @@ servers:
     motd: A Bungeecord Spigot Server
     address: localhost:26002
     restricted: false
+  folia:
+    motd: A Bungeecord Folia Server
+    address: localhost:26003
+    restricted: false
 permissions:
   default:
   - bungeecord.command.server

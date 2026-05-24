@@ -21,6 +21,7 @@ import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 public class BungeeServerListener implements Listener {
@@ -173,7 +174,9 @@ public class BungeeServerListener implements Listener {
         if (plugin.isVanishAPIEnabled() && BungeeVanishAPI.isInvisible(player)) return;  // Ignore if player is invisible.
         if (event.getFrom() == null) return;  // This means the player just joined the network.
 
-        ServerInfo from = event.getFrom();
+        boolean sendToAllServers = plugin.getSPCConfig().get(ConfigKey.PROXY_SWITCH).asBoolean();
+
+        Collection<ProxiedPlayer> players = (sendToAllServers) ? plugin.getProxy().getPlayers() : event.getFrom().getPlayers();
         previousServerHandler.put(player.getName(), event.getPlayer().getServer().getInfo());
 
         chatHandler.runProxySwitchMessage(
@@ -181,7 +184,7 @@ public class BungeeServerListener implements Listener {
                 event.getPlayer().getServer().getInfo().getName(),
                 player.getName(),
                 player.getUniqueId(),
-                (message) -> from.getPlayers().stream()
+                (message) -> players.stream()
                         .filter((streamPlayer) -> streamPlayer != player)
                         .filter((streamPlayer) -> {
                             if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean())
