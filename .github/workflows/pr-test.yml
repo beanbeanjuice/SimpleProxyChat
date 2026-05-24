@@ -11,26 +11,26 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        jdk-version: [21, 24]
+        jdk-version: [21, 25]
         os: [ubuntu-latest, windows-latest, macos-latest]
     name: Gradle JDK ${{ matrix.jdk-version }} Build (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     steps:
       -
         name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       -
         name: Validate Gradle Wrapper
-        uses: gradle/actions/wrapper-validation@v3
+        uses: gradle/actions/wrapper-validation@v6
       -
         name: Set Up JDK ${{ matrix.jdk-version }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '${{ matrix.jdk-version }}'
           distribution: 'adopt'
       -
         name: Set Up Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v6
       -
         name: Build and Test with Gradle
         run: gradle test

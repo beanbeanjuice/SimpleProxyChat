@@ -20,7 +20,7 @@ jobs:
       -
         name: Get Current Labels
         id: get_labels
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const { data: pullRequest } = await github.rest.pulls.get({
@@ -32,7 +32,7 @@ jobs:
             core.setOutput('labels', JSON.stringify(labels));
       -
         name: Remove All Labels
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const labelsToRemove = JSON.parse(process.env.LABELS_TO_REMOVE);
