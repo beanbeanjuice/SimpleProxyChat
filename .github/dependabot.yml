@@ -13,7 +13,7 @@ updates:
       - "projects/server/spigot"
     target-branch: "master"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     commit-message:
       prefix: fix
       prefix-development: fix

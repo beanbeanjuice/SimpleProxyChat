@@ -12,7 +12,7 @@ public class InitializationTest {
     private SimpleProxyChatHelper plugin;
 
     @BeforeEach
-    public void setUp() {
+    public void setup() {
         server = MockBukkit.mock();
         plugin = MockBukkit.load(SimpleProxyChatHelper.class);
     }
@@ -23,7 +23,7 @@ public class InitializationTest {
     }
 
     @Test
-    @DisplayName("Confirm MockBukkit is correctly working.")
+    @DisplayName("Confirm MockBukkit is correctly working")
     public void testInitialization() {
         PlayerMock playerMock = server.addPlayer();
         Assertions.assertEquals(1, server.getOnlinePlayers().size());
