@@ -1,0 +1,5 @@
+hackOnlineMode = true
+hackEarlySend = false
+hackMessageChain = false
+disconnectMessage = "This server requires you to connect with Velocity."
+secret = "R3QOttBsQf7K"

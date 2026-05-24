@@ -1,0 +1,27 @@
+*
+
+!.gitignore
+!README.md
+
+!*/
+!*/*/
+!*/*/start.bat
+!*/CLAUDE.md
+!*/server-wrapper.ps1
+!*/start-all.bat
+!*/stop-controller.ps1
+
+!*/*/plugins/**
+*/*/plugins/*.jar
+!*/*/mods/**
+*/*/mods/*.jar
+
+# Config Files
+!*/*/velocity.toml
+!*/*/forwarding.secret
+!*/*/config.yml
+!*/*/config/**
+!*/*/server.properties
+!*/*/spigot.yml
+!*/*/eula.txt
+!*/*/ops.json
