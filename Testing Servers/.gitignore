@@ -6,16 +6,10 @@
 !*/
 !*/*/
 !*/*/start.bat
-!*/*/proxy.jar
-!*/*/server.jar
 !*/CLAUDE.md
 !*/server-wrapper.ps1
 !*/start-all.bat
 !*/stop-controller.ps1
-
-# Mods and Plugins
-!*/*/plugins/**
-!*/*/mods/**
 
 # Config Files
 !*/*/velocity.toml
