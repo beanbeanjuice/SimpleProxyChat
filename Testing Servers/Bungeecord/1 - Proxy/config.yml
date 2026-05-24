@@ -1,0 +1,63 @@
+network_compression_threshold: 256
+remote_ping_timeout: 5000
+online_mode: true
+remote_ping_cache: -1
+forge_support: false
+max_packets_per_second: 4096
+listeners:
+- query_port: 26000
+  motd: A Bungeecord Proxy
+  tab_list: GLOBAL_PING
+  query_enabled: false
+  proxy_protocol: false
+  forced_hosts:
+    pvp.md-5.net: pvp
+  ping_passthrough: false
+  priorities:
+  - paper
+  bind_local_address: true
+  host: 0.0.0.0:26000
+  max_players: 1
+  tab_size: 60
+  force_default_server: false
+disabled_commands:
+- disabledcommandhere
+max_packets_data_per_second: 33554432
+player_limit: -1
+reject_transfers: false
+log_commands: false
+connection_throttle_limit: 3
+prevent_proxy_connections: false
+connection_throttle: 4000
+log_pings: true
+groups:
+  md_5:
+  - admin
+stats: 3f74ffe8-d50a-4854-bff1-0f991fcf1274
+servers:
+  paper:
+    motd: A Bungeecord Paper Server
+    address: localhost:26001
+    restricted: false
+  spigot:
+    motd: A Bungeecord Spigot Server
+    address: localhost:26002
+    restricted: false
+permissions:
+  default:
+  - bungeecord.command.server
+  - bungeecord.command.list
+  admin:
+  - bungeecord.command.alert
+  - bungeecord.command.alertraw
+  - bungeecord.command.end
+  - bungeecord.command.ip
+  - bungeecord.command.reload
+  - bungeecord.command.kick
+  - bungeecord.command.send
+  - bungeecord.command.find
+  - bungeecord.command.perms
+ip_forward: true
+enforce_secure_profile: false
+server_connect_timeout: 5000
+timeout: 30000
