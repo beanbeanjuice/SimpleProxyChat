@@ -25,6 +25,7 @@ import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
+import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -162,6 +163,10 @@ public class VelocityServerListener {
         String playerName = event.getPlayer().getUsername();
         UUID playerUUID = event.getPlayer().getUniqueId();
 
+        boolean sendToAllServers = plugin.getSPCConfig().get(ConfigKey.PROXY_SWITCH).asBoolean();
+
+        Collection<Player> players = (sendToAllServers) ? plugin.getProxyServer().getAllPlayers() : previousServer.getPlayersConnected();
+
         chatHandler.runProxySwitchMessage(
                 from,
                 to,
@@ -169,7 +174,7 @@ public class VelocityServerListener {
                 playerUUID,
                 (message) -> {
                     Component component = MiniMessage.miniMessage().deserialize(message);
-                    previousServer.getPlayersConnected().stream()
+                    players.stream()
                             .filter((streamPlayer) -> streamPlayer != event.getPlayer())
                             .filter((player) -> {
                                 if (plugin.getConfig().get(ConfigKey.USE_PERMISSIONS).asBoolean())

@@ -25,3 +25,7 @@
 !*/*/spigot.yml
 !*/*/eula.txt
 !*/*/ops.json
+
+# Do Not Save SPC Configs
+*/*/plugins/SimpleProxyChat/*
+*/*/plugins/simpleproxychat/*

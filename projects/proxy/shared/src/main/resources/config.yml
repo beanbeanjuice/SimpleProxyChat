@@ -108,5 +108,8 @@ commands:
 disabled-servers:
   - example1
 
+# Disable this if you don't want to receive switch messages in all servers.
+proxy-switch: true
+
 # DO NOT TOUCH THIS
-file-version: 16
+file-version: 17
