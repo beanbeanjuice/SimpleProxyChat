@@ -14,6 +14,8 @@ You need to download, and place the jars in the appropriate places.
 | Paper      | [Download](https://papermc.io/downloads/paper)    | Velocity/2 - Paper  | server.jar |
 | Fabric     | [Download](https://fabricmc.net/use/server/)      | Velocity/3 - Fabric | server.jar |
 
+> Note: The fabric server **will** need the fabric-api and FabricProxyLite.
+
 ### Bungeecord
 
 | Type       | Download URL                                                 | Path                  | Name       |
