@@ -11,6 +11,11 @@
 !*/start-all.bat
 !*/stop-controller.ps1
 
+!*/*/plugins/**
+*/*/plugins/*.jar
+!*/*/mods/**
+*/*/mods/*.jar
+
 # Config Files
 !*/*/velocity.toml
 !*/*/forwarding.secret
