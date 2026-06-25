@@ -64,6 +64,7 @@ public class VelocityServerListener {
         // When WebSocket mode is on the helper sends chat after backend processing (post-LiteBans etc.)
         if (plugin.getSPCConfig().get(ConfigKey.USE_WEBSOCKET).asBoolean()) return;
         if (playerIsInDisabledServer(event.getPlayer(), plugin)) return;
+        if (!event.getResult().isAllowed()) return;
 
         String playerMessage = event.getMessage();
         Player player = event.getPlayer();
