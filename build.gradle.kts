@@ -63,9 +63,9 @@ allprojects {
         annotationProcessor("org.projectlombok:lombok:1.18.46")
 
         // Unit Testing
-        testImplementation("org.junit.jupiter:junit-jupiter-api:6.1.1") // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
-        testImplementation("org.junit.jupiter:junit-jupiter:6.1.1") // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.1.1")
+        testImplementation("org.junit.jupiter:junit-jupiter-api:6.1.2") // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+        testImplementation("org.junit.jupiter:junit-jupiter:6.1.2") // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.1.2")
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
         // Mockito
