@@ -1,0 +1,9 @@
+# ==========================================================
+#                       INFORMATION
+# ==========================================================
+
+# Whether to suppress the default Minecraft join message.
+silentJoin: true
+
+# Whether to suppress the default Minecraft quit message.
+silentQuit: true

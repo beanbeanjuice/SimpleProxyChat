@@ -1,5 +1,7 @@
 package com.beanbeanjuice.simpleproxychathelper.shared.config;
 
 public enum ConfigKey {
-    PLACEHOLDER_API_SUPPORT
+    PLACEHOLDER_API_SUPPORT,
+    SILENT_JOIN,
+    SILENT_QUIT
 }
