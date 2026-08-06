@@ -62,6 +62,7 @@ public class VelocityServerListener {
     @Subscribe(order = PostOrder.LAST)
     public void onPlayerChat(PlayerChatEvent event) {
         if (playerIsInDisabledServer(event.getPlayer(), plugin)) return;
+        if (!event.getResult().isAllowed()) return;
 
         String playerMessage = event.getMessage();
         Player player = event.getPlayer();
