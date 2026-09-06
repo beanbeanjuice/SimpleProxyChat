@@ -59,8 +59,8 @@ allprojects {
 
     dependencies {
         // Lombok
-        compileOnly("org.projectlombok:lombok:1.18.46") // https://mvnrepository.com/artifact/org.projectlombok/lombok
-        annotationProcessor("org.projectlombok:lombok:1.18.46")
+        compileOnly("org.projectlombok:lombok:1.18.48") // https://mvnrepository.com/artifact/org.projectlombok/lombok
+        annotationProcessor("org.projectlombok:lombok:1.18.48")
 
         // Unit Testing
         testImplementation("org.junit.jupiter:junit-jupiter-api:6.1.1") // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
