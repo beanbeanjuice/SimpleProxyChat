@@ -38,8 +38,8 @@ The helper runs on each backend server and forwards chat to the proxy over TCP, 
 1) Install the proxy plugin on **BungeeCord/Waterfall/Velocity** as in the standalone section above (so `ProxyChat/config.yml` exists).
 1) Edit `ProxyChat/config.yml` and set:
     * `use-websocket: true`
-    * `websocket-port` (default `8766`) — any free TCP port; this must match on each helper.
-    * `websocket-secret` (default `"changeme"`) — change this to something strong; it must match on each helper.
+    * `websocket-port` (default `8766`) - any free TCP port; this must match on each helper.
+    * `websocket-secret` (default `"changeme"`) - change this to something strong; it must match on each helper.
 1) Restart the proxy (or run `/spc-reload`).
 
 Then, on each backend server, install the matching helper build. Config keys are the same across all three platforms; only the file location and the default secret differ slightly.
