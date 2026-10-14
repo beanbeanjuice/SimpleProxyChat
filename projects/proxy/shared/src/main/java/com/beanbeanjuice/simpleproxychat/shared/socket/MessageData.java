@@ -35,7 +35,5 @@ public abstract class MessageData {
         return Optional.ofNullable(this.discordEmbedMessage);
     }
 
-    public abstract void startPluginMessage();
-    public abstract byte[] getAsBytes();
 
 }

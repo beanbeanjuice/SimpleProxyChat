@@ -34,25 +34,6 @@ public class BungeeChatMessageData extends ChatMessageData {
         this.serverInfo = serverInfo;
     }
 
-    public BungeeChatMessageData(SimpleProxyChatBungee plugin, MessageType type, ServerInfo serverInfo,
-                                 ProxiedPlayer player, String message,
-                                 String parsedMinecraftString, String parsedDiscordString, String parsedDiscordEmbedTitle, String parsedDiscordEmbedMessage) {
-        super(
-                type,
-                serverInfo.getName(),
-                player.getName(),
-                player.getUniqueId(),
-                message,
-                parsedMinecraftString,
-                parsedDiscordString,
-                parsedDiscordEmbedTitle,
-                parsedDiscordEmbedMessage
-        );
-
-        this.plugin = plugin;
-        this.serverInfo = serverInfo;
-    }
-
     @Override
     public void chatSendToAllOtherPlayers(String parsedMessage) {
         Collection<ProxiedPlayer> blacklistedPlayers = serverInfo.getPlayers();
@@ -72,11 +53,6 @@ public class BungeeChatMessageData extends ChatMessageData {
                 })
                 .filter((streamPlayer) -> !BungeeServerListener.playerIsInDisabledServer(streamPlayer, plugin))
                 .forEach((streamPlayer) -> streamPlayer.sendMessage(ChatMessageType.CHAT, convertToBungee(parsedMessage)));
-    }
-
-    @Override
-    public void startPluginMessage() {
-        serverInfo.sendData("BungeeCord", this.getAsBytes());
     }
 
 }

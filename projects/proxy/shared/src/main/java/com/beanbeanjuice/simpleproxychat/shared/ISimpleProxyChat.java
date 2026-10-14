@@ -2,6 +2,7 @@ package com.beanbeanjuice.simpleproxychat.shared;
 
 import com.beanbeanjuice.simpleproxychat.shared.config.Config;
 import com.beanbeanjuice.simpleproxychat.shared.discord.Bot;
+import com.beanbeanjuice.simpleproxychat.shared.socket.HelperTcpServer;
 
 import java.util.Optional;
 
@@ -23,6 +24,8 @@ public interface ISimpleProxyChat {
 
     boolean isNetworkManagerEnabled();
     Optional<?> getNetworkManager();
+
+    Optional<HelperTcpServer> getHelperTcpServer();
 
     Config getSPCConfig();
     Bot getDiscordBot();

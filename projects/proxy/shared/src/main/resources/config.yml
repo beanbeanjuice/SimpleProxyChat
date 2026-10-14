@@ -69,8 +69,13 @@ timestamp:
   format: "hh:mm a"
   timezone: "America/Los_Angeles"
 
-# True if you will be using the helper plugin.
-use-helper: false
+# True if you will be using the helper plugin via TCP WebSocket.
+# When enabled, the proxy will NOT intercept PlayerChatEvent directly.
+# Instead, chat is forwarded by the helper plugin after backend processing
+# (allowing plugins like LiteBans to cancel messages before they reach the proxy).
+use-websocket: false
+websocket-port: 8766
+websocket-secret: "changeme"
 
 update-notifications: true
 
@@ -112,4 +117,4 @@ disabled-servers:
 proxy-switch: true
 
 # DO NOT TOUCH THIS
-file-version: 17
+file-version: 18

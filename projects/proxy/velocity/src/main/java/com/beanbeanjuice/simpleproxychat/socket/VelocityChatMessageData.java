@@ -14,6 +14,8 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import java.util.Collection;
 
+@SuppressWarnings("unused")
+
 public class VelocityChatMessageData extends ChatMessageData {
 
     private SimpleProxyChatVelocity plugin;
@@ -28,25 +30,6 @@ public class VelocityChatMessageData extends ChatMessageData {
                 player.getUniqueId(),
                 message
         );
-        this.plugin = plugin;
-        this.server = server;
-    }
-
-    public VelocityChatMessageData(SimpleProxyChatVelocity plugin, MessageType type, RegisteredServer server,
-                                 Player player, String message,
-                                 String parsedMinecraftString, String parsedDiscordString, String parsedDiscordEmbedTitle, String parsedDiscordEmbedMessage) {
-        super(
-                type,
-                server.getServerInfo().getName(),
-                player.getUsername(),
-                player.getUniqueId(),
-                message,
-                parsedMinecraftString,
-                parsedDiscordString,
-                parsedDiscordEmbedTitle,
-                parsedDiscordEmbedMessage
-        );
-
         this.plugin = plugin;
         this.server = server;
     }
@@ -66,11 +49,6 @@ public class VelocityChatMessageData extends ChatMessageData {
                 .filter((streamPlayer) -> !VelocityServerListener.playerIsInDisabledServer(streamPlayer, plugin))
                 .forEach((streamPlayer) -> streamPlayer.sendMessage(component));
 
-    }
-
-    @Override
-    public void startPluginMessage() {
-        server.sendPluginMessage(VelocityPluginMessagingListener.IDENTIFIER, this.getAsBytes());
     }
 
 }

@@ -131,12 +131,14 @@ public class ChatHandler {
         String discordEmbedTitle = CommonHelper.replaceKeys(config.get(ConfigKey.MINECRAFT_DISCORD_EMBED_TITLE).asString(), replacements);
         String discordEmbedMessage = CommonHelper.replaceKeys(config.get(ConfigKey.MINECRAFT_DISCORD_EMBED_MESSAGE).asString(), replacements);
 
-        if (config.get(ConfigKey.USE_HELPER).asBoolean()) {
-            chatMessageData.setMinecraftMessage(minecraftMessage);
-            chatMessageData.setDiscordMessage(discordMessage);
-            chatMessageData.setDiscordEmbedTitle(discordEmbedTitle);
-            chatMessageData.setDiscordEmbedMessage(discordEmbedMessage);
-            chatMessageData.startPluginMessage();
+        if (config.get(ConfigKey.USE_WEBSOCKET).asBoolean()) {
+            plugin.getHelperTcpServer().ifPresent((server) -> {
+                if (server.isPapiEnabled(serverName)) {
+                    server.sendChatFormat(chatMessageData, minecraftMessage, discordMessage, discordEmbedTitle, discordEmbedMessage);
+                } else {
+                    chat(chatMessageData, minecraftMessage, discordMessage, discordEmbedTitle, discordEmbedMessage);
+                }
+            });
             return;
         }
 

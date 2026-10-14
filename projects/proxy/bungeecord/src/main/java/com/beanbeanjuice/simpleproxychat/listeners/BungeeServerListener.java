@@ -45,6 +45,8 @@ public class BungeeServerListener implements Listener {
 
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onProxyChatEvent(ChatEvent event) {
+        // When WebSocket mode is on the helper sends chat after backend processing (post-LiteBans etc.)
+        if (plugin.getSPCConfig().get(ConfigKey.USE_WEBSOCKET).asBoolean()) return;
         if (event.isCancelled()) return;
         if (event.isCommand() || event.isProxyCommand()) return;
         ProxiedPlayer player = (ProxiedPlayer) event.getSender();

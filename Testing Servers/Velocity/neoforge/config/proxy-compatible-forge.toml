@@ -1,0 +1,36 @@
+#Config version, DO NOT CHANGE THIS
+version = 2.0
+
+#Player Info Forwarding Settings
+[forwarding]
+	#Enable or disable player info forwarding. Changing this setting requires a server restart.
+	enabled = true
+	#The type of forwarding to use
+	#Allowed Values: LEGACY, BUNGEEGUARD, MODERN
+	mode = "MODERN"
+	#The forwarding secret shared with the proxy
+	secret = "7be50378d802e622"
+	#A list of approved proxy hostnames or IP addresses. If the connecting proxy's hostname or IP isn't in this list, the player will be disconnected. Leave empty to allow all.
+	approvedProxyHosts = []
+
+#CrossStitch Settings - For Wrapping Modded Command Arguments
+[crossStitch]
+	#Enable or disable CrossStitch support. Changing this setting requires a server restart.
+	enabled = true
+	#Add any incompatible modded or vanilla command argument types here
+	forceWrappedArguments = []
+	#Force wrap vanilla command argument types. Useful for when the above setting gets a bit excessive.
+	forceWrapVanillaArguments = false
+
+#Debug Settings
+[debug]
+	#Enable or disable debug mode.
+	enabled = false
+	#List of mixins to disable. Use the Mixin's name and prefix it with it's partial or full package name.
+	disabledMixins = []
+
+#Advanced Settings
+[advanced]
+	#Overrides the modern forwarding version decided by PCF. Change it to "MODERN_DEFAULT" if you encounter chat-signing issues. Changing this setting requires a server restart.
+	#Allowed Values: NO_OVERRIDE, MODERN_DEFAULT, MODERN_FORWARDING_WITH_KEY, MODERN_FORWARDING_WITH_KEY_V2, MODERN_LAZY_SESSION
+	modernForwardingVersion = "NO_OVERRIDE"

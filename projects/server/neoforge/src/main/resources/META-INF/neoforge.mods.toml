@@ -1,0 +1,28 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "MIT"
+issueTrackerURL = "https://github.com/beanbeanjuice/SimpleProxyChat/issues"
+
+[[mods]]
+modId = "simpleproxychathelper"
+version = "${version}"
+displayName = "SimpleProxyChatHelper"
+authors = "beanbeanjuice"
+description = '''
+Helper mod for SimpleProxyChat. Forwards chat from this NeoForge server to the proxy over TCP.
+'''
+displayURL = "https://github.com/beanbeanjuice/SimpleProxyChat"
+
+[[dependencies.simpleproxychathelper]]
+modId = "neoforge"
+type = "required"
+versionRange = "[26.1.2,)"
+ordering = "NONE"
+side = "SERVER"
+
+[[dependencies.simpleproxychathelper]]
+modId = "minecraft"
+type = "required"
+versionRange = "[26.1.2,)"
+ordering = "NONE"
+side = "SERVER"

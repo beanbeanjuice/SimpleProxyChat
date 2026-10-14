@@ -10,8 +10,8 @@ import com.beanbeanjuice.simpleproxychat.commands.ban.VelocityUnbanCommand;
 import com.beanbeanjuice.simpleproxychat.common.CommonHelper;
 import com.beanbeanjuice.simpleproxychat.common.CommonUpdateChecker;
 import com.beanbeanjuice.simpleproxychat.common.Tuple;
-import com.beanbeanjuice.simpleproxychat.socket.VelocityPluginMessagingListener;
 import com.beanbeanjuice.simpleproxychat.shared.helper.BanHelper;
+import com.beanbeanjuice.simpleproxychat.shared.socket.HelperTcpServer;
 import com.beanbeanjuice.simpleproxychat.shared.ISimpleProxyChat;
 import com.beanbeanjuice.simpleproxychat.shared.helper.WhisperHandler;
 import com.beanbeanjuice.simpleproxychat.shared.config.Permission;
@@ -65,6 +65,7 @@ public class SimpleProxyChatVelocity implements ISimpleProxyChat {
     @Getter private BanHelper banHelper;
     private Metrics metrics;
     private VelocityServerListener serverListener;
+    private HelperTcpServer helperTcpServer;
 
     private PluginManager pluginManager;
 
@@ -204,16 +205,33 @@ public class SimpleProxyChatVelocity implements ISimpleProxyChat {
     }
 
     private void registerListeners() {
-        // Register chat listener.
         ChatHandler chatHandler = new ChatHandler(this);
         serverListener = new VelocityServerListener(this, chatHandler);
         serverListener.initializeVelocityVanishListener();
         this.proxyServer.getEventManager().register(this, serverListener);
 
-        this.proxyServer.getEventManager().register(this, new VelocityPluginMessagingListener(this, serverListener));
-        this.proxyServer.getChannelRegistrar().register(VelocityPluginMessagingListener.IDENTIFIER);
-
         whisperHandler = new WhisperHandler();
+
+        if (config.get(ConfigKey.USE_WEBSOCKET).asBoolean()) {
+            helperTcpServer = new HelperTcpServer(
+                    config.get(ConfigKey.WEBSOCKET_SECRET).asString(),
+                    chatHandler,
+                    (playerName, playerUUID, serverName, rawMessage) -> {
+                        var player = proxyServer.getPlayer(playerUUID);
+                        var server = proxyServer.getServer(serverName);
+                        if (player.isEmpty() || server.isEmpty()) return java.util.Optional.empty();
+                        return java.util.Optional.of(new com.beanbeanjuice.simpleproxychat.socket.VelocityChatMessageData(
+                                this, com.beanbeanjuice.simpleproxychat.shared.utility.listeners.MessageType.CHAT,
+                                server.get(), player.get(), rawMessage));
+                    },
+                    this.getLogger()::info
+            );
+            try {
+                helperTcpServer.start(config.get(ConfigKey.WEBSOCKET_PORT).asInt());
+            } catch (java.io.IOException e) {
+                this.getLogger().warn("Failed to start helper TCP server: {}", e.getMessage());
+            }
+        }
     }
 
     private void registerCommands() {
@@ -283,7 +301,13 @@ public class SimpleProxyChatVelocity implements ISimpleProxyChat {
     @Subscribe(order = PostOrder.LAST)
     public void onProxyShutdown(ProxyShutdownEvent event) {
         this.getLogger().info("The plugin is shutting down...");
+        if (helperTcpServer != null) helperTcpServer.stop();
         discordBot.stop();
+    }
+
+    @Override
+    public java.util.Optional<HelperTcpServer> getHelperTcpServer() {
+        return java.util.Optional.ofNullable(helperTcpServer);
     }
 
     @Override

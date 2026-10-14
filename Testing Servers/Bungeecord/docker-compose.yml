@@ -1,0 +1,123 @@
+services:
+  db: # Port 5432
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: minecraft
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U minecraft"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - db_nw
+
+  proxy:
+    image: itzg/mc-proxy:latest
+    tty: true
+    stdin_open: true
+    environment:
+      TYPE: BUNGEECORD
+      BUNGEE_JOB_ID: lastStableBuild
+      MINECRAFT_VERSION: 26.3
+      CFG_MOTD: "A BungeeCord Proxy"
+      PLUGINS: |-
+        #https://download.luckperms.net/1674/bungee/LuckPerms-Bungee-5.5.87.jar
+      MODRINTH_PROJECTS: |-
+        luckperms
+    ports:
+      - "25566:25577"
+    volumes:
+      - ./proxy/config.yml:/server/config.yml
+      - ./proxy/plugins:/server/plugins
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - bungee_nw
+      - db_nw
+
+  paper:
+    image: itzg/minecraft-server:latest
+    tty: true
+    stdin_open: true
+    environment:
+      EULA: true
+      TYPE: PAPER
+      VERSION: 26.3
+      MOTD: "A Paper Server"
+      ONLINE_MODE: false
+      ENABLE_COMMAND_BLOCK: true
+      OPS: |-
+        beanbeanjuice
+      PLUGINS: |-
+        https://download.luckperms.net/1674/bukkit/loader/LuckPerms-Bukkit-5.5.87.jar
+    volumes:
+      - ./paper/config:/data/config
+      - ./paper/plugins:/data/plugins
+      - ./paper/spigot.yml:/data/spigot.yml
+    depends_on:
+      - proxy
+    networks:
+      - bungee_nw
+      - db_nw
+
+  fabric:
+    image: itzg/minecraft-server:latest
+    tty: true
+    stdin_open: true
+    environment:
+      EULA: true
+      TYPE: FABRIC
+      VERSION: 26.3
+      MOTD: "A Fabric Server"
+      ONLINE_MODE: false
+      ENABLE_COMMAND_BLOCK: true
+      OPS: |-
+        beanbeanjuice
+      MODRINTH_PROJECTS: |-
+        luckperms
+        fabric-api
+        vanilla-permissions
+    volumes:
+      - ./fabric/config:/data/config
+      - ./fabric/mods:/data/mods
+    depends_on:
+      - proxy
+    networks:
+      - bungee_nw
+      - db_nw
+
+  neoforge:
+    image: itzg/minecraft-server:latest
+    tty: true
+    stdin_open: true
+    environment:
+      EULA: true
+      TYPE: NEOFORGE
+      VERSION: 26.2
+      MOTD: "A Neoforge Server"
+      ONLINE_MODE: false
+      ENABLE_COMMAND_BLOCK: true
+      OPS: |-
+        beanbeanjuice
+      MODRINTH_PROJECTS: |-
+        proxy-compatible-forge
+        luckperms
+      MODS: |-
+        #https://cdn.modrinth.com/data/vDyrHl8l/versions/uRu4jaFs/proxy-compatible-forge-1.3.0.jar
+    volumes:
+      - ./neoforge/config:/data/config
+      - ./neoforge/mods:/data/mods
+    depends_on:
+      - proxy
+    networks:
+      - bungee_nw
+      - db_nw
+
+networks:
+  db_nw:
+    external: false
+  bungee_nw:
+    external: false

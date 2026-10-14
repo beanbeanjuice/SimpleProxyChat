@@ -7,4 +7,4 @@ softdepend: [PlaceholderAPI]
 authors: [beanbeanjuice]
 description: A helper plugin for the SimpleProxyChat proxy plugin.
 website: https://www.github.com/beanbeanjuice/SimpleProxyChat
-api-version: 1.13
+api-version: '1.21'
