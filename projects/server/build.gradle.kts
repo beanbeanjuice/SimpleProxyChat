@@ -1,14 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import groovy.json.JsonSlurper
-import java.nio.file.Paths
-
-val manifestFile = Paths.get(rootDir.path, ".release-please-manifest.json").toFile()
-val manifestJson = JsonSlurper().parse(manifestFile) as Map<*, *>
-val rootVersion = manifestJson["projects/server"] as String
 
 allprojects {
-    version = rootVersion
-
     java {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
@@ -17,46 +9,38 @@ allprojects {
     repositories {
         mavenCentral()
         maven {
-            name = "JCenter"
+            name = "papermc-repo"
             url = uri("https://repo.papermc.io/repository/maven-public/")
         }
     }
 
+    // Fabric / NeoForge have their own platform-specific setup via fabric-loom / NeoGradle;
+    if (name == "SimpleProxyChatHelper-Fabric") return@allprojects
+    if (name == "SimpleProxyChatHelper-NeoForge") return@allprojects
+
     dependencies {
         implementation(project(":projects:common"))
 
-        // Spigot. Duh.
-        compileOnly("org.spigotmc", "spigot-api", "1.21.11-R0.1-SNAPSHOT")
-        testImplementation("io.papermc.paper", "paper-api", "1.21.11-R0.1-SNAPSHOT")
+        // Spigot
+        compileOnly("org.spigotmc:spigot-api:1.21.11-R0.1-SNAPSHOT")
+        testImplementation("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
 
         // PlaceholderAPI
-        compileOnly("me.clip", "placeholderapi", "2.11.6")
+        compileOnly("me.clip:placeholderapi:2.11.6")
 
         // bStats
-        implementation("org.bstats", "bstats-bukkit", "3.1.0")
+        implementation("org.bstats:bstats-bukkit:3.1.0")
 
         // Mock Testing
-        testImplementation("org.mockbukkit.mockbukkit", "mockbukkit-v1.21", "4.110.0")
+        testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v1.21:4.116.3")
 
         // Artifact Version Comparison
         // TODO: Eventually remove this.
-        implementation("org.apache.maven", "maven-artifact", "3.9.11")
+        implementation("org.apache.maven:maven-artifact:3.9.11")
     }
 
     tasks.withType<ShadowJar> {
         relocate("org.bstats", "com.beanbeanjuice.simpleproxychathelper.libs.org.bstats")
         relocate("org.apache.maven", "com.beanbeanjuice.simpleproxychathelper.libs.org.apache.maven")
     }
-}
-
-subprojects {
-    configure<ProcessResources>("processResources") {
-        filesMatching("plugin.yml") {
-            expand(project.properties)
-        }
-    }
-}
-
-inline fun <reified C> Project.configure(name: String, configuration: C.() -> Unit) {
-    (this.tasks.getByName(name) as C).configuration()
 }

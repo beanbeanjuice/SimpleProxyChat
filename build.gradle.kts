@@ -1,4 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import groovy.json.JsonSlurper
+import java.nio.file.Paths
 
 plugins {
     id("java")
@@ -6,8 +8,13 @@ plugins {
     id("com.adarshr.test-logger") version("4.0.0")
 }
 
+val manifestFile = Paths.get(rootDir.path, ".release-please-manifest.json").toFile()
+val manifestJson = JsonSlurper().parse(manifestFile) as Map<*, *>
+val projectVersion = manifestJson["."] as String
+
 allprojects {
     group = "com.beanbeanjuice"
+    version = projectVersion
     val mockitoAgent by configurations.creating
 
     apply(plugin = "com.adarshr.test-logger")
@@ -84,8 +91,11 @@ allprojects {
 
         useJUnitPlatform()
 
-        // Add the mockito agent as a javaagent JVM argument
-        jvmArgs("-javaagent:${mockitoAgent.singleFile.absolutePath}")
+        // Add the mockito agent as a javaagent JVM argument.
+        // Skipped for the NeoForge helper module as it throws some errors.
+        if (project.name != "SimpleProxyChatHelper-NeoForge") {
+            jvmArgs("-javaagent:${mockitoAgent.singleFile.absolutePath}")
+        }
     }
 }
 
@@ -95,7 +105,14 @@ subprojects {
     tasks.withType<ShadowJar> {
         minimize()
         archiveClassifier.set("")
-        archiveBaseName.set(project.name)
+
+        val leafName = project.path.split(":").last()
+        val archiveName = if (project.name == leafName) {
+            project.path.removePrefix(":projects:").removePrefix(":").replace(":", "-")
+        } else {
+            project.name
+        }
+        archiveBaseName.set(archiveName)
         destinationDirectory.set(File(rootProject.projectDir, "libs"))
 
         doLast {
@@ -123,6 +140,16 @@ tasks.clean {
     }
 }
 
+tasks.register("buildAll") {
+    group = "build"
+    description = "Builds all distributable JARs: combined proxy/Spigot JAR + Fabric mod JAR + NeoForge mod JAR."
+
+    // Combine shadowjars
+    dependsOn(":projects:SimpleProxyChat:shadowJar")
+    dependsOn(":projects:server:SimpleProxyChatHelper-Fabric:jar")
+    dependsOn(":projects:server:SimpleProxyChatHelper-NeoForge:shadowJar")
+}
+
 tasks.register("cleanProxyJars") {
     doLast {
         val filesToDelete = fileTree("libs") {
@@ -130,8 +157,11 @@ tasks.register("cleanProxyJars") {
                 "proxy*.jar",
                 "server*.jar",
                 "shared*.jar",
-                "projects.jar",
-                "common.jar"
+                "projects*.jar",
+                "common*.jar",
+                "SimpleProxyChat-Velocity*.jar",
+                "SimpleProxyChat-BungeeCord*.jar",
+                "SimpleProxyChatHelper-Spigot*.jar",
             )
         }.files
 
@@ -149,5 +179,9 @@ tasks.register("cleanProxyJars") {
 subprojects {
     tasks.named("shadowJar") {
         finalizedBy(rootProject.tasks.named("cleanProxyJars"))
+    }
+
+    rootProject.tasks.named("cleanProxyJars") {
+        mustRunAfter(tasks.withType<Test>())
     }
 }

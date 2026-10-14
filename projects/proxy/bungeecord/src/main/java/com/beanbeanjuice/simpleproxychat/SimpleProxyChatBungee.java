@@ -9,10 +9,10 @@ import com.beanbeanjuice.simpleproxychat.commands.whisper.BungeeReplyCommand;
 import com.beanbeanjuice.simpleproxychat.commands.whisper.BungeeWhisperCommand;
 import com.beanbeanjuice.simpleproxychat.common.CommonHelper;
 import com.beanbeanjuice.simpleproxychat.common.CommonUpdateChecker;
-import com.beanbeanjuice.simpleproxychat.common.Tuple;
 import com.beanbeanjuice.simpleproxychat.listeners.BungeeServerListener;
 import com.beanbeanjuice.simpleproxychat.listeners.BungeeVanishListener;
 import com.beanbeanjuice.simpleproxychat.shared.ISimpleProxyChat;
+import com.beanbeanjuice.simpleproxychat.shared.socket.HelperTcpServer;
 import com.beanbeanjuice.simpleproxychat.shared.helper.Helper;
 import com.beanbeanjuice.simpleproxychat.shared.helper.WhisperHandler;
 import com.beanbeanjuice.simpleproxychat.shared.helper.BanHelper;
@@ -22,7 +22,6 @@ import com.beanbeanjuice.simpleproxychat.shared.discord.Bot;
 import com.beanbeanjuice.simpleproxychat.shared.config.Config;
 import com.beanbeanjuice.simpleproxychat.shared.config.ConfigKey;
 import com.beanbeanjuice.simpleproxychat.shared.status.ServerStatusManager;
-import com.beanbeanjuice.simpleproxychat.socket.BungeeCordPluginMessagingListener;
 import de.myzelyam.api.vanish.BungeeVanishAPI;
 import litebans.api.Database;
 import lombok.Getter;
@@ -53,6 +52,7 @@ public final class SimpleProxyChatBungee extends Plugin implements ISimpleProxyC
     @Getter private BungeeServerListener serverListener;
     @Getter private WhisperHandler whisperHandler;
     @Getter private BanHelper banHelper;
+    private HelperTcpServer helperTcpServer;
     private PluginManager pluginManager;
 
     @Override
@@ -85,7 +85,7 @@ public final class SimpleProxyChatBungee extends Plugin implements ISimpleProxyC
         this.getLogger().info("Starting bStats... (IF ENABLED)");
         this.metrics = new Metrics(this, 21146);
 
-        startPluginMessaging();
+        startHelperTcpServer();
 
         // Plugin has started.
         this.getLogger().log(Level.INFO, "The plugin has been started.");
@@ -205,13 +205,28 @@ public final class SimpleProxyChatBungee extends Plugin implements ISimpleProxyC
         }
     }
 
-    private void startPluginMessaging() {
-        this.getProxy().registerChannel("BungeeCord");
-        this.getProxy().getPluginManager().registerListener(this, new BungeeCordPluginMessagingListener(this, serverListener));
-    }
+    private void startHelperTcpServer() {
+        if (!config.get(ConfigKey.USE_WEBSOCKET).asBoolean()) return;
 
-    private void stopPluginMessaging() {
-        this.getProxy().unregisterChannel("BungeeCord");
+        ChatHandler chatHandler = serverListener.getChatHandler();
+        helperTcpServer = new HelperTcpServer(
+                config.get(ConfigKey.WEBSOCKET_SECRET).asString(),
+                chatHandler,
+                (playerName, playerUUID, serverName, rawMessage) -> {
+                    net.md_5.bungee.api.connection.ProxiedPlayer player = this.getProxy().getPlayer(playerUUID);
+                    net.md_5.bungee.api.config.ServerInfo serverInfo = this.getProxy().getServerInfo(serverName);
+                    if (player == null || serverInfo == null) return java.util.Optional.empty();
+                    return java.util.Optional.of(new com.beanbeanjuice.simpleproxychat.socket.BungeeChatMessageData(
+                            this, com.beanbeanjuice.simpleproxychat.shared.utility.listeners.MessageType.CHAT,
+                            serverInfo, player, rawMessage));
+                },
+                this.getLogger()::info
+        );
+        try {
+            helperTcpServer.start(config.get(ConfigKey.WEBSOCKET_PORT).asInt());
+        } catch (java.io.IOException e) {
+            this.getLogger().warning("Failed to start helper TCP server: " + e.getMessage());
+        }
     }
 
     private int getOnlinePlayers() {
@@ -230,8 +245,13 @@ public final class SimpleProxyChatBungee extends Plugin implements ISimpleProxyC
     @Override
     public void onDisable() {
         this.getLogger().info("The plugin is shutting down...");
-        stopPluginMessaging();
+        if (helperTcpServer != null) helperTcpServer.stop();
         discordBot.stop();
+    }
+
+    @Override
+    public java.util.Optional<HelperTcpServer> getHelperTcpServer() {
+        return java.util.Optional.ofNullable(helperTcpServer);
     }
 
     @Override

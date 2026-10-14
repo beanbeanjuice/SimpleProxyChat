@@ -7,21 +7,69 @@
 
 ---
 
+### Supported Minecraft Versions
+
+| Platform | Supported Versions                                      |
+|---|---------------------------------------------------------|
+| **Velocity** (proxy) | Depends on your Velocity install + ViaVersion if needed |
+| **BungeeCord/Waterfall** (proxy) | Depends on your proxy install + ViaVersion if needed    |
+| **Spigot/Paper/Bukkit** (helper) | 1.21.11 – 26.3                                          |
+| **Fabric** (helper) | 26.1+                                                   |
+| **NeoForge** (helper) | 26.1.2+                                                 |
+
+---
+
 <p align="center">
   <img src="https://github.com/beanbeanjuice/SimpleProxyChat/blob/master/Images/Finished/Installation.png?raw=true" alt="installation"/>
 </p>
 
-### With PlaceholderAPI
-1) You **must** use the *helper plugin* which you can download [here](https://www.spigotmc.org/resources/116966/).
-1) Drag the helper plugin to each **Spigot/Paper/Bukkit** server that you want PlaceholderAPI support on.
-    * You do not need any additional configuration on the Spigot/Paper/Bukkit server as long as you have PlaceholderAPI installed.
-1) Set `use-helper` to `true` in the `config.yml` for the proxy configuration. This will be in your **BungeeCord/Velocity** server.
-1) Restart or reload the plugin! `/spc-reload`
+### Standalone (Proxy Only, No Helper)
+This is the simplest setup and is **all you need** for cross-server chat on a standard BungeeCord/Velocity network.
 
-> For **PlaceholderAPI** support, the helper plugin is required. Additionally, **PlaceholderAPI placeholders** can only be used for **Minecraft chat messages**. It will **not work** for join/leave messages.
+1) Drop the plugin jar into the `plugins` folder on your **BungeeCord/Waterfall/Velocity** proxy.
+1) Restart the proxy. It should just work out of the box!
 
-### Without Discord
-1) Simply place the plugin in your `plugins` folder on **BungeeCord/Waterfall/Velocity** and restart your proxy!
+> In standalone mode, the proxy intercepts chat on the way through. If you want chat to be relayed only **after** backend plugins (e.g. LiteBans on each server) have processed it, if you want **PlaceholderAPI** support, or if you want backend-specific hooks for **Fabric/NeoForge** servers, install the helper plugin below.
+
+### With the Helper Plugin
+The helper runs on each backend server and forwards chat to the proxy over TCP, **after** backend plugins have processed it. It is also what enables **PlaceholderAPI** support (Spigot/Paper/Bukkit only).
+
+**Proxy-side setup (required before installing any helper):**
+1) Install the proxy plugin on **BungeeCord/Waterfall/Velocity** as in the standalone section above (so `ProxyChat/config.yml` exists).
+1) Edit `ProxyChat/config.yml` and set:
+    * `use-websocket: true`
+    * `websocket-port` (default `8766`) - any free TCP port; this must match on each helper.
+    * `websocket-secret` (default `"changeme"`) - change this to something strong; it must match on each helper.
+1) Restart the proxy (or run `/spc-reload`).
+
+Then, on each backend server, install the matching helper build. Config keys are the same across all three platforms; only the file location and the default secret differ slightly.
+
+#### Spigot/Paper/Bukkit
+1) Download the helper plugin. This is the same as the main plugin for Velocity/Bungeecord.
+1) Drop it into the server's `plugins` folder and start the server once to generate `plugins/SimpleProxyChatHelper/config.yml`.
+1) Edit the generated config to point at your proxy:
+    ```yaml
+    proxy-host: "localhost"       # host where the proxy runs
+    proxy-port: 8766              # must match websocket-port in the proxy config
+    proxy-secret: "changeme"      # must match websocket-secret in the proxy config
+    server-name: "survival"       # must match this server's name in velocity.toml / BungeeCord's config.yml
+    ```
+1) (Optional) Install **PlaceholderAPI** on the server for placeholder resolution in Minecraft chat messages.
+1) Restart the server.
+
+#### Fabric
+1) Grab the matching **Fabric** helper mod for your server version.
+1) Drop the mod jar into the server's `mods` folder and start the server once to generate `config/simpleproxychathelper.yml`.
+1) Edit the generated file with the same keys as the Spigot example above (`proxy-host`, `proxy-port`, `proxy-secret`, `server-name`).
+1) Restart the server.
+
+#### NeoForge
+1) Grab the matching **NeoForge** helper mod for your server version.
+1) Drop the mod jar into the server's `mods` folder and start the server once to generate `config/simpleproxychathelper.yml`.
+1) Edit the generated file with the same keys as the Spigot example above (`proxy-host`, `proxy-port`, `proxy-secret`, `server-name`).
+1) Restart the server.
+
+> For **PlaceholderAPI** support, the helper plugin is required, and placeholders can only be used in **Minecraft chat messages**. They will **not currently work** for join/leave messages. PlaceholderAPI is only available on the **Spigot/Paper/Bukkit** helper (there is no equivalent for Fabric/NeoForge).
 
 ### With Discord
 1) Go to discord.com/developers and select **New Application**. You can select *any* name you want.
@@ -144,8 +192,13 @@ timestamp:
    format: "hh:mm a"
    timezone: "America/Los_Angeles"
 
-# True if you will be using the helper plugin.
-use-helper: false
+# True if you will be using the helper plugin via TCP WebSocket.
+# When enabled, the proxy will NOT intercept PlayerChatEvent directly.
+# Instead, chat is forwarded by the helper plugin after backend processing
+# (allowing plugins like LiteBans to cancel messages before they reach the proxy).
+use-websocket: false
+websocket-port: 8766
+websocket-secret: "changeme"
 
 update-notifications: true
 
@@ -183,8 +236,11 @@ commands:
 disabled-servers:
    - example1
 
+# Disable this if you don't want to receive switch messages in all servers.
+proxy-switch: true
+
 # DO NOT TOUCH THIS
-file-version: 16
+file-version: 18
 ```
 
 **messages.yml**
