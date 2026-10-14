@@ -3,8 +3,7 @@
   "packages": {
     ".": {
       "release-type": "simple",
-      "package-name": "SimpleProxyChat",
-      "bump-minor-pre-major": true
+      "package-name": "SimpleProxyChat"
     }
   }
 }
