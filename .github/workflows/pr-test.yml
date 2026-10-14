@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        jdk-version: [25, 27]
+        jdk-version: [25]
     name: Gradle JDK ${{ matrix.jdk-version }} Build
     runs-on: ubuntu-latest
     steps:
