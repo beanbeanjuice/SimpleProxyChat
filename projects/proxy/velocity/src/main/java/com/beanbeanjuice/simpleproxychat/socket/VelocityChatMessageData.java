@@ -14,8 +14,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import java.util.Collection;
 
-@SuppressWarnings("unused")
-
 public class VelocityChatMessageData extends ChatMessageData {
 
     private SimpleProxyChatVelocity plugin;

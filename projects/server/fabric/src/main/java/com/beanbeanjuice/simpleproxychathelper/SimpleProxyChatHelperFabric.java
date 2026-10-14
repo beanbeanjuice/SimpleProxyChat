@@ -41,16 +41,11 @@ public class SimpleProxyChatHelperFabric implements DedicatedServerModInitialize
         LOGGER.info("SimpleProxyChatHelper (Fabric) enabled — connecting to {}:{}...", host, port);
     }
 
-    // MC 26.1+ ships unobfuscated, so Loom links directly against Mojang mappings
-    // and typed Fabric API calls work without any remap. The old reflection-based
-    // Proxy approach (needed for Yarn→intermediary remap) is gone — see repo memory
-    // "Fabric helper — TCP design & reflection bug".
     private void registerChatListener() {
         ServerMessageEvents.CHAT_MESSAGE.register((message, sender, boundChatType) -> {
             String rawMessage = message.signedContent();
             if (rawMessage == null || rawMessage.isBlank()) return;
 
-            // Modern authlib exposes GameProfile as a record: use name() / id().
             tcpClient.sendChat(
                     sender.getGameProfile().name(),
                     sender.getUUID(),
