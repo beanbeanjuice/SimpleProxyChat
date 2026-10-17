@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.1](https://github.com/beanbeanjuice/SimpleProxyChat/compare/SimpleProxyChat-v1.0.0...SimpleProxyChat-v1.0.1) (2026-10-17)
+
+
+### Bug Fixes
+
+* [GH-343] [GH-335] [GH-310] Various Fixes ([#345](https://github.com/beanbeanjuice/SimpleProxyChat/issues/345)) ([635a59e](https://github.com/beanbeanjuice/SimpleProxyChat/commit/635a59e9521d3855f85b18bd091d2e488e4f0251))
+* **deps:** bump gradle-wrapper from 9.6.1 to 9.8.1 ([#339](https://github.com/beanbeanjuice/SimpleProxyChat/issues/339)) ([580ef9d](https://github.com/beanbeanjuice/SimpleProxyChat/commit/580ef9dba724a93fb8f4050bf97252252a04f435))
+* **deps:** bump org.junit.jupiter:junit-jupiter from 6.1.1 to 6.1.3 ([#336](https://github.com/beanbeanjuice/SimpleProxyChat/issues/336)) ([5625606](https://github.com/beanbeanjuice/SimpleProxyChat/commit/5625606e40374649a05046f16acf219dc31cf015))
+* **deps:** bump org.junit.jupiter:junit-jupiter-api from 6.1.1 to 6.1.3 ([#338](https://github.com/beanbeanjuice/SimpleProxyChat/issues/338)) ([cb0d4e2](https://github.com/beanbeanjuice/SimpleProxyChat/commit/cb0d4e21d00a1fc3238a5714efeb94f296da0446))
+* **deps:** bump org.junit.jupiter:junit-jupiter-engine from 6.1.1 to 6.1.3 ([#337](https://github.com/beanbeanjuice/SimpleProxyChat/issues/337)) ([b2f387d](https://github.com/beanbeanjuice/SimpleProxyChat/commit/b2f387dc2a9e951f64ed84a22ea4ad0b12792c49))
+* **deps:** bump org.projectlombok:lombok from 1.18.46 to 1.18.48 ([#340](https://github.com/beanbeanjuice/SimpleProxyChat/issues/340)) ([6e5e0ea](https://github.com/beanbeanjuice/SimpleProxyChat/commit/6e5e0eab00e6784ce9ed5f06c0047603d2741a12))
+
 ## [1.0.0](https://github.com/beanbeanjuice/SimpleProxyChat/compare/SimpleProxyChat-v0.5.7...SimpleProxyChat-v1.0.0) (2026-10-14)
 
 
