@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/beanbeanjuice/SimpleProxyChat/compare/SimpleProxyChat-v1.0.1...SimpleProxyChat-v1.0.2) (2026-10-17)
+
+
+### Bug Fixes
+
+* [GH-347] Add Fabric Jar JSON ([#348](https://github.com/beanbeanjuice/SimpleProxyChat/issues/348)) ([88d0b9c](https://github.com/beanbeanjuice/SimpleProxyChat/commit/88d0b9cb5179fbc0e1c2dab42401f7cafd37935f))
+
 ## [1.0.1](https://github.com/beanbeanjuice/SimpleProxyChat/compare/SimpleProxyChat-v1.0.0...SimpleProxyChat-v1.0.1) (2026-10-17)
 
 
