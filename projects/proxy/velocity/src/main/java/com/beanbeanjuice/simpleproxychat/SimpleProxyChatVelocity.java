@@ -149,7 +149,7 @@ public class SimpleProxyChatVelocity implements ISimpleProxyChat {
                                 "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString(),
                                 "old", currentVersion,
                                 "new", latestVersion,
-                                "link", "https://www.spigotmc.org/resources/115305/"
+                                "link", MOD_LINK
                         ));
                         String message = CommonHelper.replaceKeys(config.get(ConfigKey.UPDATE_MESSAGE).asString(), replacements);
 
@@ -379,7 +379,9 @@ public class SimpleProxyChatVelocity implements ISimpleProxyChat {
     public void sendAll(String message) {
         logger.info(Helper.sanitize(message));
         Component messageComponent = MiniMessage.miniMessage().deserialize(message);
-        proxyServer.getAllPlayers().forEach((player) -> player.sendMessage(messageComponent));
+        proxyServer.getAllPlayers().stream()
+                .filter(player -> !VelocityServerListener.playerIsInDisabledServer(player, this))
+                .forEach((player) -> player.sendMessage(messageComponent));
     }
 
     @Override

@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public interface ISimpleProxyChat {
 
+    String MOD_LINK = "https://modrinth.com/plugin/simpleproxychat";
+
     boolean isPluginStarting();
 
     boolean isLuckPermsEnabled();

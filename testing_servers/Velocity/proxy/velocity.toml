@@ -1,0 +1,50 @@
+#If you are using modern or BungeeGuard IP forwarding, configure a file that contains a unique secret here.
+#The file is expected to be UTF-8 encoded and not empty.
+forwarding-secret-file = "forwarding.secret"
+config-version = "2.9"
+#Should the proxy enforce the new public key security standard? By default, this is on.
+force-key-authentication = true
+# What should be the MOTD? This gets displayed when the player adds your server to
+# their server list. Only MiniMessage format is accepted.
+motd = "\\<#09add3>A Velocity Server"
+player-info-forwarding-mode = "modern"
+
+[servers]
+  paper = "paper:25565"
+  paper2 = "paper2:25565"
+  fabric = "fabric:25565"
+  neoforge = "neoforge:25565"
+  try = ["paper", "paper2", "fabric", "neoforge"]
+
+[forced-hosts]
+  "localhost" = ["paper"]
+
+[advanced]
+	#Allows players transferred from other hosts via the
+	#Transfer packet (Minecraft 1.20.5) to be received.
+	accepts-transfers = false
+
+[packet-limiter]
+	#Size of the moving time window in seconds used to calculate average rates.
+	#A larger window tolerates short bursts while still enforcing the configured limits over time.
+	interval = 7
+	#Maximum average number of packets per second a client may send. -1 disables this check.
+	packets-per-second = -1
+	#Maximum average number of compressed (on-wire) bytes per second a client may send. -1 disables this check.
+	bytes-per-second = -1
+	#Maximum average number of decompressed bytes per second a client may send.
+	#Protects against compression bomb attacks where small packets expand to excessive sizes after decompression.
+	#-1 disables this check.
+	decompressed-bytes-per-second = 5242880
+
+[ping-passthrough]
+	# Should Velocity pass the version number from the backend server when responding to server list ping requests?
+	version = false
+	# Should Velocity pass the player count from the backend server when responding to server list ping requests?
+	players = false
+	# Should Velocity pass the description from the backend server when responding to server list ping requests?
+	description = false
+	# Should Velocity pass the favicon (also known as the server icon) from the backend server when responding to server list ping requests?
+	favicon = false
+	# Should Velocity pass the mod list from the backend server when responding to server list ping requests?
+	modinfo = false

@@ -9,6 +9,7 @@ tasks.named<ProcessResources>("processResources") {
     filesMatching("bungee.yml") {
         expand("version" to project.version)
     }
+    inputs.property("version", project.version)
 }
 
 tasks.withType<ShadowJar> {

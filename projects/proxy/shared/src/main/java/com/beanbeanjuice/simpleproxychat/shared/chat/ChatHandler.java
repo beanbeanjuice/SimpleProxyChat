@@ -63,6 +63,8 @@ public class ChatHandler {
     }
 
     public void chat(ChatMessageData chatMessageData, String minecraftMessage, String discordMessage, String discordEmbedTitle, String discordEmbedMessage) {
+        if (Helper.isServerDisabled(config, chatMessageData.getServername())) return;
+
         // Log to Console
         if (config.get(ConfigKey.CONSOLE_CHAT).asBoolean()) plugin.log(minecraftMessage);
 
@@ -96,6 +98,7 @@ public class ChatHandler {
 
     public void runProxyChatMessage(ChatMessageData chatMessageData) {
         if (Helper.serverHasChatLocked(plugin, chatMessageData.getServername())) return;
+        if (Helper.isServerDisabled(config, chatMessageData.getServername())) return;
 
         String playerMessage = chatMessageData.getMessage();
         String serverName = chatMessageData.getServername();

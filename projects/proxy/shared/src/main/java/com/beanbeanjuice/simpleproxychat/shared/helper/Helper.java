@@ -71,4 +71,10 @@ public class Helper {
         return string.replaceAll("_", "\\_");
     }
 
+    public static boolean isServerDisabled(Config config, String serverName) {
+        if (serverName == null) return false;
+        return config.get(ConfigKey.DISABLED_SERVERS).asList().stream()
+                .anyMatch(serverName::equalsIgnoreCase);
+    }
+
 }

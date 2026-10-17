@@ -1,0 +1,62 @@
+network_compression_threshold: 256
+remote_ping_timeout: 5000
+remote_ping_cache: -1
+online_mode: true
+forge_support: false
+max_packets_per_second: 4096
+ip_forward: true
+disabled_commands:
+- disabledcommandhere
+max_packets_data_per_second: 33554432
+reject_transfers: false
+player_limit: -1
+connection_throttle: 4000
+connection_throttle_limit: 3
+prevent_proxy_connections: false
+log_commands: false
+log_pings: true
+groups: {}
+stats: 378fee27-6300-493a-93fe-08cf18744d8f
+servers:
+  paper:
+    address: paper:25565
+    motd: '&bA Paper Server'
+    restricted: false
+  paper2:
+    address: paper2:25565
+    motd: '&bA Fabric Server'
+    restricted: false
+  paper3:
+    address: paper3:25565
+    motd: '&bA Neoforge Server'
+    restricted: false
+permissions:
+  default:
+  - bungeecord.command.server
+  - bungeecord.command.list
+  admin:
+  - bungeecord.command.alert
+  - bungeecord.command.end
+  - bungeecord.command.ip
+  - bungeecord.command.reload
+listeners:
+- host: 0.0.0.0:25577
+  motd: '&#09add3A BungeeCord Server'
+  max_players: 100
+  query_enabled: false
+  query_port: 25577
+  forced_hosts:
+    localhost: paper
+  priorities:
+  - paper
+  - paper2
+  - paper3
+  tab_list: GLOBAL_PING
+  tab_size: 60
+  force_default_server: false
+  ping_passthrough: false
+  bind_local_address: true
+  proxy_protocol: false
+enforce_secure_profile: false
+server_connect_timeout: 5000
+timeout: 30000

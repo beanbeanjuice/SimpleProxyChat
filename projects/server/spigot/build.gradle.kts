@@ -14,6 +14,7 @@ tasks.named<ProcessResources>("processResources") {
     filesMatching("plugin.yml") {
         expand("version" to project.version)
     }
+    inputs.property("version", project.version)
 }
 
 // Keep gson out of the shaded jar
