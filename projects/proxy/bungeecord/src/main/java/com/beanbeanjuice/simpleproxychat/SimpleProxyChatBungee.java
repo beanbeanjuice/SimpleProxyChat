@@ -32,6 +32,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.luckperms.api.LuckPermsProvider;
 import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 import nl.chimpgamer.networkmanager.api.NetworkManagerProvider;
@@ -118,7 +119,7 @@ public final class SimpleProxyChatBungee extends Plugin implements ISimpleProxyC
                                 "plugin-prefix", config.get(ConfigKey.PLUGIN_PREFIX).asString(),
                                 "old", currentVersion,
                                 "new", version,
-                                "link", "https://www.spigotmc.org/resources/115305/"
+                                "link", MOD_LINK
                         ));
 
                         String message = CommonHelper
@@ -320,7 +321,11 @@ public final class SimpleProxyChatBungee extends Plugin implements ISimpleProxyC
 
     @Override
     public void sendAll(String message) {
-        this.getProxy().broadcast(Helper.convertToBungee(message));
+        BaseComponent[] components = Helper.convertToBungee(message);
+        this.getProxy().getPlayers().stream()
+                .filter(player -> player.getServer() == null
+                        || !BungeeServerListener.playerIsInDisabledServer(player, this))
+                .forEach(player -> player.sendMessage(ChatMessageType.CHAT, components));
     }
 
     @Override

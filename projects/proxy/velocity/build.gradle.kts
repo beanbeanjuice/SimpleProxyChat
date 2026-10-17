@@ -19,6 +19,7 @@ tasks.named<ProcessResources>("processResources") {
     filesMatching("velocity-plugin.json") {
         expand("version" to project.version)
     }
+    inputs.property("version", project.version)
 }
 
 tasks.withType<ShadowJar> {

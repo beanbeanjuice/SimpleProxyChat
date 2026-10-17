@@ -40,7 +40,9 @@ public class BungeeServerListener implements Listener {
     }
 
     public static boolean playerIsInDisabledServer(ProxiedPlayer player, ISimpleProxyChat plugin) {
-        return plugin.getSPCConfig().get(ConfigKey.DISABLED_SERVERS).asList().contains(player.getServer().getInfo().getName());
+        Server server = player.getServer();
+        if (server == null || server.getInfo() == null) return false;
+        return Helper.isServerDisabled(plugin.getSPCConfig(), server.getInfo().getName());
     }
 
     @EventHandler (priority = EventPriority.HIGHEST)

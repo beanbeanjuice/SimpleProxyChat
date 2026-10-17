@@ -51,12 +51,12 @@ public class VelocityServerListener {
         return player.getCurrentServer()
                 .map(ServerConnection::getServerInfo)
                 .map(ServerInfo::getName)
-                .map(plugin.getSPCConfig().get(ConfigKey.DISABLED_SERVERS).asList()::contains)
+                .map(name -> Helper.isServerDisabled(plugin.getSPCConfig(), name))
                 .orElse(false);
     }
 
     public static boolean playerIsInDisabledServer(ServerInfo serverInfo, ISimpleProxyChat plugin) {
-        return plugin.getSPCConfig().get(ConfigKey.DISABLED_SERVERS).asList().contains(serverInfo.getName());
+        return Helper.isServerDisabled(plugin.getSPCConfig(), serverInfo.getName());
     }
 
     @Subscribe(order = PostOrder.LAST)
@@ -99,6 +99,7 @@ public class VelocityServerListener {
         if (playerIsInDisabledServer(event.getPlayer(), plugin)) return;
 
         KickedFromServerEvent.ServerKickResult result = event.getResult();
+        if (!(result instanceof KickedFromServerEvent.DisconnectPlayer)) return;
         if (result.toString().contains("velocity.error.cant-connect")) return;
         if (event.getServerKickReason().isEmpty()) return;
         if (plugin.isVanishAPIEnabled() && VelocityVanishAPI.isInvisible(event.getPlayer())) return;  // Ignore if invisible.

@@ -1,0 +1,158 @@
+services:
+  db: # Port 5432
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: minecraft
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U minecraft"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - db_nw
+
+  proxy:
+    image: itzg/mc-proxy:latest
+    tty: true
+    stdin_open: true
+    environment:
+      TYPE: VELOCITY
+      MINECRAFT_VERSION: 26.3
+      VELOCITY_VERSION: latest
+      CFG_MOTD: "A Velocity Proxy"
+      PLUGINS: |-
+        #https://download.luckperms.net/1674/velocity/LuckPerms-Velocity-5.5.87.jar
+      MODRINTH_PROJECTS: |-
+        viaversion
+        luckperms
+        signedvelocity
+    ports:
+      - "25565:25565"
+    volumes:
+      - ./proxy/velocity.toml:/server/velocity.toml
+      - ./proxy/plugins:/server/plugins
+      - ./proxy/forwarding.secret:/server/forwarding.secret
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - velocity_nw
+      - db_nw
+
+  paper:
+    image: itzg/minecraft-server:latest
+    tty: true
+    stdin_open: true
+    environment:
+      EULA: true
+      TYPE: PAPER
+      VERSION: 26.3
+      MOTD: "A Paper Server"
+      ONLINE_MODE: false
+      ENABLE_COMMAND_BLOCK: true
+      OPS: |-
+        beanbeanjuice
+      PLUGINS: |-
+        https://download.luckperms.net/1674/bukkit/loader/LuckPerms-Bukkit-5.5.87.jar
+      MODRINTH_PROJECTS: |-
+        signedvelocity
+    volumes:
+      - ./paper/config:/data/config
+      - ./paper/plugins:/data/plugins
+    depends_on:
+      - proxy
+    networks:
+      - velocity_nw
+      - db_nw
+
+  paper2:
+    image: itzg/minecraft-server:latest
+    tty: true
+    stdin_open: true
+    environment:
+      EULA: true
+      TYPE: PAPER
+      VERSION: 26.3
+      MOTD: "A Paper 2 Server"
+      ONLINE_MODE: false
+      ENABLE_COMMAND_BLOCK: true
+      OPS: |-
+        beanbeanjuice
+      PLUGINS: |-
+        https://download.luckperms.net/1674/bukkit/loader/LuckPerms-Bukkit-5.5.87.jar
+      MODRINTH_PROJECTS: |-
+        signedvelocity
+    volumes:
+      - ./paper2/config:/data/config
+      - ./paper2/plugins:/data/plugins
+    depends_on:
+      - proxy
+    networks:
+      - velocity_nw
+      - db_nw
+
+  fabric:
+    image: itzg/minecraft-server:latest
+    tty: true
+    stdin_open: true
+    environment:
+      EULA: true
+      TYPE: FABRIC
+      VERSION: 26.3
+      MOTD: "A Fabric Server"
+      ONLINE_MODE: false
+      ENABLE_COMMAND_BLOCK: true
+      OPS: |-
+        beanbeanjuice
+      MODRINTH_PROJECTS: |-
+        luckperms
+        fabric-api
+        fabricproxy-lite
+        vanilla-permissions
+        signedvelocity
+    volumes:
+      - ./fabric/config:/data/config
+      - ./fabric/mods:/data/mods
+    depends_on:
+      - proxy
+    networks:
+      - velocity_nw
+      - db_nw
+
+  neoforge:
+    image: itzg/minecraft-server:latest
+    tty: true
+    stdin_open: true
+    environment:
+      EULA: true
+      TYPE: NEOFORGE
+      VERSION: 26.2
+      MOTD: "A Neoforge Server"
+      ONLINE_MODE: false
+      ENABLE_COMMAND_BLOCK: true
+      OPS: |-
+        beanbeanjuice
+      MODRINTH_PROJECTS: |-
+        proxy-compatible-forge
+        #neovelocity
+        luckperms
+      MODS: |-
+        #https://cdn.modrinth.com/data/RT18TcxA/versions/E6qYmwRI/neovelocity-1.2.6%2B1.21.11.jar
+        #https://cdn.modrinth.com/data/vDyrHl8l/versions/uRu4jaFs/proxy-compatible-forge-1.3.0.jar
+    volumes:
+      - ./neoforge/config:/data/config
+      - ./neoforge/mods:/data/mods
+    depends_on:
+      - proxy
+    networks:
+      - velocity_nw
+      - db_nw
+
+networks:
+  db_nw:
+    external: false
+  velocity_nw:
+    external: false
+

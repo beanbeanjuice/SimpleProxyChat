@@ -32,7 +32,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
       -
         name: Build with Gradle
-        run: gradle shadowJar
+        run: gradle build
       -
         name: Upload JARs to GitHub Release
         run: |
