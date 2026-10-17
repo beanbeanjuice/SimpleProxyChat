@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "simpleproxychathelper",
+  "version": "${version}",
+  "name": "SimpleProxyChatHelper",
+  "description": "Helper mod for SimpleProxyChat. Ensures mute plugins (e.g. LiteBans-Fabric) are respected before forwarding chat to the proxy.",
+  "authors": [
+    "beanbeanjuice"
+  ],
+  "contact": {
+    "sources": "https://github.com/beanbeanjuice/SimpleProxyChat",
+    "issues": "https://github.com/beanbeanjuice/SimpleProxyChat/issues"
+  },
+  "license": "MIT",
+  "environment": "server",
+  "entrypoints": {
+    "server": [
+      "com.beanbeanjuice.simpleproxychathelper.SimpleProxyChatHelperFabric"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.0",
+    "fabric-api": "*",
+    "minecraft": ">=26.1",
+    "java": ">=25"
+  }
+}
