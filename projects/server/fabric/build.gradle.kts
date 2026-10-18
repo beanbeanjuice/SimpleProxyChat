@@ -23,7 +23,7 @@ dependencies {
     implementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
     implementation("net.fabricmc.fabric-api:fabric-api:$fabricApiVersion")
 
-    compileOnly("com.google.code.gson:gson:2.10.1")
+    compileOnly("com.google.code.gson:gson:2.14.0")
 }
 
 tasks.withType<JavaCompile>().configureEach {
