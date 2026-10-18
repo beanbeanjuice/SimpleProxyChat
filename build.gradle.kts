@@ -76,10 +76,10 @@ allprojects {
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
         // Mockito
-        testImplementation("org.mockito:mockito-core:5.23.0") // https://mvnrepository.com/artifact/org.mockito/mockito-core
+        testImplementation("org.mockito:mockito-core:5.24.0") // https://mvnrepository.com/artifact/org.mockito/mockito-core
         testImplementation("org.mockito:mockito-inline:+") // https://mvnrepository.com/artifact/org.mockito/mockito-core
 
-        mockitoAgent("org.mockito:mockito-core:5.23.0") {
+        mockitoAgent("org.mockito:mockito-core:5.24.0") {
             isTransitive = false
         }
     }
