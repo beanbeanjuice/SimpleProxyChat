@@ -10,7 +10,7 @@ dependencies {
     implementation("joda-time:joda-time:2.14.0")
 
     // JSON for TCP protocol (provided at runtime by Velocity/BungeeCord)
-    compileOnly("com.google.code.gson:gson:2.10.1")
+    compileOnly("com.google.code.gson:gson:2.14.0")
 }
 
 tasks.withType<ShadowJar> {
