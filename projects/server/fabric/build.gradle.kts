@@ -1,6 +1,6 @@
 val minecraftVersion = "26.3"
 val fabricLoaderVersion = "0.19.5"
-val fabricApiVersion = "0.162.0+26.3"
+val fabricApiVersion = "0.163.0+"
 
 plugins {
     // https://maven.fabricmc.net/net/fabricmc/fabric-loom/
