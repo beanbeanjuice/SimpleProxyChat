@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.3](https://github.com/beanbeanjuice/SimpleProxyChat/compare/SimpleProxyChat-v1.0.2...SimpleProxyChat-v1.0.3) (2026-10-19)
+
+
+### Bug Fixes
+
+* **deps:** bump com.google.code.gson:gson from 2.10.1 to 2.14.0 ([#355](https://github.com/beanbeanjuice/SimpleProxyChat/issues/355)) ([72b1e5b](https://github.com/beanbeanjuice/SimpleProxyChat/commit/72b1e5b510804051a82286590de815d176ec0cf0))
+* **deps:** bump com.google.code.gson:gson from 2.10.1 to 2.14.0 in /projects/proxy/shared ([#356](https://github.com/beanbeanjuice/SimpleProxyChat/issues/356)) ([463ce60](https://github.com/beanbeanjuice/SimpleProxyChat/commit/463ce604ba3996befd434962247ffca4d7d36e07))
+* **deps:** bump com.google.code.gson:gson from 2.10.1 to 2.14.0 in /projects/server/spigot ([#357](https://github.com/beanbeanjuice/SimpleProxyChat/issues/357)) ([09188c0](https://github.com/beanbeanjuice/SimpleProxyChat/commit/09188c0d07ca9c0b88d70964145abd1cf52b8107))
+* **deps:** bump net.fabricmc.fabric-api:fabric-api from 0.162.0+26.3 to 0.163.0+26.4 ([#354](https://github.com/beanbeanjuice/SimpleProxyChat/issues/354)) ([6d20c5a](https://github.com/beanbeanjuice/SimpleProxyChat/commit/6d20c5aef04f9a7668c9f0b89c8dd77cc6666a7d))
+* **deps:** bump net.neoforged:neoforge from 26.1.2.78 to 26.3.0.84 ([#352](https://github.com/beanbeanjuice/SimpleProxyChat/issues/352)) ([831cc52](https://github.com/beanbeanjuice/SimpleProxyChat/commit/831cc5254db21fbb400401c478a93d245cef045b))
+* **deps:** bump org.mockito:mockito-core from 5.23.0 to 5.24.0 ([#351](https://github.com/beanbeanjuice/SimpleProxyChat/issues/351)) ([54dc461](https://github.com/beanbeanjuice/SimpleProxyChat/commit/54dc461eb021ee44e8289423d110db065f9db799))
+
 ## [1.0.2](https://github.com/beanbeanjuice/SimpleProxyChat/compare/SimpleProxyChat-v1.0.1...SimpleProxyChat-v1.0.2) (2026-10-17)
 
 
