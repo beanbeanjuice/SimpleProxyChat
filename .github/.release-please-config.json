@@ -2,8 +2,7 @@
   "bootstrap-sha": "e638bebc19c52f6ae58819fb44147cf0e4c54bc7",
   "packages": {
     ".": {
-      "release-type": "simple",
-      "package-name": "SimpleProxyChat"
+      "release-type": "simple"
     }
   }
 }

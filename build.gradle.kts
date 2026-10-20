@@ -8,7 +8,7 @@ plugins {
     id("com.adarshr.test-logger") version("4.0.0")
 }
 
-val manifestFile = Paths.get(rootDir.path, ".release-please-manifest.json").toFile()
+val manifestFile = Paths.get(rootDir.path, ".github/.release-please-manifest.json").toFile()
 val manifestJson = JsonSlurper().parse(manifestFile) as Map<*, *>
 val projectVersion = manifestJson["."] as String
 
