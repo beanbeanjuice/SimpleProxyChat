@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.4](https://github.com/beanbeanjuice/SimpleProxyChat/compare/v1.0.3...v1.0.4) (2026-10-23)
+
+
+### Bug Fixes
+
+* [GH-361] Helper README ([#364](https://github.com/beanbeanjuice/SimpleProxyChat/issues/364)) ([5aba5cd](https://github.com/beanbeanjuice/SimpleProxyChat/commit/5aba5cd86af4f7d91976d99c8e8451641ffad512))
+* [GH-362] Hex Codes Not Working with PAPI ([#363](https://github.com/beanbeanjuice/SimpleProxyChat/issues/363)) ([d313556](https://github.com/beanbeanjuice/SimpleProxyChat/commit/d313556758252ab4da351bf8aca920799aca1cbe))
+
 ## [1.0.3](https://github.com/beanbeanjuice/SimpleProxyChat/compare/v1.0.2...v1.0.3) (2026-10-20)
 
 
