@@ -44,11 +44,6 @@ allprojects {
         }
 
         maven {
-            name = "spicord-repo"
-            url = uri("https://repo.spicord.org/")
-        }
-
-        maven {
             name = "advanced-ban requirement"
             url = uri("https://maven.elmakers.com/repository/")
         }

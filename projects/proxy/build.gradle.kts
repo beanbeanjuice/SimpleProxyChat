@@ -6,6 +6,13 @@ allprojects {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    repositories {
+        maven {
+            name = "spicord-repo"
+            url = uri("https://repo.spicord.org/")
+        }
+    }
+
     dependencies {
         implementation(project(":projects:common"))
 
