@@ -32,6 +32,9 @@ This is the simplest setup and is **all you need** for cross-server chat on a st
 > In standalone mode, the proxy intercepts chat on the way through. If you want chat to be relayed only **after** backend plugins (e.g. LiteBans on each server) have processed it, if you want **PlaceholderAPI** support, or if you want backend-specific hooks for **Fabric/NeoForge** servers, install the helper plugin below.
 
 ### With the Helper Plugin
+
+> The helper plugin can be downloaded [here](https://modrinth.com/plugin/simpleproxychat).
+
 The helper runs on each backend server and forwards chat to the proxy over TCP, **after** backend plugins have processed it. It is also what enables **PlaceholderAPI** support (Spigot/Paper/Bukkit only).
 
 **Proxy-side setup (required before installing any helper):**
