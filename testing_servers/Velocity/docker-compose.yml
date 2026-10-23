@@ -28,8 +28,13 @@ services:
         viaversion
         luckperms
         signedvelocity
+      JVM_OPTS: >-
+        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5004
+      MAX_TICK_TIME: "-1"
+      JVM_DD_OPTS: "disable.watchdog:true"
     ports:
       - "25565:25565"
+      - "5004:5004" # Remote Debug Port
     volumes:
       - ./proxy/velocity.toml:/server/velocity.toml
       - ./proxy/plugins:/server/plugins
@@ -58,6 +63,13 @@ services:
         https://download.luckperms.net/1674/bukkit/loader/LuckPerms-Bukkit-5.5.87.jar
       MODRINTH_PROJECTS: |-
         signedvelocity
+        placeholderapi
+      JVM_OPTS: >-
+        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+      MAX_TICK_TIME: "-1"
+      JVM_DD_OPTS: "disable.watchdog:true"
+    ports:
+      - "5005:5005" # Remote Debug Port
     volumes:
       - ./paper/config:/data/config
       - ./paper/plugins:/data/plugins
@@ -84,6 +96,13 @@ services:
         https://download.luckperms.net/1674/bukkit/loader/LuckPerms-Bukkit-5.5.87.jar
       MODRINTH_PROJECTS: |-
         signedvelocity
+        placeholderapi
+      JVM_OPTS: >-
+        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
+      MAX_TICK_TIME: "-1"
+      JVM_DD_OPTS: "disable.watchdog:true"
+    ports:
+      - "5006:5006" # Remote Debug Port
     volumes:
       - ./paper2/config:/data/config
       - ./paper2/plugins:/data/plugins
