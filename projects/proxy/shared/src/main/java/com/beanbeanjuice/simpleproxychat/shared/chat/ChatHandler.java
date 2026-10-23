@@ -65,8 +65,12 @@ public class ChatHandler {
     public void chat(ChatMessageData chatMessageData, String minecraftMessage, String discordMessage, String discordEmbedTitle, String discordEmbedMessage) {
         if (Helper.isServerDisabled(config, chatMessageData.getServername())) return;
 
+        // This COULD be round-trip from the server. Need to re-translate legacy color codes.
+        discordMessage = CommonHelper.translateLegacyCodes(discordMessage);
+        minecraftMessage = CommonHelper.translateLegacyCodes(minecraftMessage);
+
         // Log to Console
-        if (config.get(ConfigKey.CONSOLE_CHAT).asBoolean()) plugin.log(minecraftMessage);
+        if (config.get(ConfigKey.CONSOLE_CHAT).asBoolean()) plugin.log(Helper.sanitize(minecraftMessage));
 
         // Log to Discord
         if (config.get(ConfigKey.MINECRAFT_DISCORD_ENABLED).asBoolean()) {
@@ -76,7 +80,7 @@ public class ChatHandler {
 
                 EmbedBuilder embedBuilder = new EmbedBuilder()
                         .setAuthor(discordEmbedTitle, null, getPlayerHeadURL(chatMessageData.getPlayerUUID()))
-                        .setDescription(discordEmbedMessage)
+                        .setDescription(Helper.sanitize(discordEmbedMessage))
                         .setColor(color);
 
                 if (config.get(ConfigKey.MINECRAFT_DISCORD_EMBED_USE_TIMESTAMP).asBoolean())
