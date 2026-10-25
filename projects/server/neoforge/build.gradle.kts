@@ -1,7 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 val mcVersion = "26.1.2"
-val neoForgeVersion = "26.3.0.84" // https://maven.neoforged.net/releases/net/neoforged/neoforge/
+val neoForgeVersion = "26.3.0.95" // https://maven.neoforged.net/releases/net/neoforged/neoforge/
 
 plugins {
     id("net.neoforged.gradle.userdev") version "7.1.39"
