@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.5](https://github.com/beanbeanjuice/SimpleProxyChat/compare/v1.0.4...v1.0.5) (2026-10-26)
+
+
+### Bug Fixes
+
+* **deps:** bump gradle-wrapper from 9.8.1 to 9.8.2 ([#369](https://github.com/beanbeanjuice/SimpleProxyChat/issues/369)) ([623347b](https://github.com/beanbeanjuice/SimpleProxyChat/commit/623347b826e17f632946da5db4c98e94a93328a7))
+* **deps:** bump joda-time:joda-time from 2.14.0 to 2.15.0 ([#372](https://github.com/beanbeanjuice/SimpleProxyChat/issues/372)) ([1cc536c](https://github.com/beanbeanjuice/SimpleProxyChat/commit/1cc536c844c92b53207e118503f7c85628ff46f5))
+* **deps:** bump joda-time:joda-time from 2.14.0 to 2.15.0 in /projects/proxy/shared ([#373](https://github.com/beanbeanjuice/SimpleProxyChat/issues/373)) ([7edfebb](https://github.com/beanbeanjuice/SimpleProxyChat/commit/7edfebba5ca63a7b3353f68f6689aae3a690313e))
+* **deps:** bump net.fabricmc:fabric-loader from 0.19.5 to 0.20.1 ([#368](https://github.com/beanbeanjuice/SimpleProxyChat/issues/368)) ([e9109a4](https://github.com/beanbeanjuice/SimpleProxyChat/commit/e9109a43cdbdf6aeefa90bd7d5862cc1b813fa76))
+* **deps:** bump net.neoforged:neoforge from 26.3.0.84 to 26.3.0.95 ([#371](https://github.com/beanbeanjuice/SimpleProxyChat/issues/371)) ([8d0616b](https://github.com/beanbeanjuice/SimpleProxyChat/commit/8d0616b3dfe097c24ae24ccac971fb09327ccc29))
+
 ## [1.0.4](https://github.com/beanbeanjuice/SimpleProxyChat/compare/v1.0.3...v1.0.4) (2026-10-23)
 
 
