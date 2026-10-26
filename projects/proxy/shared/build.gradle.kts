@@ -7,7 +7,7 @@ dependencies {
     testImplementation("net.md-5:bungeecord-api:1.21-R0.3") // https://javadoc.io/doc/net.md-5/bungeecord-api/latest/index.html
 
     // Timestamp
-    implementation("joda-time:joda-time:2.14.0")
+    implementation("joda-time:joda-time:2.15.0")
 
     // JSON for TCP protocol (provided at runtime by Velocity/BungeeCord)
     compileOnly("com.google.code.gson:gson:2.14.0")
