@@ -3,8 +3,8 @@ import org.gradle.kotlin.dsl.withType
 
 dependencies {
     // BungeeCord Sockets
-    compileOnly("net.md-5:bungeecord-api:1.21-R0.3") // https://javadoc.io/doc/net.md-5/bungeecord-api/latest/index.html
-    testImplementation("net.md-5:bungeecord-api:1.21-R0.3") // https://javadoc.io/doc/net.md-5/bungeecord-api/latest/index.html
+    compileOnly("net.md-5:bungeecord-api:1.21-R0.4") // https://javadoc.io/doc/net.md-5/bungeecord-api/latest/index.html
+    testImplementation("net.md-5:bungeecord-api:1.21-R0.4") // https://javadoc.io/doc/net.md-5/bungeecord-api/latest/index.html
 
     // Timestamp
     implementation("joda-time:joda-time:2.15.0")
