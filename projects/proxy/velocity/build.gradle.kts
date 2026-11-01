@@ -10,9 +10,9 @@ java {
 dependencies {
     implementation(project(":projects:proxy:shared"))
 
-    compileOnly("com.velocitypowered:velocity-api:4.2.0")
-    testImplementation("com.velocitypowered:velocity-api:4.2.0")
-    annotationProcessor("com.velocitypowered:velocity-api:4.2.0")
+    compileOnly("com.velocitypowered:velocity-api:4.3.1")
+    testImplementation("com.velocitypowered:velocity-api:4.3.1")
+    annotationProcessor("com.velocitypowered:velocity-api:4.3.1")
 }
 
 tasks.named<ProcessResources>("processResources") {
