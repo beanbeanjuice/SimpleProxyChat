@@ -4,10 +4,10 @@ dependencies {
     implementation(project(":projects:server:shared"))
 
     // JSON for TCP protocol (provided at runtime by Paper/Spigot).
-    compileOnly("com.google.code.gson:gson:2.14.0")
+    compileOnly("com.google.code.gson:gson:2.15.0")
 
     // GSON Used for tests only.
-    testImplementation("com.google.code.gson:gson:2.14.0")
+    testImplementation("com.google.code.gson:gson:2.15.0")
 }
 
 tasks.named<ProcessResources>("processResources") {
