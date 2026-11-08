@@ -29,7 +29,7 @@ allprojects {
         compileOnly("me.clip:placeholderapi:2.11.6")
 
         // bStats
-        implementation("org.bstats:bstats-bukkit:3.1.0")
+        implementation("org.bstats:bstats-bukkit:3.2.1")
 
         // Mock Testing
         testImplementation("org.mockbukkit.mockbukkit:mockbukkit-v1.21:4.116.3")
