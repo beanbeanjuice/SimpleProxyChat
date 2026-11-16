@@ -4,7 +4,7 @@ val fabricApiVersion = "0.163.0+"
 
 plugins {
     // https://maven.fabricmc.net/net/fabricmc/fabric-loom/
-    id("net.fabricmc.fabric-loom") version "1.17.20"
+    id("net.fabricmc.fabric-loom") version "1.19.3"
 }
 
 java {
