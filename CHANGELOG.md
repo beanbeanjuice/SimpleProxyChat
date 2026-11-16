@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.0.6](https://github.com/beanbeanjuice/SimpleProxyChat/compare/v1.0.5...v1.0.6) (2026-11-16)
+
+
+### Bug Fixes
+
+* **deps:** bump com.google.code.gson:gson from 2.14.0 to 2.15.0 ([#376](https://github.com/beanbeanjuice/SimpleProxyChat/issues/376)) ([b8f0277](https://github.com/beanbeanjuice/SimpleProxyChat/commit/b8f0277ec037ed9cfaa0df4bcc12525ed6c83528))
+* **deps:** bump com.google.code.gson:gson from 2.14.0 to 2.15.0 in /projects/proxy/shared ([#379](https://github.com/beanbeanjuice/SimpleProxyChat/issues/379)) ([39d57bb](https://github.com/beanbeanjuice/SimpleProxyChat/commit/39d57bb13757fa1fc67eb7db3f0c1a0d9d708a6f))
+* **deps:** bump com.velocitypowered:velocity-api from 4.2.0 to 4.3.1 ([#378](https://github.com/beanbeanjuice/SimpleProxyChat/issues/378)) ([1f1db34](https://github.com/beanbeanjuice/SimpleProxyChat/commit/1f1db343d8e8b001a57c3c7b1bcdfb22242fa7d8))
+* **deps:** bump joda-time:joda-time from 2.15.0 to 2.15.1 ([#377](https://github.com/beanbeanjuice/SimpleProxyChat/issues/377)) ([aaba342](https://github.com/beanbeanjuice/SimpleProxyChat/commit/aaba34289e660c5cc906313b206e054f9fcafc50))
+* **deps:** bump joda-time:joda-time from 2.15.0 to 2.15.1 in /projects/proxy/shared ([#380](https://github.com/beanbeanjuice/SimpleProxyChat/issues/380)) ([fe8e09e](https://github.com/beanbeanjuice/SimpleProxyChat/commit/fe8e09e3899a8f1ba1941bff565532fe41355194))
+* **deps:** bump net.md-5:bungeecord-api from 1.21-R0.3 to 1.21-R0.4 ([#375](https://github.com/beanbeanjuice/SimpleProxyChat/issues/375)) ([6f28ab1](https://github.com/beanbeanjuice/SimpleProxyChat/commit/6f28ab1a5dc40165d291da9ad4c3295a0e72a3b6))
+* **deps:** bump net.md-5:bungeecord-api from 1.21-R0.3 to 1.21-R0.4 in /projects/proxy/shared ([#381](https://github.com/beanbeanjuice/SimpleProxyChat/issues/381)) ([7377c1c](https://github.com/beanbeanjuice/SimpleProxyChat/commit/7377c1cde2547cf41a64ec9612018af735973164))
+* **deps:** bump net.neoforged:neoforge from 26.3.0.95 to 26.3.0.101 ([#384](https://github.com/beanbeanjuice/SimpleProxyChat/issues/384)) ([ddc4407](https://github.com/beanbeanjuice/SimpleProxyChat/commit/ddc4407b5da70fc791d54d0d767aa74705aff75f))
+* **deps:** bump org.apache.maven:maven-artifact from 3.9.11 to 3.10.0 in /projects/server ([#387](https://github.com/beanbeanjuice/SimpleProxyChat/issues/387)) ([35ebeec](https://github.com/beanbeanjuice/SimpleProxyChat/commit/35ebeec59eb260f61304de3d92282c3aa6426150))
+* **deps:** bump org.bstats:bstats-bukkit from 3.1.0 to 3.2.1 in /projects/server ([#385](https://github.com/beanbeanjuice/SimpleProxyChat/issues/385)) ([2885dd8](https://github.com/beanbeanjuice/SimpleProxyChat/commit/2885dd834ead5fe69807d5ee4f47746652f25d4d))
+* **deps:** bump org.spigotmc:spigot-api from 1.21.11-R0.1-SNAPSHOT to 26.3-R0.1-SNAPSHOT in /projects/server ([#386](https://github.com/beanbeanjuice/SimpleProxyChat/issues/386)) ([3038b51](https://github.com/beanbeanjuice/SimpleProxyChat/commit/3038b515a9a22f54869527a8603d61403d1c40b4))
+
 ## [1.0.5](https://github.com/beanbeanjuice/SimpleProxyChat/compare/v1.0.4...v1.0.5) (2026-10-26)
 
 
