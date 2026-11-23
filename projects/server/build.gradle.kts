@@ -36,7 +36,7 @@ allprojects {
 
         // Artifact Version Comparison
         // TODO: Eventually remove this.
-        implementation("org.apache.maven:maven-artifact:3.10.0")
+        implementation("org.apache.maven:maven-artifact:3.10.2")
     }
 
     tasks.withType<ShadowJar> {
